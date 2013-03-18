@@ -9,6 +9,7 @@ my $datafile;
 my $id;
 my $lowerbound;
 my $upperbound;
+my $gpfile;
 my $verbose;
 my $screen;
 my %raw;
@@ -30,10 +31,11 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:i:l:u:svx", \%options);
+    getopts("f:i:l:u:g:svx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
+    $gpfile = "power.gp";
     $verbose = "no";
     $screen = "no";
 
@@ -43,17 +45,20 @@ sub config {
     $upperbound = 999999999999;
     $lowerbound = $options{l} if defined $options{l};
     $upperbound = $options{u} if defined $options{u};
+    $gpfile = $options{g} if defined $options{g};
     $verbose = "yes" if defined $options{v};
     $screen = "yes" if defined $options{s};
 
     if (defined $options{x}) {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
-        print "                 [-i sampleid] [-s] [-v]\n";
+        print "                 [-i sampleid] [-g gpfile]\n";
+        print "                 [-s] [-v]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
         print "    the range of interest in time is given by lower and upper\n";
+        print "    subsitute gnuplot by setting gpfile (default power.gp)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
         print "    verbose output is toggled by -v\n";
         print "\n";
@@ -125,7 +130,7 @@ sub graph {
         foreach my $port (sort keys %{$raw{$node}}) {
             my $cmd = "gnuplot -e \"node=\\\"" . $node . "\\\"; port=" . $port . "; id=" . $id . "; ";
             $cmd .= "crt=\\\"" . $screen . "\\\";" if $screen eq "yes";
-            $cmd .= "; load 'plots/power.gp'\"";
+            $cmd .= "; load '" . $gpfile . "'\"";
             system($cmd);
         }
     }
