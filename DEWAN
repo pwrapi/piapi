@@ -1,0 +1,10 @@
+./server.pl -p 20213 &
+./client.pl -h 10.54.0.1 -r 20213 -p 20212 -s 2 &
+./control.pl -h teller-pm02 -p 20212 -u 1
+
+salloc -p power -w teller[02]
+srun 
+
+./control.pl -h teller-pm02 -p 20212 -d 1
+./analyze.pl -l 0 -u 99999999999
+
