@@ -5,6 +5,8 @@ package Server;
 use strict;
 use base qw(Net::Server::PreFork);
 use Getopt::Std;
+use IPC::SysV qw(IPC_PRIVATE S_IRUSR S_IWUSR IPC_CREAT);
+use IPC::Semaphore;
 
 =item main
 
@@ -15,6 +17,7 @@ my $port;
 my $output;
 my $logfile;
 my $loglevel;
+my $sem;
 
 Server->config();
 
@@ -58,6 +61,9 @@ sub config {
 
         exit;
     }
+
+    $sem = IPC::Semaphore->new(IPC_PRIVATE, 1, S_IRUSR | S_IWUSR | IPC_CREAT);
+    $sem->setall(1);    
 }
 
 =item process_request
@@ -72,10 +78,12 @@ sub process_request {
         open(OUT, ">" . $output);
         print OUT "HOST:PID:SECONDS:MICROSECONDS:PORT:P1(A):P2(V):P3(mA):P4(mV):P5(mW):\n";
         while( <STDIN> ) {
+            $sem->op(0, -1, 0);
             s/\r?\n$//;
             $self->log(3, "LOG - logging data " . $_);
             print OUT "$_\r\n";
             OUT->flush;
+            $sem->op(0, 1, 0);
         }
         close(OUT);
     };
