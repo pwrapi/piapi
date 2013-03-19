@@ -14,7 +14,6 @@ print "starting clients on teller-pm$start through teller-pm$fin " .
 
 my $ret;
 for ($start..$fin) {
-    print "teller-pm$_ interval $interval\n";
     system("ssh teller-pm$_ ./client_start $interval &");
-
 }
+sleep(2);
