@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $start = shift or die "Must provide first client in range\n";
+my $fin = shift or die "Must provide last client in range\n";
+
+print "killing clients on teller-pm$start through teller-pm$fin\n";
+
+my $ret;
+for ($start..$fin) {
+    print "teller-pm$_\n";
+    $ret = `ssh teller-pm$_ ./client_kill`;
+}

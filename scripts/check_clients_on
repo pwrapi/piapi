@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $start = shift or die "Must provide first client in range\n";
+my $fin = shift or die "Must provide last client in range\n";
+
+print "checking clients on teller-pm$start through teller-pm$fin\n";
+
+my $ret;
+for ($start..$fin) {
+    print "teller-pm$_:";
+    $ret = `ssh teller-pm$_ ps auxw|grep client.pl|grep -v grep|wc -l`;
+    print "has client(s) running\n" if $ret > 0;
+    print "has NO clients running\n" if $ret == 0;
+
+}
