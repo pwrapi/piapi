@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $start = shift or die "Must provide first client in range\n";
+my $fin = shift or die "Must provide last client in range\n";
+my $port;
+$port = shift or do {
+    !defined($port) and $port = 8;
+};
+
+print "sending control command to teller-pm$start through " .
+      "teller-pm$fin for port(s) $port\n";
+
+my $ret;
+for ($start..$fin) {
+    print "teller-pm$_\n";
+    $ret = `../control.pl -h teller-pm$_ -c start -v $port `;
+}
+
