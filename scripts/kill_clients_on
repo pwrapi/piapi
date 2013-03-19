@@ -9,6 +9,6 @@ print "killing clients on teller-pm$start through teller-pm$fin\n";
 
 my $ret;
 for ($start..$fin) {
-    print "teller-pm$_\n";
-    $ret = `ssh teller-pm$_ ./client_kill`;
+    system("ssh teller-pm$_ ./client_kill &");
 }
+sleep(2);
