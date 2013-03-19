@@ -7,11 +7,10 @@ my $fin = shift or die "Must provide last client in range\n";
 
 print "checking clients on teller-pm$start through teller-pm$fin\n";
 
-my $ret;
+my $count=1;
+print "\n Greater than 0 returns mean client(s) is/are running\n";
 for ($start..$fin) {
-    print "teller-pm$_:";
-    $ret = `ssh teller-pm$_ ps auxw|grep client.pl|grep -v grep|wc -l`;
-    print "has client(s) running\n" if $ret > 0;
-    print "has NO clients running\n" if $ret == 0;
-
+    system("ssh teller-pm$_ ps auxw|grep client.pl|grep -v grep|wc -l &");
+    $count++;
 }
+sleep(2);
