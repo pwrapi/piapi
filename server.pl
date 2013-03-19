@@ -5,8 +5,6 @@ package Server;
 use strict;
 use base qw(Net::Server::PreFork);
 use Getopt::Std;
-#use IPC::SysV qw(IPC_PRIVATE S_IRUSR S_IWUSR IPC_CREAT);
-#use IPC::Semaphore;
 
 =item main
 
@@ -63,9 +61,6 @@ sub config {
 
         exit;
     }
-
-#    $sem = IPC::Semaphore->new(IPC_PRIVATE, 1, S_IRUSR | S_IWUSR | IPC_CREAT);
-#    $sem->setall(1);    
 }
 
 =item post_child_cleanup
@@ -88,12 +83,10 @@ sub process_request {
     my $self = shift;
 
     while( <STDIN> ) {
-#        $sem->op(0, -1, 0);
         s/\r?\n$//;
         $self->log(3, "LOG - logging data " . $_);
         print OUT "$_\r\n";
         OUT->flush;
-#        $sem->op(0, 1, 0);
     }
 }
 
