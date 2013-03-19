@@ -5,8 +5,8 @@ package Server;
 use strict;
 use base qw(Net::Server::PreFork);
 use Getopt::Std;
-use IPC::SysV qw(IPC_PRIVATE S_IRUSR S_IWUSR IPC_CREAT);
-use IPC::Semaphore;
+#use IPC::SysV qw(IPC_PRIVATE S_IRUSR S_IWUSR IPC_CREAT);
+#use IPC::Semaphore;
 
 =item main
 
@@ -48,6 +48,8 @@ sub config {
     $loglevel = $options{l} if defined $options{l};
 
     unlink $output;
+    open(OUT, ">" . $output);
+    print OUT "HOST:PID:SECONDS:MICROSECONDS:PORT:P1(A):P2(V):P3(mA):P4(mV):P5(mW):\n";
 
     if (defined $options{x}) {
         print "\n";
@@ -62,8 +64,18 @@ sub config {
         exit;
     }
 
-    $sem = IPC::Semaphore->new(IPC_PRIVATE, 1, S_IRUSR | S_IWUSR | IPC_CREAT);
-    $sem->setall(1);    
+#    $sem = IPC::Semaphore->new(IPC_PRIVATE, 1, S_IRUSR | S_IWUSR | IPC_CREAT);
+#    $sem->setall(1);    
+}
+
+=item post_child_cleanup
+
+Hooks into base event flow to close the OUT file 
+prior to server exiting.
+
+=cut
+sub post_child_cleanup {
+    close(OUT);
 }
 
 =item process_request
@@ -74,18 +86,14 @@ STDIN is redirected from socket and messages are logged to output file.
 =cut
 sub process_request {
     my $self = shift;
-    eval {
-        open(OUT, ">" . $output);
-        print OUT "HOST:PID:SECONDS:MICROSECONDS:PORT:P1(A):P2(V):P3(mA):P4(mV):P5(mW):\n";
-        while( <STDIN> ) {
-            $sem->op(0, -1, 0);
-            s/\r?\n$//;
-            $self->log(3, "LOG - logging data " . $_);
-            print OUT "$_\r\n";
-            OUT->flush;
-            $sem->op(0, 1, 0);
-        }
-        close(OUT);
-    };
+
+    while( <STDIN> ) {
+#        $sem->op(0, -1, 0);
+        s/\r?\n$//;
+        $self->log(3, "LOG - logging data " . $_);
+        print OUT "$_\r\n";
+        OUT->flush;
+#        $sem->op(0, 1, 0);
+    }
 }
 
