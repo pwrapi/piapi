@@ -130,7 +130,7 @@ sub graph {
         foreach my $port (sort keys %{$raw{$node}}) {
             my $cmd = "gnuplot -e \"node=\\\"" . $node . "\\\"; port=" . $port . "; id=" . $id . "; ";
             $cmd .= "crt=\\\"" . $screen . "\\\";" if $screen eq "yes";
-            $cmd .= "; load '" . $gpfile . "'\"";
+            $cmd .= "; load 'plots/" . $gpfile . "'\"";
             system($cmd);
         }
     }
