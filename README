@@ -25,7 +25,7 @@ and verbose mode [-v].
              [-c command] [-v value] [-t]
 
 ./analyze.pl [-f filename] [-l lowerbound] [-u upperbound]
-             [-i identifier] [-g gpfile] [-s] [-v]
+             [-i identifier] [-n nodename] [-g gpfile] [-s] [-v]
 
 command = { start | stop | freq }
 value = { 1 - 8 | n }

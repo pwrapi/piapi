@@ -6,6 +6,7 @@ use strict;
 use Getopt::Std;
 
 my $datafile;
+my $nodename;
 my $id;
 my $lowerbound;
 my $upperbound;
@@ -31,15 +32,17 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:i:l:u:g:svx", \%options);
+    getopts("f:n:i:l:u:g:svx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
+    $nodename = "";
     $gpfile = "power.gp";
     $verbose = "no";
     $screen = "no";
 
     $datafile = $options{f} if defined $options{f};
+    $nodename = $options{n} if defined $options{n};
     $id = $options{i} if defined $options{i};
     $lowerbound = 0;
     $upperbound = 999999999999;
@@ -52,11 +55,12 @@ sub config {
     if (defined $options{x}) {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
-        print "                 [-i sampleid] [-g gpfile]\n";
-        print "                 [-s] [-v]\n";
+        print "                 [-i sampleid] [-n nodename]\n";
+        print "                 [-g gpfile] [-s] [-v]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
+        print "    nodename indicates the particular node (defaults to all)\n";
         print "    the range of interest in time is given by lower and upper\n";
         print "    subsitute gnuplot by setting gpfile (default power.gp)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
@@ -77,7 +81,8 @@ sub load_data {
         my $node = shift(@arg);
         my $pid = shift(@arg);
 
-        if ($id == 0 or $pid == $id) {
+        if (($id == 0 or $pid == $id) and
+            ($node eq "" or $node eq "$nodename")) {
             my $sec = shift(@arg);
             my $usec = shift(@arg);
             my $port = shift(@arg);
