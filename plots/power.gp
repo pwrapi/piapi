@@ -14,6 +14,10 @@ if (!exists("crt")) set output results.".eps"
 set multiplot
 set size 1, 0.3;
 
+set xdata time
+set timefmt "%s"
+set format x "%m/%d/%y %H:%M:%S"
+
 set xtic auto
 set ytic auto
 set xlabel "seconds (since epoch)"

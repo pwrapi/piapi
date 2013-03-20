@@ -11,6 +11,10 @@ results="results/".node.".".id."_".port
 if (!exists("crt")) set term post eps
 if (!exists("crt")) set output results.".eps"
 
+set xdata time
+set timefmt "%s"
+set format x "%m/%d/%y %H:%M:%S"
+
 set xtic auto
 set ytic auto
 set xlabel "seconds (since epoch)"
