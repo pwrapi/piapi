@@ -82,7 +82,7 @@ sub load_data {
         my $pid = shift(@arg);
 
         if (($id == 0 or $pid == $id) and
-            ($node eq "" or $node eq "$nodename")) {
+            ($nodename eq "" or $nodename eq $node)) {
             my $sec = shift(@arg);
             my $usec = shift(@arg);
             my $port = shift(@arg);
