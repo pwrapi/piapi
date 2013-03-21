@@ -1,7 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Pt#	  A	  V	  mA	  mV	  mW"
-for port in {1..7}
+for port in 1 2 3 4 5 6 7
 do
-    echo "$port,$RANDOM,$RANDOM,$RANDOM,$RANDOM,$RANDOM,"
+    let "A = $RANDOM % 8192"
+    let "V = $RANDOM % 8192"
+    let "mA = $RANDOM % 5000 + 3000"
+    let "mV = $RANDOM % 11000 + 3000"
+    let "mW = A * V"
+
+    echo -e "$port,\t $A,\t $V,\t $mA,\t $mV,\t $mW,\t "
 done
