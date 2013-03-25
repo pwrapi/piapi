@@ -12,6 +12,7 @@ my $lowerbound;
 my $upperbound;
 my $gpfile;
 my $verbose;
+my $quiet;
 my $screen;
 my %raw;
 
@@ -32,13 +33,14 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:n:i:l:u:g:svx", \%options);
+    getopts("f:n:i:l:u:g:svqx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
     $nodename = "";
     $gpfile = "power.gp";
     $verbose = "no";
+    $quiet = "no";
     $screen = "no";
 
     $datafile = $options{f} if defined $options{f};
@@ -50,13 +52,14 @@ sub config {
     $upperbound = $options{u} if defined $options{u};
     $gpfile = $options{g} if defined $options{g};
     $verbose = "yes" if defined $options{v};
+    $quiet = "yes" if defined $options{q};
     $screen = "yes" if defined $options{s};
 
     if (defined $options{x}) {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
         print "                 [-i sampleid] [-n nodename]\n";
-        print "                 [-g gpfile] [-s] [-v]\n";
+        print "                 [-g gpfile] [-s] [-v] [-q]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
@@ -65,6 +68,7 @@ sub config {
         print "    subsitute gnuplot by setting gpfile (default power.gp)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
         print "    verbose output is toggled by -v\n";
+        print "    summary power output only is toggled by -q\n";
         print "\n";
 
         exit;
@@ -143,10 +147,10 @@ sub graph {
 
 sub stats {
     foreach my $node (sort keys %raw) {
-        print "Node " . $node . "\n";
+        print "\nNode " . $node . "\n";
         print "-----------------\n";
         foreach my $port (sort keys %{$raw{$node}}) {
-            print "\tPort " . $port . "\n";
+            print "\n\tPort " . $port . "\n";
             print "\t-----------------\n";
 
             foreach my $type (sort keys %{$raw{$node}{$port}}) {
@@ -176,18 +180,22 @@ sub stats {
                     }
                 }
 
-                print "\t" . $type . "(avg) = " . $sum/$count . "\n";
-                print "\t" . $type . "(min) = " . $min . "\n";
-                print "\t" . $type . "(max) = " . $max . "\n\n";
+                if ($quiet eq "no") {
+                    print "\t" . $type . "(avg) = " . $sum/$count . "\n";
+                    print "\t" . $type . "(min) = " . $min . "\n";
+                    print "\t" . $type . "(max) = " . $max . "\n\n";
+                }
+
                 if ($type eq "W") {
                     $power = ($last - $first) / (2 * $count) * $power;
-                    print "\tJ(tot) = " . $power . "\n\n";
-                    print "\tt(min) = " . $first . "\n";
-                    print "\tt(max) = " . $last . "\n";
-                    print "\tt(tot) = " . ($last - $first) . "\n";
+                    print "\tJ(tot) = " . $power . "\n";
+                    if ($quiet eq "no") {
+                        print "\n\tt(min) = " . $first . "\n";
+                        print "\tt(max) = " . $last . "\n";
+                        print "\tt(tot) = " . ($last - $first) . "\n";
+                    }
                 }
             }
-            print "\n\n";
         }
     }
 }
