@@ -15,13 +15,19 @@ my $verbose;
 my $quiet;
 my $screen;
 my %raw;
+my $energy;
 
 Analyze->config;
 
 Analyze->load_data;
 Analyze->save_data;
 
-Analyze->stats;
+if (defined($energy)) {
+    Analyze->energy;
+} else {
+    Analyze->stats;
+}
+
 Analyze->graph;
 
 =item config
@@ -33,7 +39,7 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:n:i:l:u:g:svqx", \%options);
+    getopts("f:n:i:l:u:g:esvqx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
@@ -54,6 +60,7 @@ sub config {
     $verbose = "yes" if defined $options{v};
     $quiet = "yes" if defined $options{q};
     $screen = "yes" if defined $options{s};
+    $energy = "yes" if defined $options{e};
 
     if (defined $options{x}) {
         print "\n";
@@ -84,6 +91,7 @@ sub load_data {
         my @arg = split(':', $_);
         my $node = shift(@arg);
         my $pid = shift(@arg);
+        !defined($node) and $node = "";
 
         if (($id == 0 or $pid == $id) and
             ($nodename eq "" or $nodename eq $node)) {
@@ -194,6 +202,49 @@ sub stats {
                         print "\tt(max) = " . $last . "\n";
                         print "\tt(tot) = " . ($last - $first) . "\n";
                     }
+                }
+            }
+        }
+    }
+}
+
+sub energy {
+    foreach my $node (sort keys %raw) {
+        print "\n$node:";
+        foreach my $port (sort keys %{$raw{$node}}) {
+            print "P$port = ";
+
+            foreach my $type (sort keys %{$raw{$node}{$port}}) {
+                my $sum = 0;
+                my $count = 0;
+                my $max = 0;
+                my $min = 9999;
+                my $first = -1;
+                my $last = -1;
+                my $power = 0;
+
+                foreach my $timestamp (sort keys %{$raw{$node}{$port}{$type}}) {
+                    foreach my $val ($raw{$node}{$port}{$type}{$timestamp}) {
+                        $sum = $sum + $val;
+                        $count = $count + 1;
+                        $min = $val if $val < $min;
+                        $max = $val if $val > $max;
+                        if ($type eq "W") {
+                            if ($first != -1) {
+                                $power += 2 * $val;
+                                $last = $timestamp;
+                            } else {
+                                $power += $val;
+                                $first = $timestamp;
+                            }
+                        }
+                    }
+                }
+
+
+                if ($type eq "W") {
+                    $power = ($last - $first) / (2 * $count) * $power;
+                    print "$power:";
                 }
             }
         }
