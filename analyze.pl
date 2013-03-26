@@ -16,6 +16,7 @@ my $quiet;
 my $screen;
 my %raw;
 my $energy;
+my $timespan=0;
 
 Analyze->config;
 
@@ -56,6 +57,7 @@ sub config {
     $upperbound = 999999999999;
     $lowerbound = $options{l} if defined $options{l};
     $upperbound = $options{u} if defined $options{u};
+    $timespan = $upperbound - $lowerbound;
     $gpfile = $options{g} if defined $options{g};
     $verbose = "yes" if defined $options{v};
     $quiet = "yes" if defined $options{q};
@@ -210,7 +212,7 @@ sub stats {
 
 sub energy {
     foreach my $node (sort keys %raw) {
-        print "\n$node:";
+        print "\n$node:$timespan:";
         foreach my $port (sort keys %{$raw{$node}}) {
             print "P$port = ";
 
