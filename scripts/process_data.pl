@@ -57,7 +57,7 @@ while (<FLFD>) {
     my $stime = convert_time($sepoch);
     my $ftime = convert_time($fepoch);
 
-    print "/Users/jhlaros/kratos/analyze.pl -l $stime -u $ftime -n $hostn -q -f \$1\n";
+    print "/Users/jhlaros/kratos/analyze.pl -l $stime -u $ftime -n $hostn -e -f \$1\n";
     close IFD;
 }
 
