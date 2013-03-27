@@ -58,6 +58,7 @@ while (<FLFD>) {
     my $ftime = convert_time($fepoch);
 
     print "/Users/jhlaros/kratos/analyze.pl -l $stime -u $ftime -n $hostn -e -f \$1\n";
+    print "#$hostn:$stime:$sepoch:$ftime:$fepoch:$gflops\n";
     close IFD;
 }
 
