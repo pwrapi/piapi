@@ -187,7 +187,7 @@ sub stats {
 
                 if ($type eq "W") {
                     $power = ($last - $first) / (2 * $count) * $power;
-                    print $data $first . " " . $last . " " . ($last - $first) . " " . $power;
+                    print $data ($last - $first) . " " . $first . " " . $last . " " . $power;
                 }
             }
             print $data "\n";
