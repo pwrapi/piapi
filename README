@@ -25,7 +25,7 @@ and verbose mode [-v].
              [-c command] [-v value] [-t]
 
 ./analyze.pl [-f filename] [-l lowerbound] [-u upperbound]
-             [-i identifier] [-n nodename] [-g gpfile] [-s] [-v] [-q]
+             [-i identifier] [-n nodename] [-g gpfile] [-s] [-v]
 
 command = { start | stop | freq }
 value = { 1 - 8 | n }
@@ -57,6 +57,11 @@ format:
 The output files for each time / power value pair generated from analyze.pl
 reside in the results directory and are denoted by HOST.PID_PORT_X
 where X is either A, V, or W. 
+
+A last output file is generated with summary information denoted summary.PID 
+in the following format:
+
+    HOST PORT A(avg) A(min) A(max) V(avg) V(min) V(max) W(avg) W(min) W(max) t(tot) t(min) t(max) P
 
 Installation
 ------------

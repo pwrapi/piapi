@@ -12,7 +12,6 @@ my $lowerbound;
 my $upperbound;
 my $gpfile;
 my $verbose;
-my $quiet;
 my $screen;
 my %raw;
 my $energy;
@@ -40,14 +39,13 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:n:i:l:u:g:esvqx", \%options);
+    getopts("f:n:i:l:u:g:esvx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
     $nodename = "";
     $gpfile = "power.gp";
     $verbose = "no";
-    $quiet = "no";
     $screen = "no";
 
     $datafile = $options{f} if defined $options{f};
@@ -60,7 +58,6 @@ sub config {
     $timespan = $upperbound - $lowerbound;
     $gpfile = $options{g} if defined $options{g};
     $verbose = "yes" if defined $options{v};
-    $quiet = "yes" if defined $options{q};
     $screen = "yes" if defined $options{s};
     $energy = "yes" if defined $options{e};
 
@@ -68,7 +65,7 @@ sub config {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
         print "                 [-i sampleid] [-n nodename]\n";
-        print "                 [-g gpfile] [-s] [-v] [-q]\n";
+        print "                 [-g gpfile] [-s] [-v]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
@@ -77,7 +74,6 @@ sub config {
         print "    subsitute gnuplot by setting gpfile (default power.gp)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
         print "    verbose output is toggled by -v\n";
-        print "    summary power output only is toggled by -q\n";
         print "\n";
 
         exit;
@@ -156,18 +152,15 @@ sub graph {
 }
 
 sub stats {
+    open (my $data, ">", "results/summary." . $id . ".dat");
     foreach my $node (sort keys %raw) {
-        print "\nNode " . $node . "\n";
-        print "-----------------\n";
         foreach my $port (sort keys %{$raw{$node}}) {
-            print "\n\tPort " . $port . "\n";
-            print "\t-----------------\n";
-
+            print $data $node . " " . $port . " ";
             foreach my $type (sort keys %{$raw{$node}{$port}}) {
                 my $sum = 0;
                 my $count = 0;
                 my $max = 0;
-                my $min = 9999;
+                my $min = 99999999;
                 my $first = -1;
                 my $last = -1;
                 my $power = 0;
@@ -190,24 +183,17 @@ sub stats {
                     }
                 }
 
-                if ($quiet eq "no") {
-                    print "\t" . $type . "(avg) = " . $sum/$count . "\n";
-                    print "\t" . $type . "(min) = " . $min . "\n";
-                    print "\t" . $type . "(max) = " . $max . "\n\n";
-                }
+                print $data $sum/$count . " " . $min . " " . $max . " ";
 
                 if ($type eq "W") {
                     $power = ($last - $first) / (2 * $count) * $power;
-                    print "\tJ(tot) = " . $power . "\n";
-                    if ($quiet eq "no") {
-                        print "\n\tt(min) = " . $first . "\n";
-                        print "\tt(max) = " . $last . "\n";
-                        print "\tt(tot) = " . ($last - $first) . "\n";
-                    }
+                    print $data $first . " " . $last . " " . ($last - $first) . " " . $power;
                 }
             }
+            print $data "\n";
         }
     }
+    close $data;
 }
 
 sub energy {
@@ -220,7 +206,7 @@ sub energy {
                 my $sum = 0;
                 my $count = 0;
                 my $max = 0;
-                my $min = 9999;
+                my $min = 99999999;
                 my $first = -1;
                 my $last = -1;
                 my $power = 0;
