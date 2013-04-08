@@ -59,6 +59,10 @@ directory.
 ______________________________________________________________________
 client_kill - used by kill_clients_on. Should be in the root home 
 directory.
+______________________________________________________________________
+process_data.pl - example script for basis of how you might process
+slurm output files to get the parameters needed for the analyze.pl
+script. 
 
 
 
