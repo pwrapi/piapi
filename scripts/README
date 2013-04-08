@@ -1,0 +1,64 @@
+Simple scripts to make some common tasks easier for launching
+and for post processing data.
+
+______________________________________________________________________
+check_clients_on - simply ssh'es to each beagle and doesa ps to 
+see if there are any clients already running on the beagle. Should
+see 0's if not and > 0 if there is
+RUN AS ROOT
+
+Usage:
+check_clients_on 1 100
+
+Note: the names for the beagles are teller-pm00, teller-pm01 etc
+specify them numerically. Do not specify the leading 0 for beagles
+< 10
+
+______________________________________________________________________
+start_clients_on - uses client_start script which must be located
+in the root home directory of each node to start a client. 
+Note: client_start uses 10.54.0.1 as the server which is the admin
+node. 
+RUN AS ROOT
+
+Usage:
+start_clients_on 1 100
+or
+start_clients_on 1 100 1
+
+Note: must privide the clients to act upon, optional interval may 
+be specified after. Interval is how many times per second.
+
+______________________________________________________________________
+control_clients_on - uses the control.pl command to control the list
+of clients specified, in the same way of course. Just makes it easier
+to control larger numbers of clients
+RUN AS ROOT
+
+Usage:
+control_clients_on 1 100 start|stop
+or
+control_clients_on 1 100 start|stop 1
+
+Note: you must provide the clients to act on and start or stop.
+The port number or 8 for all ports is optional. Defalt = 8 or all ports.
+
+______________________________________________________________________
+kill_clients_on - uses client_kill locally on node so depends upon it being
+in the root home directory. Basically does a killall of the client
+processes. Easy way to clean up the client processes on a range of nodes.
+RUN AS ROOT
+
+Usage:
+kill_clients_on 1 100
+
+
+______________________________________________________________________
+client_start - used by start_clients_on. Should be in the root home 
+directory.
+______________________________________________________________________
+client_kill - used by kill_clients_on. Should be in the root home 
+directory.
+
+
+
