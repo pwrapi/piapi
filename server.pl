@@ -15,7 +15,7 @@ my $port;
 my $output;
 my $logfile;
 my $loglevel;
-my $servers;
+my $nodes;
 my $sem;
 
 Server->config();
@@ -24,7 +24,7 @@ Server->run(
     port => $port,
     log_file => $logfile,
     log_level => $loglevel,
-    max_servers => $servers
+    max_servers => $nodes
 );
 
 =item config
@@ -41,13 +41,13 @@ sub config {
     $output = "power.dat";
     $logfile = "/tmp/server_" . $$ . ".log";
     $loglevel = 2;
-    $servers = 100;
+    $nodes = 100;
 
     $port = $options{p} if defined $options{p};
     $output = $options{f} if defined $options{f};
     undef $logfile if defined $options{q};
     $loglevel = $options{l} if defined $options{l};
-    $servers = $options{s} if defined $options{s};
+    $nodes = $options{n} if defined $options{n};
 
     unlink $output;
     open(OUT, ">" . $output);
@@ -55,12 +55,12 @@ sub config {
 
     if (defined $options{x}) {
         print "\n";
-        print "    ./server.pl [-p port] [-f filename] [-s maxservers]\n";
+        print "    ./server.pl [-p port] [-f filename] [-n maxnodes]\n";
         print "                [-l loglevel] [-q]\n";
         print "\n";
         print "    filename redirects the power file output (default power.dat)\n";
         print "    loglevel can be from 1 to 4 (default 2)\n";
-        print "    maxservers should be greater than the number of nodes communicating (default 100)\n";
+        print "    maxnodes should be greater than the number of nodes communicating (default 100)\n";
         print "    defaults log to /tmp or -q to console\n";
         print "\n";
 

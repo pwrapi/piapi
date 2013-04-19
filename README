@@ -15,7 +15,7 @@ or remotely based on command line configuration [-h].  Other configuration
 options are the log level [-l], whether to log to file or console [-q],
 and verbose mode [-v].
 
-./server.pl [-p port] [-f filename] [-l loglevel] [-s maxservers] [-q]
+./server.pl [-p port] [-f filename] [-l loglevel] [-n maxnodes] [-q]
 
 ./client.pl [-h hostname] [-r remoteport] [-p localport]
             [-f filename] [-l loglevel] [-s samplerate] [-q]
