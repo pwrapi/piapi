@@ -15,12 +15,17 @@ my $verbose;
 my $screen;
 my %raw;
 my $energy;
+my $dat;
+my $plot;
 my $timespan=0;
 
 Analyze->config;
 
 Analyze->load_data;
-Analyze->save_data;
+
+if (defined($dat)) {
+    Analyze->save_data;
+}
 
 if (defined($energy)) {
     Analyze->energy;
@@ -28,11 +33,13 @@ if (defined($energy)) {
     Analyze->stats;
 }
 
-my $sys_status = system("which gnuplot");
-if ($sys_status == 0) {
-  Analyze->graph;
-} else {
-  print "Skipping graphing step, gnuplot not found\n";
+if (defined($plot)) {
+    my $sys_status = system("which gnuplot");
+    if ($sys_status == 0) {
+        Analyze->graph;
+    } else {
+        print "Skipping graphing step, gnuplot not found\n";
+    }
 }
 
 =item config
@@ -44,7 +51,7 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:n:i:l:u:g:esvx", \%options);
+    getopts("f:n:i:l:u:g:dpesvx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
@@ -64,19 +71,23 @@ sub config {
     $gpfile = $options{g} if defined $options{g};
     $verbose = "yes" if defined $options{v};
     $screen = "yes" if defined $options{s};
+    $dat = "yes" if defined $options{d};
+    $plot = "yes" if defined $options{p};
     $energy = "yes" if defined $options{e};
 
     if (defined $options{x}) {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
         print "                 [-i sampleid] [-n nodename]\n";
-        print "                 [-g gpfile] [-s] [-v]\n";
+        print "                 [-g gpfile] [-d] [-p] [-s] [-v]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
         print "    nodename indicates the particular node (defaults to all)\n";
         print "    the range of interest in time is given by lower and upper\n";
         print "    subsitute gnuplot by setting gpfile (default power.gp)\n";
+        print "    creates individual detail dat files with -d (default off)\n";
+        print "    creates individual detail plot files with -p (default off)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
         print "    verbose output is toggled by -v\n";
         print "\n";
@@ -91,22 +102,11 @@ sub load_data {
     my $header = <$data>;
     while(<$data>) {
         chomp($_);
-        my @arg = split(':', $_);
-        my $node = shift(@arg);
-        my $pid = shift(@arg);
+        my ($node, $pid, $sec, $usec, $port, $A, $V, $mA, $mV, $mW)  = split(':', $_);
         !defined($node) and $node = "";
 
         if (($id == 0 or $pid == $id) and
             ($nodename eq "" or $nodename eq $node)) {
-            my $sec = shift(@arg);
-            my $usec = shift(@arg);
-            my $port = shift(@arg);
-            my $A = shift(@arg);
-            my $V = shift(@arg);
-            my $mA = shift(@arg);
-            my $mV = shift(@arg);
-            my $mW = shift(@arg);
-    
             my $timestamp = ($sec+$usec/1000000); 
             if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
                 $raw{$node}{$port}{"A"}{$timestamp} = ($mA/1000); 
@@ -122,6 +122,8 @@ sub load_data {
                     print "Watts: " . $raw{$node}{$port}{"W"}{$timestamp} . "\n";
                     print "\n";
                 }
+            } else {
+		last if($timestamp > $upperbound + 100);
             }
         }
     }
