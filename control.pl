@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-package Intercomm;
+package Control;
 
 use strict;
 use Getopt::Std;
@@ -12,10 +12,10 @@ my $mode;
 my $command;
 my $value;
 
-Intercomm->config();
+Control->config();
 
-Intercomm->send() if ($command && $value);
-Intercomm->test() if ($mode);
+Control->send() if ($command && $value);
+Control->test() if ($mode);
 
 =item config
 
@@ -54,7 +54,7 @@ sub config {
 
     if (defined $options{x}) {
         print "\n";
-        print "    ./intercomm.pl [-h hostname] [-p port]\n";
+        print "    ./control.pl [-h hostname] [-p port]\n";
         print "                 [-s samplerate]\n";
         print "                 [-u sensorport] [-d sensorport]\n";
         print "                 [-c command] [-v value] [-t]\n";
@@ -92,7 +92,7 @@ closes the connection.
 
 =cut
 sub send {
-        my $sock = Intercomm->channel();
+        my $sock = Control->channel();
         print $sock $command . ":" . $value . "\n";
         $sock->flush;
         close($sock);
@@ -112,7 +112,7 @@ sub test {
         print "Testing -c start -v " . $sensor . "\n";
         $command = "start";
         $value = $sensor;
-        Intercomm->send();
+        Control->send();
         sleep 1;
     }
 
@@ -120,25 +120,25 @@ sub test {
         print "Testing -c stop -v " . $sensor . "\n";
         $command = "stop";
         $value = $sensor;
-        Intercomm->send();
+        Control->send();
         sleep 1;
     }
 
     print "Testing -c freq -v 10\n";
     $command = "freq";
     $value = 10;
-    Intercomm->send();
+    Control->send();
     sleep 1;
 
     print "Testing -c start -v 8\n";
     $command = "start";
     $value = 8;
-    Intercomm->send();
+    Control->send();
     sleep 1;
 
     print "Testing -c stop -v 8\n";
     $command = "stop";
     $value = 8;
-    Intercomm->send();
+    Control->send();
     sleep 1;
 }

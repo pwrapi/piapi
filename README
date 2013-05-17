@@ -9,7 +9,7 @@ HPC node power usage.
 Usage
 -----
 
-The system is made up of four components: proxy, agent, intercomm, and
+The system is made up of four components: proxy, agent, control, and
 analyze.  The four components can run either locally on the same host
 or remotely based on command line configuration [-h].  Other configuration
 options are the log level [-l], whether to log to file or console [-q],
@@ -20,7 +20,7 @@ and verbose mode [-v].
 ./agent.pl [-h hostname] [-r remoteport] [-p localport]
             [-f filename] [-l loglevel] [-s samplerate] [-q]
 
-./intercomm.pl [-h hostname] [-p port]
+./control.pl [-h hostname] [-p port]
              [-s samplerate] [-u sensorport] [-d sensorport]
              [-c command] [-v value] [-t]
 
