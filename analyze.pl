@@ -160,7 +160,11 @@ sub graph {
 
 sub stats {
     open (my $data, ">>", "results/summary." . $id . ".dat");
-    print $data "# HOST PORT A(avg) A(min) A(max) V(avg) V(min) V(max) W(avg) W(min) W(max) t(tot) t(min) t(max) Power(joules)\n";
+
+    if ($verbose eq "yes") {
+        print $data "# HOST PORT A(avg) A(min) A(max) V(avg) V(min) V(max) W(avg) W(min) W(max) t(tot) t(min) t(max) Power(joules)\n";
+    }
+
     foreach my $node (sort keys %raw) {
         foreach my $port (sort keys %{$raw{$node}}) {
             print $data $node . " " . $port . " ";
