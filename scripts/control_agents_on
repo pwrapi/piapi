@@ -3,10 +3,10 @@
 use strict;
 
 my $start = shift;
-    defined($start) or die "Must provide first client in range\n";
+    defined($start) or die "Must provide first agent in range\n";
 my $fin = shift;
-    defined($fin) or die "Must provide last client in range\n";
-my $action = shift or die "Must provide action for client (start|stop)\n";
+    defined($fin) or die "Must provide last agent in range\n";
+my $action = shift or die "Must provide action for agent (start|stop)\n";
 my $port;
 $port = shift or do {
     !defined($port) and $port = 8;

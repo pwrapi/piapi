@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-package Server;
+package Proxy;
 
 use strict;
 use base qw(Net::Server::PreFork);
@@ -8,7 +8,7 @@ use Getopt::Std;
 
 =item main
 
-Main simply calls config for setup and starts server.
+Main simply calls config for setup and starts proxy.
 
 =cut
 my $port;
@@ -18,9 +18,9 @@ my $loglevel;
 my $nodes;
 my $sem;
 
-Server->config();
+Proxy->config();
 
-Server->run(
+Proxy->run(
     port => $port,
     log_file => $logfile,
     log_level => $loglevel,
@@ -39,7 +39,7 @@ sub config {
 
     $port = 20203;
     $output = "power.dat";
-    $logfile = "/tmp/server_" . $$ . ".log";
+    $logfile = "/tmp/proxy_" . $$ . ".log";
     $loglevel = 2;
     $nodes = 100;
 
@@ -55,7 +55,7 @@ sub config {
 
     if (defined $options{x}) {
         print "\n";
-        print "    ./server.pl [-p port] [-f filename] [-n maxnodes]\n";
+        print "    ./proxy.pl [-p port] [-f filename] [-n maxnodes]\n";
         print "                [-l loglevel] [-q]\n";
         print "\n";
         print "    filename redirects the power file output (default power.dat)\n";

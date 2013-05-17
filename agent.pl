@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-package Client;
+package Agent;
 
 use strict;
 
@@ -32,9 +32,9 @@ my $pipe = "no";
 my @sensorstate;
 my $samplefreq;
 
-Client->config;
-Client->sampler;
-Client->run(
+Agent->config;
+Agent->sampler;
+Agent->run(
     port => $port,
     log_file => $logfile,
     log_level => $loglevel
@@ -56,7 +56,7 @@ sub config {
     $args = "";
 
     $port = 20202;
-    $logfile = "/tmp/client_" . $$ . ".log";
+    $logfile = "/tmp/agent_" . $$ . ".log";
     $loglevel = 2;
     @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
@@ -78,7 +78,7 @@ sub config {
 
     if (defined $options{x}) {
         print "\n";
-        print "    ./client.pl [-h hostname] [-r remoteport] [-p localport]\n";
+        print "    ./agent.pl [-h hostname] [-r remoteport] [-p localport]\n";
         print "                [-f filename] [-l loglevel] [-s samplerate] [-q]\n";
         print "\n";
         print "    loglevel can be from 1 to 4 (default 2)\n";
@@ -100,7 +100,7 @@ sub sampler {
 
     unless ($pid) {
         if ($pipe eq "yes") {
-            Client->sample;
+            Agent->sample;
         } else {
             exec "./sample.pl $args" if $pipe eq "no";
             die "cannot exec sample.pl: $!";
@@ -181,7 +181,7 @@ sub post_client_connection_hook() {
         $self->log(4, "sensorstate[" . $i . "] = " . $sensorstate[$i]);
     }
     $self->log(4, "samplefreq = " .  $samplefreq);
-    Client->save_config;
+    Agent->save_config;
 }
 
 =item save_config
@@ -273,7 +273,7 @@ parameters.
 
 =cut
 sub sample {
-    my $sock = Client->channel;
+    my $sock = Agent->channel;
     my $hostid = hostname;
     $hostid .= ":" . $$;
 
@@ -291,9 +291,9 @@ sub sample {
         }
         usleep(1000000/$samplefreq);
         if ($pipe eq "yes") {
-            Client->load_config if select $load;
+            Agent->load_config if select $load;
         } else {
-            Client->load_config if (-e "/tmp/.config" . $$);
+            Agent->load_config if (-e "/tmp/.config" . $$);
         }
     }
 
