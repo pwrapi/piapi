@@ -23,17 +23,18 @@ my $rport;
 my $output;
 
 my $pid;
-my $args;
 
 my $port;
 my $logfile;
 my $loglevel;
+my $delay;
+
 my $pipe = "no";
 my @sensorstate;
 my $samplefreq;
 
 Agent->config;
-Agent->sampler;
+Agent->sampler if ($delay eq "no");
 Agent->run(
     port => $port,
     log_file => $logfile,
@@ -49,32 +50,27 @@ at 1 Hz.  Also collects args for sample.pl.
 =cut
 sub config {
     my %options=();
-    getopts("h:r:p:f:l:s:qx", \%options);
+    getopts("h:r:p:f:l:s:qdx", \%options);
 
     $saddr = "localhost";
     $rport = "20203";
-    $args = "";
 
     $port = 20202;
     $logfile = "/tmp/agent_" . $$ . ".log";
     $loglevel = 2;
+    $delay = "no";
     @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
 
-    if ($pipe eq "yes") {
-        $saddr = $options{h} if defined $options{h};
-        $rport = $options{r} if defined $options{r};
-        $output = $options{f} if defined $options{f};
-    } else {
-        $args .= " -h " . $options{h} if defined $options{h};
-        $args .= " -p " . $options{r} if defined $options{r};
-        $args .= " -f " . $options{f} if defined $options{f};
-    }
+    $saddr = $options{h} if defined $options{h};
+    $rport = $options{r} if defined $options{r};
+    $output = $options{f} if defined $options{f};
 
     $samplefreq = $options{s} if defined $options{s};
     $port = $options{p} if defined $options{p};
     $loglevel = $options{l} if defined $options{l};
     undef $logfile if defined $options{q};
+    $delay = "yes" if defined $options{d};
 
     if (defined $options{x}) {
         print "\n";
@@ -102,7 +98,7 @@ sub sampler {
         if ($pipe eq "yes") {
             Agent->sample;
         } else {
-            exec "./sample.pl $args" if $pipe eq "no";
+            exec "./sample.pl -h $saddr -p $rport -f $output";
             die "cannot exec sample.pl: $!";
         }
     }
@@ -122,6 +118,7 @@ sub post_child_cleanup {
     }
 
     kill $pid;
+    undef $pid;
 }
 
 =item process_request
@@ -163,6 +160,15 @@ sub process_request {
         } elsif ($command eq "freq") {
             $samplefreq = $value;
             $self->log(4, "Sample frequency is now " .  $samplefreq);
+        } elsif ($command eq "attach") {
+            $saddr = $value;
+            $self->log(4, "Attaching to proxy at " .  $saddr);
+            Agent->sampler if !defined($pid);
+        } elsif ($command eq "detach") {
+            $saddr = $value;
+            $self->log(4, "Detaching from proxy at " .  $saddr);
+            kill $pid if defined($pid);
+            undef $pid;
         }
     }
 }
