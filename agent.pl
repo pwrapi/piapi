@@ -23,6 +23,7 @@ my $rport;
 my $output;
 
 my $pid;
+my $args;
 
 my $port;
 my $logfile;
@@ -57,7 +58,6 @@ sub config {
     $port = 20202;
     $logfile = "/tmp/agent_" . $$ . ".log";
     $loglevel = 2;
-    $delay = "no";
     @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
 
@@ -97,7 +97,9 @@ sub sampler {
         if ($pipe eq "yes") {
             Agent->sample;
         } else {
-            exec "./sample.pl -h $saddr -p $rport -f $output";
+            $args = " -h " . $saddr . " -p " . $rport;
+            $args .= " -f " . $output if defined $output;
+            exec "./sample.pl $args";
             die "cannot exec sample.pl: $!";
         }
     }
@@ -186,7 +188,7 @@ sub post_client_connection_hook() {
         $self->log(4, "sensorstate[" . $i . "] = " . $sensorstate[$i]);
     }
     $self->log(4, "samplefreq = " .  $samplefreq);
-    Agent->save_config;
+    Agent->save_config if defined($pid);
 }
 
 =item save_config
