@@ -27,14 +27,13 @@ my $pid;
 my $port;
 my $logfile;
 my $loglevel;
-my $delay;
 
 my $pipe = "no";
 my @sensorstate;
 my $samplefreq;
 
 Agent->config;
-Agent->sampler if ($delay eq "no");
+Agent->sampler if defined($pid);
 Agent->run(
     port => $port,
     log_file => $logfile,
@@ -70,7 +69,7 @@ sub config {
     $port = $options{p} if defined $options{p};
     $loglevel = $options{l} if defined $options{l};
     undef $logfile if defined $options{q};
-    $delay = "yes" if defined $options{d};
+    undef $pid if defined $options{d};
 
     if (defined $options{x}) {
         print "\n";
