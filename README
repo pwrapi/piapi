@@ -22,6 +22,7 @@ and verbose mode [-v].
 
 ./control.pl [-h hostname] [-p port]
              [-s samplerate] [-u sensorport] [-d sensorport]
+             [-a ipaddress] [-d ipaddress]
              [-c command] [-v value] [-t]
 
 ./analyze.pl [-f filename] [-l lowerbound] [-u upperbound]

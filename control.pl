@@ -27,7 +27,7 @@ to off.
 =cut
 sub config {
     my %options=();
-    getopts("h:p:s:u:d:c:v:tx", \%options);
+    getopts("h:p:s:u:d:c:v:a:q:tx", \%options);
 
     $host = "localhost";
     $port = 20202;
@@ -51,12 +51,21 @@ sub config {
         $command = "freq";
         $value = $options{s};
     }
+    if (defined $options{a}) {
+        $command = "attach";
+        $value = $options{a};
+    }
+    if (defined $options{q}) {
+        $command = "detach";
+        $value = $options{q};
+    }
 
     if (defined $options{x}) {
         print "\n";
         print "    ./control.pl [-h hostname] [-p port]\n";
         print "                 [-s samplerate]\n";
         print "                 [-u sensorport] [-d sensorport]\n";
+        print "                 [-a ipaddress] [-q ipaddress]\n";
         print "                 [-c command] [-v value] [-t]\n";
         print "\n";
         print "    sensorport value should be 1 to 7 or 8 (all sensor ports)\n";
@@ -108,6 +117,12 @@ on all (8) sensor ports then off.
 
 =cut
 sub test {
+    print "Testing -c attach -v localhost\n";
+    $command = "attach";
+    $value = "localhost";
+    Control->send();
+    sleep 1;
+
     for (my $sensor = 1; $sensor < 8; $sensor++) {
         print "Testing -c start -v " . $sensor . "\n";
         $command = "start";
@@ -139,6 +154,12 @@ sub test {
     print "Testing -c stop -v 8\n";
     $command = "stop";
     $value = 8;
+    Control->send();
+    sleep 1;
+
+    print "Testing -c detach -v localhost\n";
+    $command = "detach";
+    $value = "localhost";
     Control->send();
     sleep 1;
 }
