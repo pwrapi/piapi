@@ -23,6 +23,7 @@ my $rport;
 my $output;
 
 my $pid;
+my $delay;
 my $args;
 
 my $port;
@@ -34,7 +35,7 @@ my @sensorstate;
 my $samplefreq;
 
 Agent->config;
-Agent->sampler if defined($pid);
+Agent->sampler if ($delay eq "no");
 Agent->run(
     port => $port,
     log_file => $logfile,
@@ -50,14 +51,16 @@ at 1 Hz.  Also collects args for sample.pl.
 =cut
 sub config {
     my %options=();
-    getopts("h:r:p:f:l:s:qdx", \%options);
+    getopts("h:r:p:f:l:s:qwx", \%options);
 
     $saddr = "localhost";
     $rport = "20203";
+    $args = "";
 
     $port = 20202;
     $logfile = "/tmp/agent_" . $$ . ".log";
     $loglevel = 2;
+    $delay = "no";
     @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
 
@@ -69,12 +72,12 @@ sub config {
     $port = $options{p} if defined $options{p};
     $loglevel = $options{l} if defined $options{l};
     undef $logfile if defined $options{q};
-    undef $pid if defined $options{d};
+    $wait = "yes" if defined $options{w};
 
     if (defined $options{x}) {
         print "\n";
         print "    ./agent.pl [-h hostname] [-r remoteport] [-p localport]\n";
-        print "                [-f filename] [-l loglevel] [-s samplerate] [-q]\n";
+        print "                [-f filename] [-l loglevel] [-s samplerate] [-q] [-w]\n";
         print "\n";
         print "    loglevel can be from 1 to 4 (default 2)\n";
         print "    defaults log to /tmp or -q to console\n";
@@ -119,7 +122,6 @@ sub post_child_cleanup {
     }
 
     kill $pid;
-    undef $pid;
 }
 
 =item process_request
@@ -164,12 +166,13 @@ sub process_request {
         } elsif ($command eq "attach") {
             $saddr = $value;
             $self->log(4, "Attaching to proxy at " .  $saddr);
-            Agent->sampler if !defined($pid);
+            Agent->sampler if ($wait eq "yes");
+            $wait = "no";
         } elsif ($command eq "detach") {
             $saddr = $value;
             $self->log(4, "Detaching from proxy at " .  $saddr);
-            kill $pid if defined($pid);
-            undef $pid;
+            kill $pid if $wait = "no";
+            $wait = "yes";
         }
     }
 }
@@ -188,7 +191,7 @@ sub post_client_connection_hook() {
         $self->log(4, "sensorstate[" . $i . "] = " . $sensorstate[$i]);
     }
     $self->log(4, "samplefreq = " .  $samplefreq);
-    Agent->save_config if defined($pid);
+    Agent->save_config if ($wait eq "no");
 }
 
 =item save_config
