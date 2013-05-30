@@ -23,7 +23,7 @@ my $rport;
 my $output;
 
 my $pid;
-my $delay;
+my $wait;
 my $args;
 
 my $port;
@@ -35,7 +35,7 @@ my @sensorstate;
 my $samplefreq;
 
 Agent->config;
-Agent->sampler if ($delay eq "no");
+Agent->sampler if ($wait eq "no");
 Agent->run(
     port => $port,
     log_file => $logfile,
@@ -60,7 +60,7 @@ sub config {
     $port = 20202;
     $logfile = "/tmp/agent_" . $$ . ".log";
     $loglevel = 2;
-    $delay = "no";
+    $wait = "no";
     @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
 
