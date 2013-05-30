@@ -126,7 +126,7 @@ sub sample {
     my $hostid = hostname;
     $hostid .= ":" . $$;
 
-    while ($samplefreq > 0) {
+    while ($samplefreq >= 0) {
         (my $seconds, my $microseconds) = Time::HiRes::gettimeofday;
         my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
         for (my $sensorport = 1; $sensorport < 8; $sensorport++) {
@@ -138,7 +138,7 @@ sub sample {
                 $sock->flush;
             }
         }
-        usleep(1000000/$samplefreq);
+        usleep(1000000/$samplefreq) if $samplefreq;
         Sample->load_config if (-e "/tmp/.config" . $$);
     }
 
