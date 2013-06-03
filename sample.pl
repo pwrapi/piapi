@@ -96,7 +96,7 @@ sub channel {
     my $self = shift;
     my $sock;
 
-    if ($output) {
+    if (defined $output) {
         open($sock, ">" . "$output");
     } else {
         $sock = IO::Socket::INET->new(

@@ -171,7 +171,7 @@ sub process_request {
         } elsif ($command eq "detach") {
             $saddr = $value;
             $self->log(4, "Detaching from proxy at " .  $saddr);
-            kill $pid if $wait = "no";
+            kill $pid if ($wait eq "no");
             $wait = "yes";
         }
     }
