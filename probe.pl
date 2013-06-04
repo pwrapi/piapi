@@ -17,15 +17,10 @@ sample process, and starts the server for incoming control
 commands.
 
 =cut
-my $saddr;
-my $output;
-
+my $samplefreq;
 my $port;
 my $logfile;
 my $loglevel;
-
-my @sensorstate;
-my $samplefreq;
 
 Probe->config;
 Probe->run(
@@ -43,17 +38,12 @@ at 1 Hz.  Also collects args for sample.pl.
 =cut
 sub config {
     my %options=();
-    getopts("h:p:f:l:s:qx", \%options);
+    getopts("p:l:s:qx", \%options);
 
-    $saddr = "localhost";
     $port = 20202;
     $logfile = "/tmp/probe_" . $$ . ".log";
     $loglevel = 2;
-    @sensorstate = qw/off off off off off off off off/;
     $samplefreq = 1;
-
-    $saddr = $options{h} if defined $options{h};
-    $output = $options{f} if defined $options{f};
 
     $samplefreq = $options{s} if defined $options{s};
     $port = $options{p} if defined $options{p};
@@ -62,8 +52,8 @@ sub config {
 
     if (defined $options{x}) {
         print "\n";
-        print "    ./probe.pl [-h hostname] [-p localport]\n";
-        print "                [-f filename] [-l loglevel] [-s samplerate] [-q]\n";
+        print "    ./probe.pl [-p port]\n";
+        print "               [-l loglevel] [-s samplerate] [-q]\n";
         print "\n";
         print "    loglevel can be from 1 to 4 (default 2)\n";
         print "    defaults log to /tmp or -q to console\n";
@@ -92,59 +82,25 @@ sub process_request {
         my $value = shift(@arg);
         $self->log(3, "Received control command " . $command . ":" . $value);
         if ($command eq "start") {
-            if ($value == 8) {
-                @sensorstate = qw/on on on on on on on on/;
-                $self->log(4, "Sensor state for all are now on");
-            } else {
-                $sensorstate[$value] = "on";
-                $self->log(4, "Sensor state for " . $value .
-                    " is now " . $sensorstate[$value]);
-            }
-        } elsif ($command eq "stop") {
-            if ($value == 8) {
-                @sensorstate = qw/off off off off off off off off/;
-                $self->log(4, "Sensor state for all are now off");
-            } else {
-                $sensorstate[$value] = "off";
-                $self->log(4, "Sensor state for " . $value .
-                    " is now " . $sensorstate[$value]);
-            }
-        } elsif ($command eq "freq") {
-            $samplefreq = $value;
-            $self->log(4, "Sample frequency is now " .  $samplefreq);
-        }
-        Probe->sample;
-    }
-}
+            $self->log(4, "Starting collection on port " .  $value);
 
-=item sample
+            my $samplecount = 0;
+            my $hostid = hostname;
+            $hostid .= ":" . $$;
 
-Attains a channel to communicate over and samples all ports that have
-a state of on, retrieving their power value and timestamp, and sends
-a message with this infomation along with its hostid and port number
-over the channel (either socket of local file) on a period based on
-the sample frequency.  Between samples, if a .config file exists,
-the sample thread will refresh its sensor states and sample frequency
-parameters.
+            while ($samplefreq > 0 and $samplecount < 100) {
+                (my $seconds, my $microseconds) = Time::HiRes::gettimeofday;
+                my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
+                $power[$value] =~ s/,/:/g;
+                $power[$value] =~ s/\t //g;
 
-=cut
-sub sample {
-    my $hostid = hostname;
-    $hostid .= ":" . $$;
+                $self->log(4, "Sending sample " . $samplecount);
+                print $hostid . ":" . $seconds . ":" . $microseconds . ":" . $power[$value] . "\n";
 
-    while ($samplefreq > 0) {
-        (my $seconds, my $microseconds) = Time::HiRes::gettimeofday;
-        my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
-        for (my $sensorport = 1; $sensorport < 8; $sensorport++) {
-            if ($sensorstate[$sensorport] eq "on") {
-                $power[$sensorport] =~ s/,/:/g;
-                $power[$sensorport] =~ s/\t //g;
-
-                print STDOUT $hostid . ":" . $seconds . ":" . $microseconds . ":" . $power[$sensorport] . "\n";
-                STDOUT->flush;
+                $samplecount++;
+                usleep(1000000/$samplefreq);
             }
         }
-        usleep(1000000/$samplefreq);
     }
 }
 
