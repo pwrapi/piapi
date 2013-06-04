@@ -95,7 +95,8 @@ sub process_request {
                 $power[$value] =~ s/\t //g;
 
                 $self->log(4, "Sending sample " . $samplecount);
-                print $hostid . ":" . $seconds . ":" . $microseconds . ":" . $power[$value] . "\n";
+                print STDOUT $hostid . ":" . $seconds . ":" . $microseconds . ":" . $power[$value] . "\n";
+		STDOUT->flush;
 
                 $samplecount++;
                 usleep(1000000/$samplefreq);
