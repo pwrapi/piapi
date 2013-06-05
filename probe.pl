@@ -79,22 +79,23 @@ sub process_request {
         chomp($_);
         my @arg = split(':', $_);
         my $command = shift(@arg);
-        my $value = shift(@arg);
-        $self->log(3, "Received control command " . $command . ":" . $value);
-        if ($command eq "start") {
-            $self->log(4, "Starting collection on port " .  $value);
+        my $sensorport = shift(@arg);
+        my $samples = shift(@arg);
+        $self->log(3, "Received control command " . $command . ":" . $sensorport . ":" . $samples);
+        if ($command eq "collect") {
+            $self->log(4, "Starting collection of " . $samples . " on port " .  $sensorport);
 
             my $samplecount = 0;
-            while ($samplefreq > 0 and $samplecount < 100) {
+            while ($samplefreq > 0 and $samplecount < $samples) {
                 (my $sec, my $usec) = Time::HiRes::gettimeofday;
                 my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
                 my $timestamp = ($sec+$usec/1000000); 
-                $power[$value] =~ s/,/:/g;
-                $power[$value] =~ s/\t //g;
+                $power[$sensorport] =~ s/,/:/g;
+                $power[$sensorport] =~ s/\t //g;
 
-                $energy{$timestamp} = $power[$value];
-                $self->log(4, "Sending sample " . $samplecount);
-                print STDOUT $samplecount . ":" . Probe->totalenergy . "\n";
+                $energy{$timestamp} = $power[$sensorport];
+                $self->log(4, "Sending sample " . $samplecount . " of " . $samples);
+                print STDOUT $samplecount . ":" . $samples . ":" . Probe->totalenergy . "\n";
 		STDOUT->flush;
 
                 $samplecount++;
