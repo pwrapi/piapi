@@ -16,7 +16,6 @@ sample process, and starts the server for incoming control
 commands.
 
 =cut
-my $samplefreq;
 my $port;
 my $logfile;
 my $loglevel;
@@ -38,14 +37,12 @@ at 1 Hz.  Also collects args for sample.pl.
 =cut
 sub config {
     my %options=();
-    getopts("p:l:s:qx", \%options);
+    getopts("p:l:qx", \%options);
 
-    $port = 20202;
+    $port = 20201;
     $logfile = "/tmp/probe_" . $$ . ".log";
     $loglevel = 2;
-    $samplefreq = 1;
 
-    $samplefreq = $options{s} if defined $options{s};
     $port = $options{p} if defined $options{p};
     $loglevel = $options{l} if defined $options{l};
     undef $logfile if defined $options{q};
@@ -81,9 +78,10 @@ sub process_request {
         my $command = shift(@arg);
         my $sensorport = shift(@arg);
         my $samples = shift(@arg);
-        $self->log(3, "Received control command " . $command . ":" . $sensorport . ":" . $samples);
+        my $samplefreq = shift(@arg);
+        $self->log(3, "Received control command " . $command . ":" . $sensorport . ":" . $samples . ":" . $samplefreq);
         if ($command eq "collect") {
-            $self->log(4, "Starting collection of " . $samples . " on port " .  $sensorport);
+            $self->log(4, "Starting collection of " . $samples . " on port " .  $sensorport . " at " . $samplefreq . " Hz");
 
             my $samplecount = 0;
             while ($samplefreq > 0 and $samplecount < $samples) {
