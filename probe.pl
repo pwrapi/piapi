@@ -5,7 +5,6 @@ package Probe;
 use strict;
 
 use Getopt::Std;
-use Sys::Hostname;
 use IO::Socket::INET;
 use Time::HiRes qw(usleep nanosleep);
 use base qw(Net::Server::PreFork);
@@ -21,6 +20,7 @@ my $samplefreq;
 my $port;
 my $logfile;
 my $loglevel;
+my %energy;
 
 Probe->config;
 Probe->run(
@@ -85,17 +85,16 @@ sub process_request {
             $self->log(4, "Starting collection on port " .  $value);
 
             my $samplecount = 0;
-            my $hostid = hostname;
-            $hostid .= ":" . $$;
-
             while ($samplefreq > 0 and $samplecount < 100) {
-                (my $seconds, my $microseconds) = Time::HiRes::gettimeofday;
+                (my $sec, my $usec) = Time::HiRes::gettimeofday;
                 my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
+                my $timestamp = ($sec+$usec/1000000); 
                 $power[$value] =~ s/,/:/g;
                 $power[$value] =~ s/\t //g;
 
+                $energy{$timestamp} = $power[$value];
                 $self->log(4, "Sending sample " . $samplecount);
-                print STDOUT $hostid . ":" . $seconds . ":" . $microseconds . ":" . $power[$value] . "\n";
+                print STDOUT $samplecount . ":" . Probe->totalenergy . "\n";
 		STDOUT->flush;
 
                 $samplecount++;
@@ -105,3 +104,25 @@ sub process_request {
     }
 }
 
+sub totalenergy {
+    my $count = 0;
+    my $first = -1;
+    my $last = -1;
+    my $power = 0;
+
+    foreach my $timestamp (sort keys %energy) {
+        foreach my $val ($energy{$timestamp}) {
+            $count = $count + 1;
+            if ($first != -1) {
+                $power += 2 * $val;
+                $last = $timestamp;
+            } else {
+                $power += $val;
+                $first = $timestamp;
+            }
+        }
+    }
+
+    $power = ($last - $first) / (2 * $count) * $power;
+    return $power;
+}
