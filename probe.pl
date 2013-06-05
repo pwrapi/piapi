@@ -90,18 +90,19 @@ sub process_request {
             my $samplecount = 1;
             while ($samplefreq > 0 and $samplecount <= $samples) {
                 (my $sec, my $usec) = Time::HiRes::gettimeofday;
-                my @power = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
-                $power[$sensorport] =~ s/,/:/g;
-                $power[$sensorport] =~ s/\t //g;
+                my @row = split /\n/, `./getRawPower8 1 2 3 4 5 6 7`;
+                $row[$sensorport] =~ s/,/:/g;
+                $row[$sensorport] =~ s/\t //g;
 
-                my ($sport, $A, $V, $mA, $mV, $mW) = split(':', $power[$sensorport]);
-                my $timestamp = ($sec+$usec/1000000); 
-                $energy{$timestamp} = $mW / 1000;
+                my ($sport, $A, $V, $mA, $mV, $mW) = split(':', $row[$sensorport]);
+                my $timestamp = ($sec+$usec/1000000);
+                my $power = $mW / 1000;
+                $energy{$timestamp} = $power;
 
                 $self->log(4, "Sending sample " . $samplecount . " of " . $samples);
 
                 print STDOUT $samplecount . ":" . $samples . ":" . $timestamp . ":" .
-			$mW / 1000 . ":" .  Probe->totalenergy . "\n";
+			$power . ":" .  Probe->totalenergy . "\n";
 		STDOUT->flush;
 
                 $samplecount++;
