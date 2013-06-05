@@ -101,7 +101,7 @@ sub process_request {
 
                 $self->log(4, "Sending sample " . $samplecount . " of " . $samples);
 
-                print STDOUT $samplecount . ":" . $samples . ":" . $timestamp . ":" .
+                print STDOUT $samplecount . ":" . $samples . ":" . $sec . ":" . $usec . ":" .
 			$power . ":" .  Probe->totalenergy . "\n";
 		STDOUT->flush;
 
@@ -131,6 +131,9 @@ sub totalenergy {
         }
     }
 
-    $power = ($last - $first) / (2 * $count) * $power;
+    if ($last != -1) {
+    	$power = ($last - $first) / (2 * $count) * $power;
+    }
+
     return $power;
 }
