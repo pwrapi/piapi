@@ -208,8 +208,6 @@ static void openSPI( int dev )
         return;
     };
 
-    printf( "Opening SPI file descriptor %s\n", devList[dev].file );
-
     // Open SPI device
     fd = open(devList[dev].file, O_RDWR);
     if (fd < 0) {
@@ -253,8 +251,6 @@ static void openAIN( int dev )
         return;
     };
 
-    printf( "Opening AIN file descriptor %s\n", devList[dev].file );
-
     // Open AIN device
     fd = open(devList[dev].file, O_RDONLY);
     if (fd < 0) {
@@ -268,7 +264,6 @@ static void openAIN( int dev )
 static void closeSPI( int dev ) {
 
     if( devList[dev].fd >= 0 ) {
-        printf( "Closing SPI file descriptor %d\n", devList[dev].fd );
         close( devList[dev].fd );
     }
 }
@@ -276,7 +271,6 @@ static void closeSPI( int dev ) {
 static void closeAIN( int dev ) {
 
     if( devList[dev].fd >= 0 ) {
-        printf( "Closing AIN file descriptor %d\n", devList[dev].fd );
         close( devList[dev].fd );
     }
 }
@@ -285,7 +279,6 @@ void closePorts( void ) {
     int i;
 
     for( i = sizeof(devList)/sizeof(*devList)-1 ; i > 0 ; --i ) {
-        printf( "Closing port %d\n", i );
         (devList[i].close)( i );
     }
 }

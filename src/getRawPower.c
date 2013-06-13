@@ -10,7 +10,7 @@
 #include <getopt.h>
 #include <sys/time.h>
 
-static int timeCollect = 1;
+static int timeCollect = 0;
 
 /***********************************************************/
 static void printUsage(const char *prog)
