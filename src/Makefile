@@ -9,7 +9,7 @@ LIBNAME = piapi
 
 TESTOBJS = $(TARGET).o
 STATICLIB = lib$(LIBNAME).a
-OBJS = piapi.o pidev.o
+OBJS = piapi.o pidev.o picomm.o
 
 all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)
