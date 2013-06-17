@@ -2,7 +2,7 @@
  * For use with Carrier Board 10016423 Rev E8 (= Rev A)
  */
 
-#include "piapi.h"
+#include "pidev.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     if( timeCollect ) {
         gettimeofday( &start, NULL );
     } else {
-        printf("%-4s %5s %5s %7s %7s %7s\n",
+        print:("%-4s %5s %5s %7s %7s %7s\n",
             "Pt#", "A", "V", "mA", "mV", "mW"); 
     }
 
@@ -52,11 +52,8 @@ int main(int argc, char *argv[])
         if((portNumber < 0) || (portNumber > MAX_PORTNUM)) 
             { printUsage(argv[0]); }
 
-        // Collect raw readings
-        getReadings(portNumber, &sample);
-
-        // Calculate power
-        calcValues(portNumber, &sample); 
+        // Collect raw readings and calculate power
+        pidev_read(portNumber, &sample);
 
         // What time is it now?
         if( timeCollect ) {
@@ -78,6 +75,6 @@ int main(int argc, char *argv[])
 
     }  // end for() loop 
 
-    closePorts();
+    piapi_close();
 }
 

@@ -1,29 +1,25 @@
-#ifndef __PIAPI_H__
-#define __PIAPI_H__
+#ifndef PIAPI_H
+#define PIAPI_H
 
-/* getRawPower9.2.c    (version 6.2)
- * For use with Carrier Board 10016423 Rev E8 (= Rev A)
- */
+typedef enum {
+        PIAPI_UNKNOWN = 0,
+        PIAPI_CPU = 1,
+        PIAPI_12V = 2,
+        PIAPI_MEM = 3,
+        PIAPI_5V = 4,
+        PIAPI_3_3V = 5,
+        PIAPI_HDD_12V = 6,
+        PIAPI_HDD_5V = 7,
+        PIAPI_ALL = 8
+} piapi_port_t;
 
-#include <stdint.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
+typedef struct piapi_reading {
+    float volts;
+    float amps;
+    float watts;
+} piapi_reading_t;
 
-#define MAX_PORTNUM      15
-
-typedef struct reading {
-    uint16_t    Asamp;          // Raw sample
-    uint16_t    Vsamp;          // Raw sample
-    int32_t     miliamps;       // Calculated value
-    int32_t     milivolts;      // Calculated value
-    int32_t     miliwatts;      // Calculated value
-} reading_t;
-
-void getReadings(int portNumber, reading_t *sample);
-void calcValues(int portNumber, reading_t *sample);
-
-void closePorts(void);
+int piapi_collect( piapi_port_t port, piapi_reading_t *reading );
+int piapi_close( void );
 
 #endif
