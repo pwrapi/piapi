@@ -1,4 +1,4 @@
-# CROSS_COMPILE=arm-linux-gnueabihf-
+CROSS_COMPILE=arm-linux-gnueabihf-
 
 CC = $(CROSS_COMPILE)gcc
 AR = $(CROSS_COMPILE)ar
@@ -9,7 +9,7 @@ LIBNAME = piapi
 
 TESTOBJS = $(TARGET).o
 STATICLIB = lib$(LIBNAME).a
-OBJS = piapi.o pidev.o picomm.o
+OBJS = piapi.o pidev.o
 
 all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)

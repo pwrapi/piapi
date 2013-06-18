@@ -75,6 +75,6 @@ int main(int argc, char *argv[])
 
     }  // end for() loop 
 
-    piapi_close();
+    pidev_close();
 }
 
