@@ -414,7 +414,7 @@ piapi_agent_thread( void *cntx )
 
 			piapi_agent_parse( buf, rc, cntx );
 			if( strcmp( PIAPI_CNTX(cntx)->command, "collect" ) )
-				pthread( &collect, 0x0, (void *)&piapi_agent_collect, cntx );	
+				pthread_create( &collect, 0x0, (void *)&piapi_agent_collect, cntx );	
 		}
 
 	}
