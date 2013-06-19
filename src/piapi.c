@@ -312,7 +312,7 @@ piapi_proxy_thread( void *cntx )
 }
 
 static void
-piapi_agent_collect( void *cntx )
+piapi_agent_thread( void *cntx )
 {
 	char buf[256] = "";
 	unsigned int len;
@@ -348,10 +348,8 @@ piapi_agent_collect( void *cntx )
 }
 
 static void
-piapi_agent_thread( void *cntx )
+piapi_agent_collect( void *cntx )
 {
-	pthread_t collect;
-
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
 
@@ -414,7 +412,7 @@ piapi_agent_thread( void *cntx )
 
 			piapi_agent_parse( buf, rc, cntx );
 			if( strcmp( PIAPI_CNTX(cntx)->command, "collect" ) )
-				pthread_create( &collect, 0x0, (void *)&piapi_agent_collect, cntx );	
+				pthread_create( &(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_agent_thread, cntx );	
 		}
 
 	}
@@ -462,8 +460,6 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 				return -1;
 			}
 
-			pthread_create(&(PIAPI_CNTX(*cntx)->worker), 0x0, (void *)&piapi_agent_thread, *cntx);
-
 			if( piapi_debug )
        				printf( "Agent listener established\n" );
 			break;
@@ -510,6 +506,9 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			break;
 
 		case PIAPI_MODE_PROXY:
+			piapi_agent_collect( cntx );
+			break;
+
 		case PIAPI_MODE_AGENT:
 			piapi_proxy_collect( cntx );
 			break;
