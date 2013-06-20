@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-int piapi_sampling = 1;
+int piapi_sampling;
 
 void
 piapi_callback( struct piapi_sample *sample )
@@ -28,8 +28,12 @@ int main(int argc, char *argv[])
 
 	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback ); 
 
-	piapi_collect( cntx, PIAPI_PORT_CPU, 60, 1 );
+	piapi_sampling = 1;
+	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
+	while( piapi_sampling);
 
+	piapi_sampling = 1;
+	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
 	while( piapi_sampling);
 
 	piapi_destroy( cntx );
