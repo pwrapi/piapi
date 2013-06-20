@@ -422,7 +422,8 @@ piapi_agent_collect( void *cntx )
 			char buf[ 256 ];
 			ssize_t rc = read( fd, buf, sizeof(buf)-1 );
 			if( rc <= 0 ) {
-				printf( "%d: closed connection rc=%zd\n", fd, rc );
+				if( piapi_debug )
+					printf( "%d: closed connection rc=%zd\n", fd, rc );
 				FD_CLR( fd, &fds );
 				continue;
 			}
