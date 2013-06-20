@@ -15,7 +15,7 @@
 static int piapi_debug = 0;
 
 struct piapi_context {
-	int fd;
+	int fd, cfd;
 	piapi_mode_t mode;
 
 	char command[40];
@@ -338,7 +338,7 @@ piapi_proxy_thread( void *cntx )
 }
 
 static void
-piapi_agent_thread( void *cntx, int fd )
+piapi_agent_thread( void *cntx )
 {
 	char buf[256] = "";
 	unsigned int len;
@@ -355,7 +355,7 @@ piapi_agent_thread( void *cntx, int fd )
 		if( piapi_debug )
 			printf( "Collecting sample #%u\n", sample.number);
 
-		if( fd ) {
+		if( PIAPI_CNTX(cntx)->cfd ) {
 			if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
 				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
 				return;
@@ -371,7 +371,7 @@ piapi_agent_thread( void *cntx, int fd )
 			if( piapi_debug )
 				printf( "Sending sample (%d) %s\n", len, buf);
 
-			writen( fd, buf, len );
+			writen( PIAPI_CNTX(cntx)->cfd, buf, len );
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
 	}
@@ -442,8 +442,10 @@ piapi_agent_collect( void *cntx )
 				printf( "%d: read %zd bytes: '%s'\n", fd, rc, buf);
 
 			piapi_agent_parse( buf, rc, cntx );
-			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) )
-				piapi_agent_thread( cntx, fd );	
+			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
+				PIAPI_CNTX(cntx)->cfd = fd;
+				pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_agent_thread, cntx);
+			}
 		}
 
 	}
