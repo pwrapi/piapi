@@ -29,7 +29,6 @@ static void printUsage(const char *prog)
 int main(int argc, char *argv[])
 {
     int i, portNumber;
-    int j;
     struct timeval start, now;
     reading_t sample;
 
@@ -41,7 +40,7 @@ int main(int argc, char *argv[])
     if( timeCollect ) {
         gettimeofday( &start, NULL );
     } else {
-        print:("%-4s %5s %5s %7s %7s %7s\n",
+        printf("%-4s %5s %5s %7s %7s %7s\n",
             "Pt#", "A", "V", "mA", "mV", "mW"); 
     }
 
@@ -76,5 +75,7 @@ int main(int argc, char *argv[])
     }  // end for() loop 
 
     pidev_close();
+
+    return 0;
 }
 

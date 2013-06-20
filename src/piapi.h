@@ -2,7 +2,7 @@
 #define PIAPI_H
 
 /* The well-known powerinsight agent saddr */
-#define PIAPI_AGNT_SADDR    0x0a361500
+#define PIAPI_AGNT_SADDR    0x0a360003
 
 /* The well-known powerinsight agent port */
 #define PIAPI_AGNT_PORT     20201

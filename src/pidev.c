@@ -111,7 +111,7 @@ static portConfig_t  portConfig[] = {
 
 static uint16_t spiTransfer(int fd, int port)
 {
-    int         result, i;
+    int         result;
     uint16_t    retVal; 
     uint8_t     tx[] = { 0x01, 0x00, 0x00, };
     uint8_t     rx[] = { 0,    0,    0,    };
@@ -156,7 +156,7 @@ static uint16_t ainTransfer(int fd, int port)
 {
     int  i;
     char  buf[16];
-    char  actual;
+    uint8_t  actual;
     int  val, sum, min, max;
     uint16_t  retVal; 
 
@@ -201,7 +201,7 @@ static uint16_t ainTransfer(int fd, int port)
 static void openSPI( int dev )
 {
     int  fd;
-    int  retVal, setting;
+    int retVal, setting;
 
     // Make sure it's not already open?
     if( devList[dev].fd >= 0 ) {
@@ -244,7 +244,6 @@ static void openSPI( int dev )
 static void openAIN( int dev )
 {
     int  fd;
-    int  retVal, setting;
 
     // Make sure it's not already open?
     if( devList[dev].fd >= 0 ) {

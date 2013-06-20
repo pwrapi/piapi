@@ -1,8 +1,8 @@
-CROSS_COMPILE=arm-linux-gnueabihf-
+#CROSS_COMPILE=arm-linux-gnueabihf-
 
 CC = $(CROSS_COMPILE)gcc
 AR = $(CROSS_COMPILE)ar
-CFLAGS = -O2 -pthread
+CFLAGS = -Wall -O0 -pthread
 
 TARGET = getRawPower
 LIBNAME = piapi

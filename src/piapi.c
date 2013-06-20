@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static int piapi_debug = 1;
+static int piapi_debug = 0;
 
 struct piapi_context {
 	int fd;
@@ -113,6 +113,8 @@ piapi_agent_listen( void *cntx )
 
 	if( piapi_debug )
 		printf( "Agent is listening on port %d\n", PIAPI_AGNT_PORT );
+
+	return 0;
 }
 
 static int
@@ -160,18 +162,33 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 {
 	char *token;
 
+	if( piapi_debug )
+		printf( "Parsing agent message %s\n", buf );
+
 	if( (token = strtok( buf, ":" )) == NULL)
 		return -1;
 
 	if( !strcmp( token, "collect" ) ) {
 		strcpy( PIAPI_CNTX(cntx)->command, token );
-		if( (token = strtok( buf, ":" )) == NULL)
+
+		if( (token = strtok( NULL, ":" )) == NULL)
+			return -1;
+		PIAPI_CNTX(cntx)->port = atoi(token);
+
+		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
 		PIAPI_CNTX(cntx)->samples = atoi(token);
 
-		if( (token = strtok( buf, ":" )) == NULL)
+		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
 		PIAPI_CNTX(cntx)->frequency = atoi(token);
+
+		if( piapi_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
+			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+			printf( "Samples:   %d\n", PIAPI_CNTX(cntx)->samples );
+			printf( "Frequency: %d\n", PIAPI_CNTX(cntx)->frequency );
+		} 
 
 		return 0;
 	}
@@ -183,6 +200,9 @@ static int
 piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 {
 	char *token;
+
+	if( piapi_debug )
+		printf( "Parsing proxy message %s\n", buf );
 
 	if( (token = strtok( buf, ":" )) == NULL)
 		return -1;
@@ -215,6 +235,15 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 	if( (token = strtok( NULL, ":" )) == NULL)
 		return -1;
 	sample->energy = atof(token);
+
+	if( piapi_debug ) {
+		printf( "\tsample - %u of %u\n", sample->number, sample->total );
+		printf( "\ttime   - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+		printf( "\tvolts  - %f\n", sample->raw.volts );
+		printf( "\tamps   - %f\n", sample->raw.amps );
+		printf( "\twatts  - %f\n", sample->raw.watts );
+		printf( "\tenergy - %f\n", sample->energy );
+	} 
 
 	return 0;
 }
@@ -269,9 +298,6 @@ piapi_proxy_collect( void *cntx )
 static void
 piapi_proxy_thread( void *cntx )
 {
-	struct sockaddr_in addr;
-	socklen_t socklen = sizeof(addr);
-
 	piapi_sample_t sample;
 	char buf[ 256 ];
 	ssize_t rc;
@@ -312,7 +338,7 @@ piapi_proxy_thread( void *cntx )
 }
 
 static void
-piapi_agent_thread( void *cntx )
+piapi_agent_thread( void *cntx, int fd )
 {
 	char buf[256] = "";
 	unsigned int len;
@@ -325,7 +351,11 @@ piapi_agent_thread( void *cntx )
 
 	while( PIAPI_CNTX(cntx)->worker_run && sample.number < PIAPI_CNTX(cntx)->samples ) {
 		sample.number++;
-		if( PIAPI_CNTX(cntx)->fd ) {
+
+		if( piapi_debug )
+			printf( "Collecting sample #%u\n", sample.number);
+
+		if( fd ) {
 			if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
 				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
 				return;
@@ -338,10 +368,10 @@ piapi_agent_thread( void *cntx )
 				sample.number, sample.total, sample.time_sec, sample.time_usec,
 				sample.raw.volts, sample.raw.amps, sample.raw.watts, sample.energy);
 
-			writen( PIAPI_CNTX(cntx)->fd, buf, len );
+			if( piapi_debug )
+				printf( "Sending sample (%d) %s\n", len, buf);
 
-			if( PIAPI_CNTX(cntx)->callback )
-				PIAPI_CNTX(cntx)->callback( &sample );
+			writen( fd, buf, len );
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
 	}
@@ -373,7 +403,7 @@ piapi_agent_collect( void *cntx )
 
 			int new_fd = accept( PIAPI_CNTX(cntx)->fd, (struct sockaddr *) &addr, &socklen );
 			if( piapi_debug )
-				printf( "Agent IP address is %d.%d.%d.%d\n",
+				printf( "Proxy IP address is %d.%d.%d.%d\n",
 					*((char *)(&addr.sin_addr.s_addr)+0),
 					*((char *)(&addr.sin_addr.s_addr)+1),
 					*((char *)(&addr.sin_addr.s_addr)+2),
@@ -411,8 +441,8 @@ piapi_agent_collect( void *cntx )
 				printf( "%d: read %zd bytes: '%s'\n", fd, rc, buf);
 
 			piapi_agent_parse( buf, rc, cntx );
-			if( strcmp( PIAPI_CNTX(cntx)->command, "collect" ) )
-				pthread_create( &(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_agent_thread, cntx );	
+			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) )
+				piapi_agent_thread( cntx, fd );	
 		}
 
 	}
@@ -506,14 +536,22 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			break;
 
 		case PIAPI_MODE_PROXY:
-			piapi_agent_collect( cntx );
+			piapi_proxy_collect( cntx );
 			break;
 
 		case PIAPI_MODE_AGENT:
-			piapi_proxy_collect( cntx );
+			if( piapi_debug )
+				printf("Starting agent collect\n");
+
+			piapi_agent_collect( cntx );
+
+			if( piapi_debug )
+				printf("Stoping agent collect\n");
 			break;
 
 		default:
 			break;
 	}
+
+	return 0;
 }

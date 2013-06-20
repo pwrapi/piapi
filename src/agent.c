@@ -11,8 +11,10 @@ int main(int argc, char *argv[])
 
 	piapi_init( &cntx, PIAPI_MODE_AGENT, 0x0 ); 
 
-	piapi_collect( &cntx, PIAPI_PORT_CPU, 60, 1 );
+	piapi_collect( cntx, PIAPI_PORT_CPU, 60, 1 );
 
-	piapi_destroy( &cntx );
+	piapi_destroy( cntx );
+
+	return 0;
 }
 
