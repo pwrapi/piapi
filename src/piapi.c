@@ -533,11 +533,23 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
+			if( piapi_debug )
+				printf("Starting native collect\n");
+
 			pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_collect, cntx);
+
+			if( piapi_debug )
+				printf("Stopping native collect\n");
 			break;
 
 		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf("Starting proxy collect\n");
+
 			piapi_proxy_collect( cntx );
+
+			if( piapi_debug )
+				printf("Stopping proxy collect\n");
 			break;
 
 		case PIAPI_MODE_AGENT:
@@ -547,7 +559,7 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			piapi_agent_collect( cntx );
 
 			if( piapi_debug )
-				printf("Stoping agent collect\n");
+				printf("Stopping agent collect\n");
 			break;
 
 		default:
