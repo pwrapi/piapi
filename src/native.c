@@ -18,8 +18,22 @@ piapi_callback( struct piapi_sample *sample )
         printf( "\twatts  - %f\n", sample->raw.watts );
         printf( "\tenergy - %f\n", sample->energy );
 
-	if( sample->number == sample->total )
+	if( sample->number == sample->total ) {
+        	printf( "PIAPI Summary:\n");
+	        printf( "\tavg volts  - %f\n", sample->avg.volts );
+        	printf( "\tavg amps   - %f\n", sample->avg.amps );
+      	  	printf( "\tavg watts  - %f\n", sample->avg.watts );
+
+	        printf( "\tmin volts  - %f\n", sample->min.volts );
+        	printf( "\tmin amps   - %f\n", sample->min.amps );
+      	  	printf( "\tmin watts  - %f\n", sample->min.watts );
+
+	        printf( "\tmax volts  - %f\n", sample->max.volts );
+        	printf( "\tmax amps   - %f\n", sample->max.amps );
+      	  	printf( "\tmax watts  - %f\n", sample->max.watts );
+
 		piapi_sampling = 0;
+	}
 }
 
 int main(int argc, char *argv[])

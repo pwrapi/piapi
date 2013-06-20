@@ -234,6 +234,42 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 
 	if( (token = strtok( NULL, ":" )) == NULL)
 		return -1;
+	sample->avg.volts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->avg.amps = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->avg.watts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->min.volts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->min.amps = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->min.watts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->max.volts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->max.amps = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
+	sample->max.watts = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
 	sample->energy = atof(token);
 
 	if( piapi_debug ) {
@@ -253,6 +289,7 @@ piapi_native_collect( void *cntx )
 {
 	struct timeval t;
 	piapi_sample_t sample;
+	piapi_reading_t min, max, avg;
 
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
@@ -268,6 +305,31 @@ piapi_native_collect( void *cntx )
 			gettimeofday( &t, 0x0 );
 			sample.time_sec = t.tv_sec;
 			sample.time_usec = t.tv_usec;
+
+			if( min.volts > sample.raw.volts || !min.volts) min.volts = sample.raw.volts;
+			if( min.amps > sample.raw.amps || !min.amps ) min.amps = sample.raw.amps;
+			if( min.watts > sample.raw.watts || !min.watts ) min.watts = sample.raw.watts;
+
+			if( max.volts < sample.raw.volts ) max.volts = sample.raw.volts;
+			if( max.amps < sample.raw.amps ) max.amps = sample.raw.amps;
+			if( max.watts < sample.raw.watts ) max.watts = sample.raw.watts;
+
+			avg.volts += sample.raw.volts;
+			avg.amps += sample.raw.amps;
+			avg.watts += sample.raw.watts;
+
+			sample.min.volts = min.volts;
+			sample.min.amps = min.amps;
+			sample.min.watts = min.watts;
+
+			sample.max.volts = max.volts;
+			sample.max.amps = max.amps;
+			sample.max.watts = max.watts;
+
+			sample.avg.volts = avg.volts / sample.number;
+			sample.avg.amps = avg.amps / sample.number;
+			sample.avg.watts = avg.watts / sample.number;
+
 			PIAPI_CNTX(cntx)->callback( &sample );
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
@@ -345,6 +407,7 @@ piapi_agent_thread( void *cntx )
 
 	struct timeval t;
 	piapi_sample_t sample;
+	piapi_reading_t min, max, avg;
 
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
@@ -364,9 +427,36 @@ piapi_agent_thread( void *cntx )
 			sample.time_sec = t.tv_sec;
 			sample.time_usec = t.tv_usec;
 
-			len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f",
+			if( min.volts > sample.raw.volts || !min.volts) min.volts = sample.raw.volts;
+			if( min.amps > sample.raw.amps || !min.amps ) min.amps = sample.raw.amps;
+			if( min.watts > sample.raw.watts || !min.watts ) min.watts = sample.raw.watts;
+
+			if( max.volts < sample.raw.volts ) max.volts = sample.raw.volts;
+			if( max.amps < sample.raw.amps ) max.amps = sample.raw.amps;
+			if( max.watts < sample.raw.watts ) max.watts = sample.raw.watts;
+
+			avg.volts += sample.raw.volts;
+			avg.amps += sample.raw.amps;
+			avg.watts += sample.raw.watts;
+
+			sample.min.volts = min.volts;
+			sample.min.amps = min.amps;
+			sample.min.watts = min.watts;
+
+			sample.max.volts = max.volts;
+			sample.max.amps = max.amps;
+			sample.max.watts = max.watts;
+
+			sample.avg.volts = avg.volts / sample.number;
+			sample.avg.amps = avg.amps / sample.number;
+			sample.avg.watts = avg.watts / sample.number;
+
+			len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
 				sample.number, sample.total, sample.time_sec, sample.time_usec,
-				sample.raw.volts, sample.raw.amps, sample.raw.watts, sample.energy);
+				sample.raw.volts, sample.raw.amps, sample.raw.watts,
+				sample.avg.volts, sample.avg.amps, sample.avg.watts,
+				sample.min.volts, sample.min.amps, sample.min.watts,
+				sample.max.volts, sample.max.amps, sample.max.watts, sample.energy);
 
 			if( piapi_debug )
 				printf( "Sending sample (%d) %s\n", len, buf);
@@ -515,8 +605,13 @@ piapi_destroy( void *cntx )
 			break;
 
 		case PIAPI_MODE_PROXY:
+			close( PIAPI_CNTX(cntx)->fd );
+			break;
+
 		case PIAPI_MODE_AGENT:
 			close( PIAPI_CNTX(cntx)->fd );
+			piapi_dev_close();
+
 			break;
 
 		default:
