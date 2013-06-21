@@ -16,7 +16,6 @@ piapi_callback( struct piapi_sample *sample )
         printf( "\tvolts  - %f\n", sample->raw.volts );
         printf( "\tamps   - %f\n", sample->raw.amps );
         printf( "\twatts  - %f\n", sample->raw.watts );
-        printf( "\tenergy - %f\n", sample->energy );
 
 	if( sample->number == sample->total ) {
         	printf( "PIAPI Summary:\n");

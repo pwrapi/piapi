@@ -70,7 +70,8 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 }
 
 static inline void
-piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg, piapi_reading_t *min, piapi_reading_t *max )
+piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
+	piapi_reading_t *min, piapi_reading_t *max, struct timeval *tinit )
 {
 	struct timeval t;
 
@@ -101,6 +102,16 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg, piapi_reading_t *
 	sample->avg.volts = avg->volts / sample->number;
 	sample->avg.amps = avg->amps / sample->number;
 	sample->avg.watts = avg->watts / sample->number;
+
+	if( !tinit->tv_sec ) {
+		tinit->tv_sec = sample->time_sec;
+		tinit->tv_usec = sample->time_usec;
+	}
+
+	sample->time_total = t.tv_sec - tinit->tv_sec +
+		(t.tv_usec - tinit->tv_usec)/1000000.0;
+
+	sample->energy += sample->raw.watts;
 }
 
 static int
@@ -304,6 +315,10 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 
 	if( (token = strtok( NULL, ":" )) == NULL)
 		return -1;
+	sample->time_total = atof(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
 	sample->energy = atof(token);
 
 	if( piapi_debug ) {
@@ -321,6 +336,7 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 		printf( "\tmax volts  - %f\n", sample->max.volts );
 		printf( "\tmax amps   - %f\n", sample->max.amps );
 		printf( "\tmax watts  - %f\n", sample->max.watts );
+		printf( "\ttime total - %f\n", sample->time_total );
 		printf( "\tenergy     - %f\n", sample->energy );
 	} 
 
@@ -328,10 +344,31 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 }
 
 static void
+piapi_agent_callback( piapi_sample_t *sample )
+{
+	char buf[256] = "";
+	unsigned int len;
+
+	len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
+		sample->number, sample->total, sample->time_sec, sample->time_usec,
+		sample->raw.volts, sample->raw.amps, sample->raw.watts,
+		sample->avg.volts, sample->avg.amps, sample->avg.watts,
+		sample->min.volts, sample->min.amps, sample->min.watts,
+		sample->max.volts, sample->max.amps, sample->max.watts,
+		sample->time_total, sample->energy);
+
+	if( piapi_debug )
+		printf( "Sending sample (%d) %s\n", len, buf);
+
+	writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
+}
+
+static void
 piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
 	piapi_reading_t min, max, avg;
+	struct timeval t = { 0, 0 };
 
 	sample.cntx = cntx;
 	sample.number = 0;
@@ -346,7 +383,7 @@ piapi_native_thread( void *cntx )
 				return;
 			}
 
-			piapi_dev_stats( &sample, &avg, &min, &max );
+			piapi_dev_stats( &sample, &avg, &min, &max, &t );
 			PIAPI_CNTX(cntx)->callback( &sample );
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
@@ -416,25 +453,6 @@ piapi_proxy_thread( void *cntx )
 			PIAPI_CNTX(cntx)->callback( &sample );
 		}
 	}
-}
-
-static void
-piapi_agent_callback( piapi_sample_t *sample )
-{
-	char buf[256] = "";
-	unsigned int len;
-
-	len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
-		sample->number, sample->total, sample->time_sec, sample->time_usec,
-		sample->raw.volts, sample->raw.amps, sample->raw.watts,
-		sample->avg.volts, sample->avg.amps, sample->avg.watts,
-		sample->min.volts, sample->min.amps, sample->min.watts,
-		sample->max.volts, sample->max.amps, sample->max.watts, sample->energy);
-
-	if( piapi_debug )
-		printf( "Sending sample (%d) %s\n", len, buf);
-
-	writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
 }
 
 static void
