@@ -73,7 +73,10 @@ static inline void
 piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	piapi_reading_t *min, piapi_reading_t *max, struct timeval *tinit )
 {
-	struct timeval t;
+	struct timeval t, tprev;
+
+	tprev.tv_sec = sample->time_sec;
+	tprev.tv_usec = sample->time_usec;
 
 	gettimeofday( &t, 0x0 );
 	sample->time_sec = t.tv_sec;
@@ -106,12 +109,16 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	if( !tinit->tv_sec ) {
 		tinit->tv_sec = sample->time_sec;
 		tinit->tv_usec = sample->time_usec;
+
+		sample->time_total = 0;
+		sample->energy = sample->raw.watts;
+	} else {
+		sample->time_total = t.tv_sec - tinit->tv_sec +
+			(t.tv_usec - tinit->tv_usec)/1000000.0;
+
+		sample->energy += sample->raw.watts *
+			(t.tv_sec - tprev.tv_sec + (t.tv_usec - tprev.tv_usec)/1000000.0);
 	}
-
-	sample->time_total = t.tv_sec - tinit->tv_sec +
-		(t.tv_usec - tinit->tv_usec)/1000000.0;
-
-	sample->energy += sample->raw.watts*(1.0/PIAPI_CNTX(sample->cntx)->frequency);
 }
 
 static int
