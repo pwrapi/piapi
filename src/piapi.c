@@ -69,6 +69,40 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
     return 0;
 }
 
+static inline void
+piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg, piapi_reading_t *min, piapi_reading_t *max )
+{
+	struct timeval t;
+
+	gettimeofday( &t, 0x0 );
+	sample->time_sec = t.tv_sec;
+	sample->time_usec = t.tv_usec;
+
+	if( min->volts > sample->raw.volts || !min->volts) min->volts = sample->raw.volts;
+	if( min->amps > sample->raw.amps || !min->amps ) min->amps = sample->raw.amps;
+	if( min->watts > sample->raw.watts || !min->watts ) min->watts = sample->raw.watts;
+
+	if( max->volts < sample->raw.volts ) max->volts = sample->raw.volts;
+	if( max->amps < sample->raw.amps ) max->amps = sample->raw.amps;
+	if( max->watts < sample->raw.watts ) max->watts = sample->raw.watts;
+
+	avg->volts += sample->raw.volts;
+	avg->amps += sample->raw.amps;
+	avg->watts += sample->raw.watts;
+
+	sample->min.volts = min->volts;
+	sample->min.amps = min->amps;
+	sample->min.watts = min->watts;
+
+	sample->max.volts = max->volts;
+	sample->max.amps = max->amps;
+	sample->max.watts = max->watts;
+
+	sample->avg.volts = avg->volts / sample->number;
+	sample->avg.amps = avg->amps / sample->number;
+	sample->avg.watts = avg->watts / sample->number;
+}
+
 static int
 piapi_dev_close( void )
 {
@@ -287,7 +321,6 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 static void
 piapi_native_collect( void *cntx )
 {
-	struct timeval t;
 	piapi_sample_t sample;
 	piapi_reading_t min, max, avg;
 
@@ -302,34 +335,8 @@ piapi_native_collect( void *cntx )
 				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
 				return;
 			}
-			gettimeofday( &t, 0x0 );
-			sample.time_sec = t.tv_sec;
-			sample.time_usec = t.tv_usec;
 
-			if( min.volts > sample.raw.volts || !min.volts) min.volts = sample.raw.volts;
-			if( min.amps > sample.raw.amps || !min.amps ) min.amps = sample.raw.amps;
-			if( min.watts > sample.raw.watts || !min.watts ) min.watts = sample.raw.watts;
-
-			if( max.volts < sample.raw.volts ) max.volts = sample.raw.volts;
-			if( max.amps < sample.raw.amps ) max.amps = sample.raw.amps;
-			if( max.watts < sample.raw.watts ) max.watts = sample.raw.watts;
-
-			avg.volts += sample.raw.volts;
-			avg.amps += sample.raw.amps;
-			avg.watts += sample.raw.watts;
-
-			sample.min.volts = min.volts;
-			sample.min.amps = min.amps;
-			sample.min.watts = min.watts;
-
-			sample.max.volts = max.volts;
-			sample.max.amps = max.amps;
-			sample.max.watts = max.watts;
-
-			sample.avg.volts = avg.volts / sample.number;
-			sample.avg.amps = avg.amps / sample.number;
-			sample.avg.watts = avg.watts / sample.number;
-
+			piapi_dev_stats( &sample, &avg, &min, &max );
 			PIAPI_CNTX(cntx)->callback( &sample );
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
@@ -423,34 +430,8 @@ piapi_agent_thread( void *cntx )
 				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
 				return;
 			}
-			gettimeofday( &t, 0x0 );
-			sample.time_sec = t.tv_sec;
-			sample.time_usec = t.tv_usec;
 
-			if( min.volts > sample.raw.volts || !min.volts) min.volts = sample.raw.volts;
-			if( min.amps > sample.raw.amps || !min.amps ) min.amps = sample.raw.amps;
-			if( min.watts > sample.raw.watts || !min.watts ) min.watts = sample.raw.watts;
-
-			if( max.volts < sample.raw.volts ) max.volts = sample.raw.volts;
-			if( max.amps < sample.raw.amps ) max.amps = sample.raw.amps;
-			if( max.watts < sample.raw.watts ) max.watts = sample.raw.watts;
-
-			avg.volts += sample.raw.volts;
-			avg.amps += sample.raw.amps;
-			avg.watts += sample.raw.watts;
-
-			sample.min.volts = min.volts;
-			sample.min.amps = min.amps;
-			sample.min.watts = min.watts;
-
-			sample.max.volts = max.volts;
-			sample.max.amps = max.amps;
-			sample.max.watts = max.watts;
-
-			sample.avg.volts = avg.volts / sample.number;
-			sample.avg.amps = avg.amps / sample.number;
-			sample.avg.watts = avg.watts / sample.number;
-
+			piapi_dev_stats( &sample, &avg, &min, &max );
 			len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
 				sample.number, sample.total, sample.time_sec, sample.time_usec,
 				sample.raw.volts, sample.raw.amps, sample.raw.watts,
