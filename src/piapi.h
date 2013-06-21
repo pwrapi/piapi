@@ -15,7 +15,9 @@ typedef enum {
         PIAPI_PORT_5V = 4,
         PIAPI_PORT_3_3V = 5,
         PIAPI_PORT_HDD_12V = 6,
-        PIAPI_PORT_HDD_5V = 7
+        PIAPI_PORT_HDD_5V = 7,
+	PIAPI_PORT_MIN = PIAPI_PORT_CPU,
+	PIAPI_PORT_MAX = PIAPI_PORT_HDD_5V
 } piapi_port_t;
 
 typedef enum {

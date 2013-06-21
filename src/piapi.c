@@ -111,7 +111,7 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	sample->time_total = t.tv_sec - tinit->tv_sec +
 		(t.tv_usec - tinit->tv_usec)/1000000.0;
 
-	sample->energy += sample->raw.watts;
+	sample->energy += sample->raw.watts*(1.0/PIAPI_CNTX(sample->cntx)->frequency);
 }
 
 static int
