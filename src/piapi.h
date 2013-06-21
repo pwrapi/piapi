@@ -32,6 +32,7 @@ typedef struct piapi_reading {
 } piapi_reading_t;
 
 typedef struct piapi_sample {
+	void *cntx;
         unsigned int number;
         unsigned int total;
         unsigned long time_sec;
@@ -40,6 +41,7 @@ typedef struct piapi_sample {
         piapi_reading_t min;
         piapi_reading_t max;
         piapi_reading_t avg;
+	float time_total;
         float energy;
 } piapi_sample_t;
 

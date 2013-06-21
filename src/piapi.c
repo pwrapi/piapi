@@ -307,23 +307,33 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 	sample->energy = atof(token);
 
 	if( piapi_debug ) {
-		printf( "\tsample - %u of %u\n", sample->number, sample->total );
-		printf( "\ttime   - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
-		printf( "\tvolts  - %f\n", sample->raw.volts );
-		printf( "\tamps   - %f\n", sample->raw.amps );
-		printf( "\twatts  - %f\n", sample->raw.watts );
-		printf( "\tenergy - %f\n", sample->energy );
+		printf( "\tsample     - %u of %u\n", sample->number, sample->total );
+		printf( "\ttime       - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+		printf( "\traw volts  - %f\n", sample->raw.volts );
+		printf( "\traw amps   - %f\n", sample->raw.amps );
+		printf( "\traw watts  - %f\n", sample->raw.watts );
+		printf( "\tavg volts  - %f\n", sample->avg.volts );
+		printf( "\tavg amps   - %f\n", sample->avg.amps );
+		printf( "\tavg watts  - %f\n", sample->avg.watts );
+		printf( "\tmin volts  - %f\n", sample->min.volts );
+		printf( "\tmin amps   - %f\n", sample->min.amps );
+		printf( "\tmin watts  - %f\n", sample->min.watts );
+		printf( "\tmax volts  - %f\n", sample->max.volts );
+		printf( "\tmax amps   - %f\n", sample->max.amps );
+		printf( "\tmax watts  - %f\n", sample->max.watts );
+		printf( "\tenergy     - %f\n", sample->energy );
 	} 
 
 	return 0;
 }
 
 static void
-piapi_native_collect( void *cntx )
+piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
 	piapi_reading_t min, max, avg;
 
+	sample.cntx = cntx;
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
 
@@ -371,6 +381,8 @@ piapi_proxy_thread( void *cntx )
 	char buf[ 256 ];
 	ssize_t rc;
 
+	sample.cntx = cntx;
+
 	PIAPI_CNTX(cntx)->worker_run = 1;
 	while( PIAPI_CNTX(cntx)->worker_run ) {
 		if( piapi_debug )
@@ -407,45 +419,22 @@ piapi_proxy_thread( void *cntx )
 }
 
 static void
-piapi_agent_thread( void *cntx )
+piapi_agent_callback( piapi_sample_t *sample )
 {
 	char buf[256] = "";
 	unsigned int len;
 
-	struct timeval t;
-	piapi_sample_t sample;
-	piapi_reading_t min, max, avg;
+	len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
+		sample->number, sample->total, sample->time_sec, sample->time_usec,
+		sample->raw.volts, sample->raw.amps, sample->raw.watts,
+		sample->avg.volts, sample->avg.amps, sample->avg.watts,
+		sample->min.volts, sample->min.amps, sample->min.watts,
+		sample->max.volts, sample->max.amps, sample->max.watts, sample->energy);
 
-	sample.number = 0;
-	sample.total = PIAPI_CNTX(cntx)->samples;
+	if( piapi_debug )
+		printf( "Sending sample (%d) %s\n", len, buf);
 
-	while( PIAPI_CNTX(cntx)->worker_run && sample.number < PIAPI_CNTX(cntx)->samples ) {
-		sample.number++;
-
-		if( piapi_debug )
-			printf( "Collecting sample #%u\n", sample.number);
-
-		if( PIAPI_CNTX(cntx)->cfd ) {
-			if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
-				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
-				return;
-			}
-
-			piapi_dev_stats( &sample, &avg, &min, &max );
-			len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
-				sample.number, sample.total, sample.time_sec, sample.time_usec,
-				sample.raw.volts, sample.raw.amps, sample.raw.watts,
-				sample.avg.volts, sample.avg.amps, sample.avg.watts,
-				sample.min.volts, sample.min.amps, sample.min.watts,
-				sample.max.volts, sample.max.amps, sample.max.watts, sample.energy);
-
-			if( piapi_debug )
-				printf( "Sending sample (%d) %s\n", len, buf);
-
-			writen( PIAPI_CNTX(cntx)->cfd, buf, len );
-		}
-		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
-	}
+	writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
 }
 
 static void
@@ -515,7 +504,7 @@ piapi_agent_collect( void *cntx )
 			piapi_agent_parse( buf, rc, cntx );
 			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
 				PIAPI_CNTX(cntx)->cfd = fd;
-				pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_agent_thread, cntx);
+				pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
 			}
 		}
 
@@ -529,13 +518,14 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
 
-	PIAPI_CNTX(*cntx)->callback = callback;
 	PIAPI_CNTX(*cntx)->mode = mode;
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
 			if( piapi_debug )
         			printf( "\nPower Communication (Native)\n" );
+
+			PIAPI_CNTX(*cntx)->callback = callback;
 			break;
 
 		case PIAPI_MODE_PROXY:
@@ -548,6 +538,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 				return -1;
 			}
 
+			PIAPI_CNTX(*cntx)->callback = callback;
 			pthread_create(&(PIAPI_CNTX(*cntx)->worker), 0x0, (void *)&piapi_proxy_thread, *cntx);
 
 			if( piapi_debug )
@@ -563,6 +554,8 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 				printf( "ERROR: unable to start agent\n" );
 				return -1;
 			}
+
+			PIAPI_CNTX(*cntx)->callback = piapi_agent_callback;
 
 			if( piapi_debug )
        				printf( "Agent listener established\n" );
@@ -614,7 +607,7 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			if( piapi_debug )
 				printf("Starting native collect\n");
 
-			pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_collect, cntx);
+			pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
 
 			if( piapi_debug )
 				printf("Stopping native collect\n");
