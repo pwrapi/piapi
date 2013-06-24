@@ -17,7 +17,8 @@ typedef enum {
         PIAPI_PORT_HDD_12V = 6,
         PIAPI_PORT_HDD_5V = 7,
 	PIAPI_PORT_MIN = PIAPI_PORT_CPU,
-	PIAPI_PORT_MAX = PIAPI_PORT_HDD_5V
+	PIAPI_PORT_MAX = PIAPI_PORT_HDD_5V,
+	PIAPI_PORT_ALL = 8
 } piapi_port_t;
 
 typedef enum {
@@ -53,5 +54,8 @@ int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback );
 int piapi_destroy( void *cntx );
 
 int piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency );
+
+int piapi_counter( void *cntx, piapi_port_t port, float *time, float *energy );
+int piapi_clear( void *cntx, piapi_port_t port );
 
 #endif

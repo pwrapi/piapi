@@ -14,6 +14,27 @@
 
 static int piapi_debug = 0;
 
+#define SAMPLE_FREQ 10
+#define SAMPLE_RING_SIZE (1 << 15)
+
+typedef struct piapi_counter {
+	piapi_sample_t sample[SAMPLE_RING_SIZE];
+
+	unsigned int number;
+	piapi_reading_t min, max, avg;
+	struct timeval t;
+} piapi_counter_t;
+
+typedef struct piapi_counters {
+	piapi_counter_t sampler[PIAPI_PORT_MAX];
+
+	pthread_t samplers;
+	int samplers_run;
+} piapi_counters_t;
+
+static piapi_counters_t counters;
+static unsigned int frequency = SAMPLE_FREQ;
+
 struct piapi_context {
 	int fd, cfd;
 	piapi_mode_t mode;
@@ -127,6 +148,33 @@ piapi_dev_close( void )
     pidev_close();
 
     return 0;
+}
+
+static void
+piapi_counters_thread( void *arg )
+{
+	unsigned int frequency = *((unsigned int *)arg);
+
+	unsigned int i;
+
+	bzero( &counters.sampler, sizeof( piapi_counter_t ) * PIAPI_PORT_MAX );
+
+	counters.samplers_run = 1;
+	while( counters.samplers_run ) {
+		for( i = PIAPI_PORT_MIN; i < PIAPI_PORT_MAX; i++ ) {
+			unsigned int j = ++(counters.sampler[i].number)%SAMPLE_RING_SIZE;
+			counters.sampler[i].sample[j].number = j;
+			if( piapi_dev_collect( i,
+				&(counters.sampler[i].sample[j].raw ) ) < 0 ) {
+				printf( "Unable to collect reading on port %d", i );
+				return;
+			}
+
+			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
+				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
+		}
+		usleep( 1000000.0 / frequency );
+	}
 }
 
 static int
@@ -382,7 +430,8 @@ piapi_native_thread( void *cntx )
 	sample.total = PIAPI_CNTX(cntx)->samples;
 
 	PIAPI_CNTX(cntx)->worker_run = 1;
-	while( PIAPI_CNTX(cntx)->worker_run && sample.number < PIAPI_CNTX(cntx)->samples ) {
+	while( PIAPI_CNTX(cntx)->worker_run &&
+		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
 		if( PIAPI_CNTX(cntx)->callback ) {
 			if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
@@ -539,7 +588,6 @@ piapi_agent_collect( void *cntx )
 int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 {
-
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
 
@@ -551,6 +599,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
         			printf( "\nPower Communication (Native)\n" );
 
 			PIAPI_CNTX(*cntx)->callback = callback;
+			pthread_create(&counters.samplers, 0x0, (void *)&piapi_counters_thread, &frequency);
 			break;
 
 		case PIAPI_MODE_PROXY:
@@ -581,6 +630,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 			}
 
 			PIAPI_CNTX(*cntx)->callback = piapi_agent_callback;
+			pthread_create(&counters.samplers, 0x0, (void *)&piapi_counters_thread, &frequency);
 
 			if( piapi_debug )
        				printf( "Agent listener established\n" );
@@ -600,6 +650,7 @@ piapi_destroy( void *cntx )
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
+			counters.samplers_run = 0;
 			piapi_dev_close();
 			break;
 
@@ -608,6 +659,7 @@ piapi_destroy( void *cntx )
 			break;
 
 		case PIAPI_MODE_AGENT:
+			counters.samplers_run = 0;
 			close( PIAPI_CNTX(cntx)->fd );
 			piapi_dev_close();
 
@@ -662,5 +714,23 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			break;
 	}
 
+	return 0;
+}
+
+int
+piapi_counter( void *cntx, piapi_port_t port, float *time, float *energy )
+{
+	unsigned int i = ++(counters.sampler[port].number)%SAMPLE_RING_SIZE;
+
+	*time = counters.sampler[port].sample[i].time_sec+counters.sampler[port].sample[i].time_usec/1000000.0;
+	*energy = counters.sampler[port].sample[i].energy;
+
+	return 0;
+}
+
+int
+piapi_clear( void *cntx, piapi_port_t port )
+{
+	bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
 	return 0;
 }
