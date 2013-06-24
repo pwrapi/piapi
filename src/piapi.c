@@ -77,6 +77,32 @@ writen(int fd, const void *vptr, size_t n)
         return n;
 }
 
+static void
+piapi_print( piapi_port_t port, struct piapi_sample *sample )
+{
+        printf( "Sample on port %d:\n", port);
+        printf( "\tsample       - %u of %u\n", sample->number, sample->total );
+        printf( "\ttime         - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+        printf( "\tvolts        - %f\n", sample->raw.volts );
+        printf( "\tamps         - %f\n", sample->raw.amps );
+        printf( "\twatts        - %f\n", sample->raw.watts );
+
+        printf( "\tavg volts    - %f\n", sample->avg.volts );
+       	printf( "\tavg amps     - %f\n", sample->avg.amps );
+  	printf( "\tavg watts    - %f\n", sample->avg.watts );
+
+        printf( "\tmin volts    - %f\n", sample->min.volts );
+       	printf( "\tmin amps     - %f\n", sample->min.amps );
+  	printf( "\tmin watts    - %f\n", sample->min.watts );
+
+        printf( "\tmax volts    - %f\n", sample->max.volts );
+       	printf( "\tmax amps     - %f\n", sample->max.amps );
+  	printf( "\tmax watts    - %f\n", sample->max.watts );
+
+        printf( "\ttotal time   - %f\n", sample->time_total );
+        printf( "\ttotal energy - %f\n", sample->energy );
+}
+
 static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 {
@@ -159,11 +185,16 @@ piapi_counters_thread( void *arg )
 
 	bzero( &counters.sampler, sizeof( piapi_counter_t ) * PIAPI_PORT_MAX );
 
+	if( piapi_debug )
+		printf( "Counter thread running\n" );
+
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		for( i = PIAPI_PORT_MIN; i < PIAPI_PORT_MAX; i++ ) {
 			unsigned int j = ++(counters.sampler[i].number)%SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].number = j;
+			counters.sampler[i].sample[j].total = j;
+
 			if( piapi_dev_collect( i,
 				&(counters.sampler[i].sample[j].raw ) ) < 0 ) {
 				printf( "Unable to collect reading on port %d", i );
@@ -172,9 +203,15 @@ piapi_counters_thread( void *arg )
 
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
+
+			if( piapi_debug )
+				piapi_print( i, &(counters.sampler[i].sample[j]) );
 		}
 		usleep( 1000000.0 / frequency );
 	}
+
+	if( piapi_debug )
+		printf( "Counter thread exiting\n" );
 }
 
 static int
@@ -718,12 +755,11 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 }
 
 int
-piapi_counter( void *cntx, piapi_port_t port, float *time, float *energy )
+piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 {
-	unsigned int i = ++(counters.sampler[port].number)%SAMPLE_RING_SIZE;
+	unsigned int i = counters.sampler[port].number%SAMPLE_RING_SIZE;
 
-	*time = counters.sampler[port].sample[i].time_sec+counters.sampler[port].sample[i].time_usec/1000000.0;
-	*energy = counters.sampler[port].sample[i].energy;
+	*sample = counters.sampler[port].sample[i];
 
 	return 0;
 }

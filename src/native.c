@@ -8,7 +8,7 @@
 int piapi_sampling;
 
 void
-piapi_callback( struct piapi_sample *sample )
+piapi_callback( piapi_sample_t *sample )
 {
         printf( "PIAPI:\n");
         printf( "\tsample - %u of %u\n", sample->number, sample->total );
@@ -40,7 +40,8 @@ piapi_callback( struct piapi_sample *sample )
 
 int main(int argc, char *argv[])
 {
-	unsigned int port;
+	piapi_sample_t sample;
+	piapi_port_t port;
 	void *cntx;
 
 	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback ); 
@@ -54,6 +55,12 @@ int main(int argc, char *argv[])
 		piapi_collect( cntx, port, 100, 100 );
 		while( piapi_sampling );
 	}
+
+	piapi_clear( cntx, PIAPI_PORT_CPU );
+	sleep( 2 );
+
+	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
+	piapi_callback( &sample );
 
 	piapi_destroy( cntx );
 

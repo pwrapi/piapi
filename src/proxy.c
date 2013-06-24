@@ -8,7 +8,7 @@
 int piapi_sampling;
 
 void
-piapi_callback( struct piapi_sample *sample )
+piapi_callback( piapi_sample_t *sample )
 {
         printf( "PIAPI:\n");
         printf( "\tsample - %u of %u\n", sample->number, sample->total );
