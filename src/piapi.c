@@ -59,8 +59,8 @@ writen(int fd, const void *vptr, size_t n)
         ssize_t nwritten;
         const char *ptr;
 
-	if( fd < 0) {
-		printf("File descriptor is invalid\n");
+	if( fd < 0 || !vptr) {
+		printf( "File descriptor (%d) or vptr (%p) is invalid\n", fd, vptr );
 		return 0;
 	}
 
