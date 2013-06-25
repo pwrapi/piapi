@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static int piapi_debug = 0;
+static int piapi_debug = 1;
 
 #define SAMPLE_FREQ 10
 #define SAMPLE_RING_SIZE (1 << 15)
@@ -58,6 +58,11 @@ writen(int fd, const void *vptr, size_t n)
         size_t nleft;
         ssize_t nwritten;
         const char *ptr;
+
+	if( fd < 0) {
+		printf("File descriptor is invalid\n");
+		return 0;
+	}
 
         ptr = vptr;
         nleft = n;
@@ -328,6 +333,32 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 		} 
 
 		return 0;
+	} else if( !strcmp( token, "counter" ) ) {
+		strcpy( PIAPI_CNTX(cntx)->command, token );
+
+		if( (token = strtok( NULL, ":" )) == NULL)
+			return -1;
+		PIAPI_CNTX(cntx)->port = atoi(token);
+
+		if( piapi_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
+			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+		} 
+
+		return 0;
+	} else if( !strcmp( token, "clear" ) ) {
+		strcpy( PIAPI_CNTX(cntx)->command, token );
+
+		if( (token = strtok( NULL, ":" )) == NULL)
+			return -1;
+		PIAPI_CNTX(cntx)->port = atoi(token);
+
+		if( piapi_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
+			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+		} 
+
+		return 0;
 	}
 
 	return -1;
@@ -456,6 +487,21 @@ piapi_agent_callback( piapi_sample_t *sample )
 }
 
 static void
+piapi_agent_counter( void *cntx )
+{
+	piapi_sample_t sample;
+
+	piapi_counter( cntx, PIAPI_CNTX(cntx)->port, &sample );
+	piapi_agent_callback( &sample );
+}
+
+static void
+piapi_agent_clear( void *cntx )
+{
+	piapi_clear( cntx, PIAPI_CNTX(cntx)->port );
+}
+
+static void
 piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
@@ -500,6 +546,46 @@ piapi_proxy_collect( void *cntx )
 
 	if( piapi_debug )
 		printf( "Successfully started collect\n");
+
+	return 0;
+}
+
+static int
+piapi_proxy_counter( void *cntx )
+{
+	char buf[ 256 ] = "";
+	unsigned int len;
+
+	if( piapi_debug )
+		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+
+	strcpy( PIAPI_CNTX(cntx)->command, "counter" );
+	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+
+	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+
+	if( piapi_debug )
+		printf( "Successfully queried counter\n");
+
+	return 0;
+}
+
+static int
+piapi_proxy_clear( void *cntx )
+{
+	char buf[ 256 ] = "";
+	unsigned int len;
+
+	if( piapi_debug )
+		printf( "Requesting agent to clear counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+
+	strcpy( PIAPI_CNTX(cntx)->command, "clear" );
+	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+
+	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+
+	if( piapi_debug )
+		printf( "Successfully cleared counter\n");
 
 	return 0;
 }
@@ -612,10 +698,15 @@ piapi_agent_collect( void *cntx )
 			if( piapi_debug )
 				printf( "%d: read %zd bytes: '%s'\n", fd, rc, buf);
 
+			PIAPI_CNTX(cntx)->cfd = fd;
 			piapi_agent_parse( buf, rc, cntx );
+
 			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
-				PIAPI_CNTX(cntx)->cfd = fd;
 				pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
+				piapi_agent_counter( cntx );
+			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "clear" ) ) {
+				piapi_agent_clear( cntx );
 			}
 		}
 
@@ -723,10 +814,6 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 
 			pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
 
-			if( piapi_debug )
-				printf("Stopping native collect\n");
-			break;
-
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
 				printf("Starting proxy collect\n");
@@ -757,9 +844,30 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 int
 piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 {
-	unsigned int i = counters.sampler[port].number%SAMPLE_RING_SIZE;
+	unsigned int i;
+	PIAPI_CNTX(cntx)->port = port;
 
-	*sample = counters.sampler[port].sample[i];
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf("Retrieving counter for port %d\n", port);
+
+			i = counters.sampler[port].number%SAMPLE_RING_SIZE;
+			*sample = counters.sampler[port].sample[i];
+
+			break;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf("Retrieving proxy counter for port %d\n", port);
+
+			piapi_proxy_counter( cntx );
+			break;
+
+		default:
+			break;
+	}
 
 	return 0;
 }
@@ -767,6 +875,27 @@ piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 int
 piapi_clear( void *cntx, piapi_port_t port )
 {
-	bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+	PIAPI_CNTX(cntx)->port = port;
+
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf("Clearing counter for port %d\n", port);
+
+			bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+			break;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf("Clearing proxy counter for port %d\n", port);
+
+			piapi_proxy_clear( cntx );
+			break;
+
+		default:
+			break;
+	}
+
 	return 0;
 }

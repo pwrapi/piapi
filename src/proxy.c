@@ -40,11 +40,13 @@ piapi_callback( piapi_sample_t *sample )
 
 int main(int argc, char *argv[])
 {
+	piapi_sample_t sample;
 	unsigned int port;
 	void *cntx;
 
 	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback ); 
 
+#if 0
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
 	while( piapi_sampling);
@@ -54,6 +56,13 @@ int main(int argc, char *argv[])
 		piapi_collect( cntx, port, 100, 100 );
 		while( piapi_sampling );
 	}
+#endif
+
+	piapi_clear( cntx, PIAPI_PORT_CPU );
+	sleep( 2 );
+
+	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
+	piapi_callback( &sample );
 
 	piapi_destroy( cntx );
 
