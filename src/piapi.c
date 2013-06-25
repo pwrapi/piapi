@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static int piapi_debug = 1;
+static int piapi_debug = 0;
 
 #define SAMPLE_FREQ 10
 #define SAMPLE_RING_SIZE (1 << 15)
@@ -126,9 +126,6 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	piapi_reading_t *min, piapi_reading_t *max, struct timeval *tinit )
 {
 	struct timeval t;
-
-	tprev.tv_sec = sample->time_sec;
-	tprev.tv_usec = sample->time_usec;
 
 	gettimeofday( &t, 0x0 );
 	sample->time_sec = t.tv_sec;
@@ -483,7 +480,10 @@ piapi_agent_callback( piapi_sample_t *sample )
 	if( piapi_debug )
 		printf( "Sending sample (%d) %s\n", len, buf);
 
-	writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
+	if( sample->cntx )
+		writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
+	else
+		printf( "Missing sample context\n" );
 }
 
 static void
@@ -553,8 +553,10 @@ piapi_proxy_collect( void *cntx )
 static int
 piapi_proxy_counter( void *cntx )
 {
+	piapi_sample_t sample;
 	char buf[ 256 ] = "";
 	unsigned int len;
+	ssize_t rc;
 
 	if( piapi_debug )
 		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
@@ -563,6 +565,24 @@ piapi_proxy_counter( void *cntx )
 	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+	rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
+
+	if( piapi_debug )
+		printf( "%d: checking read length\n", PIAPI_CNTX(cntx)->fd);
+
+	buf[rc] = '\0';
+	while( rc > 0 ) {
+		if( !isspace( buf[rc-1] ) )
+			break;
+		buf[--rc] = '\0';
+	}
+
+	if( piapi_debug )
+		printf( "%d: read %zd bytes: '%s'\n", PIAPI_CNTX(cntx)->fd, rc, buf);
+
+	if( PIAPI_CNTX(cntx)->callback ) {
+		piapi_proxy_parse( buf, rc, &sample );
+	}
 
 	if( piapi_debug )
 		printf( "Successfully queried counter\n");
@@ -855,6 +875,7 @@ piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 
 			i = counters.sampler[port].number%SAMPLE_RING_SIZE;
 			*sample = counters.sampler[port].sample[i];
+			sample->cntx = cntx;
 
 			break;
 
