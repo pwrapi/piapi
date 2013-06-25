@@ -125,7 +125,7 @@ static inline void
 piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	piapi_reading_t *min, piapi_reading_t *max, struct timeval *tinit )
 {
-	struct timeval t, tprev;
+	struct timeval t;
 
 	tprev.tv_sec = sample->time_sec;
 	tprev.tv_usec = sample->time_usec;
@@ -169,7 +169,7 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 			(t.tv_usec - tinit->tv_usec)/1000000.0;
 
 		sample->energy += sample->raw.watts *
-			(t.tv_sec - tprev.tv_sec + (t.tv_usec - tprev.tv_usec)/1000000.0);
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/1000000.0);
 	}
 }
 
