@@ -1,9 +1,8 @@
 #include "piapi.h"
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
+#include <unistd.h>
 
 int piapi_sampling;
 

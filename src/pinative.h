@@ -2,7 +2,6 @@
 #define PINATIVE_H
 
 #include "picommon.h"
-#include "pidev.h"
 
 int piapi_native_init( void *cntx );
 int piapi_native_destroy( void *cntx );

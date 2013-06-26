@@ -1,12 +1,7 @@
 #include "piutil.h"
 
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <errno.h>
