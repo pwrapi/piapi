@@ -278,3 +278,24 @@ piapi_proxy_clear( void *cntx )
 	return 0;
 }
 
+int
+piapi_proxy_init( void *cntx )
+{
+	if( piapi_proxy_connect( cntx ) )
+	{
+		printf( "ERROR: unable to start proxy\n" );
+		return -1;
+	}
+
+	pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_proxy_thread, cntx);
+
+	return 0;
+}
+
+int
+piapi_proxy_destroy( void *cntx )
+{
+	close( PIAPI_CNTX(cntx)->fd );
+
+	return 0;
+}

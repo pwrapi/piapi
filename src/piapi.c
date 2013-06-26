@@ -6,9 +6,6 @@
 
 #include "piutil.h"
 
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,7 +15,6 @@
 #include <errno.h>
 
 static int piapi_debug = 0;
-static unsigned int frequency = SAMPLE_FREQ;
 
 int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
@@ -27,28 +23,21 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 	bzero( *cntx, sizeof(struct piapi_context) );
 
 	PIAPI_CNTX(*cntx)->mode = mode;
+	PIAPI_CNTX(*cntx)->callback = callback;
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
 			if( piapi_debug )
         			printf( "\nPower Communication (Native)\n" );
 
-			PIAPI_CNTX(*cntx)->callback = callback;
-			pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
+			piapi_native_init( *cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
         			printf( "\nPower Communication (Proxy <=> Agent)\n" );
 
-			if( piapi_proxy_connect( *cntx ) )
-			{
-				printf( "ERROR: unable to start proxy\n" );
-				return -1;
-			}
-
-			PIAPI_CNTX(*cntx)->callback = callback;
-			pthread_create(&(PIAPI_CNTX(*cntx)->worker), 0x0, (void *)&piapi_proxy_thread, *cntx);
+			piapi_proxy_init( *cntx );
 
 			if( piapi_debug )
        				printf( "Agent connection established\n" );
@@ -58,14 +47,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 			if( piapi_debug )
         			printf( "\nPower Communication (Agent <=> Proxy)\n" );
 
-			if( piapi_agent_listen( *cntx ) )
-			{
-				printf( "ERROR: unable to start agent\n" );
-				return -1;
-			}
-
-			PIAPI_CNTX(*cntx)->callback = piapi_agent_callback;
-			pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
+			piapi_agent_init( *cntx );
 
 			if( piapi_debug )
        				printf( "Agent listener established\n" );
@@ -85,19 +67,15 @@ piapi_destroy( void *cntx )
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			counters.samplers_run = 0;
-			piapi_native_close();
+			piapi_native_destroy( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
-			close( PIAPI_CNTX(cntx)->fd );
+			piapi_proxy_destroy( cntx );
 			break;
 
 		case PIAPI_MODE_AGENT:
-			counters.samplers_run = 0;
-			close( PIAPI_CNTX(cntx)->fd );
-			piapi_native_close();
-
+			piapi_native_destroy( cntx );
 			break;
 
 		default:

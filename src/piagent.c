@@ -234,3 +234,27 @@ piapi_agent_collect( void *cntx )
 	}
 }
 
+int
+piapi_agent_init( void *cntx )
+{
+	if( piapi_agent_listen( cntx ) )
+	{
+		printf( "ERROR: unable to start agent\n" );
+		return -1;
+	}
+
+	PIAPI_CNTX(cntx)->callback = piapi_agent_callback;
+	piapi_native_init( cntx );
+
+	return 0;
+}
+
+int
+piapi_agent_destroy( void *cntx )
+{
+	close( PIAPI_CNTX(cntx)->fd );
+	piapi_native_destroy( cntx );
+
+	return 0;
+}
+

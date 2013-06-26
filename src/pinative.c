@@ -12,6 +12,7 @@
 
 static int piapi_native_debug = 0;
 static unsigned int frequency = SAMPLE_FREQ;
+static piapi_counters_t counters;
 
 static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
@@ -138,8 +139,17 @@ piapi_native_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 }
 
 int
-piapi_native_close( void )
+piapi_native_init( void *cntx )
 {
+	pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
+
+	return 0;
+}
+
+int
+piapi_native_destroy( void *cntx )
+{
+	counters.samplers_run = 0;
 	pidev_close();
 
 	return 0;

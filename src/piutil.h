@@ -31,8 +31,6 @@ typedef struct piapi_counters {
 	int samplers_run;
 } piapi_counters_t;
 
-piapi_counters_t counters;
-
 struct piapi_context {
 	int fd, cfd;
 	piapi_mode_t mode;
