@@ -11,6 +11,4 @@ int piapi_native_collect( void *cntx );
 int piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample );
 int piapi_native_clear( void *cntx, piapi_port_t port );
 
-void piapi_native_thread( void *cntx );
-
 #endif

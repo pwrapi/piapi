@@ -223,7 +223,7 @@ piapi_agent_collect( void *cntx )
 			piapi_agent_parse( buf, rc, cntx );
 
 			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
-				pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+				piapi_native_collect( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
 				piapi_agent_counter( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "clear" ) ) {
