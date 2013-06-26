@@ -113,7 +113,7 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 	return 0;
 }
 
-void
+static void
 piapi_proxy_thread( void *cntx )
 {
 	piapi_sample_t sample;
@@ -157,7 +157,7 @@ piapi_proxy_thread( void *cntx )
 	}
 }
 
-int
+static int
 piapi_proxy_connect( void *cntx )
 {
 	struct sockaddr_in addr;
