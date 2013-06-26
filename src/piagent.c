@@ -12,21 +12,6 @@
 
 static int piapi_agent_debug = 0;
 
-static void
-piapi_agent_counter( void *cntx )
-{
-	piapi_sample_t sample;
-
-	piapi_native_counter( cntx, PIAPI_CNTX(cntx)->port, &sample );
-	piapi_agent_callback( &sample );
-}
-
-static void
-piapi_agent_clear( void *cntx )
-{
-	piapi_native_clear( cntx, PIAPI_CNTX(cntx)->port );
-}
-
 static int 
 piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 {
@@ -92,7 +77,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 	return -1;
 }
 
-void
+static void
 piapi_agent_callback( piapi_sample_t *sample )
 {
 	char buf[256] = "";
@@ -115,7 +100,7 @@ piapi_agent_callback( piapi_sample_t *sample )
 		printf( "Missing sample context\n" );
 }
 
-int
+static int
 piapi_agent_listen( void *cntx )
 {
 	struct sockaddr_in addr;
@@ -155,7 +140,22 @@ piapi_agent_listen( void *cntx )
 	return 0;
 }
 
-void
+static void
+piapi_agent_counter( void *cntx )
+{
+	piapi_sample_t sample;
+
+	piapi_native_counter( cntx, PIAPI_CNTX(cntx)->port, &sample );
+	piapi_agent_callback( &sample );
+}
+
+static void
+piapi_agent_clear( void *cntx )
+{
+	piapi_native_clear( cntx, PIAPI_CNTX(cntx)->port );
+}
+
+int
 piapi_agent_collect( void *cntx )
 {
 	struct sockaddr_in addr;
@@ -172,7 +172,7 @@ piapi_agent_collect( void *cntx )
 		int rc = select( max_fd+1, &read_fds, 0, 0, 0 );
 		if( rc < 0 ) {
 			printf( "ERROR: select() failed! rc=%d\n", rc );
-			return;
+			return -1;
 		}
 
 		if( FD_ISSET( PIAPI_CNTX(cntx)->fd, &read_fds ) ) {
@@ -232,11 +232,16 @@ piapi_agent_collect( void *cntx )
 		}
 
 	}
+
+	return 0;
 }
 
 int
 piapi_agent_init( void *cntx )
 {
+	if( piapi_agent_debug )
+       		printf( "\nPower native communication\n" );
+
 	if( piapi_agent_listen( cntx ) )
 	{
 		printf( "ERROR: unable to start agent\n" );
@@ -245,6 +250,9 @@ piapi_agent_init( void *cntx )
 
 	PIAPI_CNTX(cntx)->callback = piapi_agent_callback;
 	piapi_native_init( cntx );
+
+	if( piapi_agent_debug )
+       		printf( "Agent listener established\n" );
 
 	return 0;
 }

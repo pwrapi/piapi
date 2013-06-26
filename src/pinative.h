@@ -7,10 +7,9 @@
 int piapi_native_init( void *cntx );
 int piapi_native_destroy( void *cntx );
 
-void piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample );
-void piapi_native_clear( void *cntx, piapi_port_t port );
-
-void piapi_native_counters( void *arg );
+int piapi_native_collect( void *cntx );
+int piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample );
+int piapi_native_clear( void *cntx, piapi_port_t port );
 
 void piapi_native_thread( void *cntx );
 

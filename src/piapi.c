@@ -27,37 +27,19 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			if( piapi_debug )
-        			printf( "\nPower Communication (Native)\n" );
-
-			piapi_native_init( *cntx );
-			break;
+			return piapi_native_init( *cntx );
 
 		case PIAPI_MODE_PROXY:
-			if( piapi_debug )
-        			printf( "\nPower Communication (Proxy <=> Agent)\n" );
-
-			piapi_proxy_init( *cntx );
-
-			if( piapi_debug )
-       				printf( "Agent connection established\n" );
-			break;
+			return piapi_proxy_init( *cntx );
 
 		case PIAPI_MODE_AGENT:
-			if( piapi_debug )
-        			printf( "\nPower Communication (Agent <=> Proxy)\n" );
-
-			piapi_agent_init( *cntx );
-
-			if( piapi_debug )
-       				printf( "Agent listener established\n" );
-			break;
+			return piapi_agent_init( *cntx );
 
 		default:
 			break;
 	}
 
-	return 0;
+	return -1;
 }
 
 int
@@ -67,22 +49,19 @@ piapi_destroy( void *cntx )
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			piapi_native_destroy( cntx );
-			break;
+			return piapi_native_destroy( cntx );
 
 		case PIAPI_MODE_PROXY:
-			piapi_proxy_destroy( cntx );
-			break;
+			return piapi_proxy_destroy( cntx );
 
 		case PIAPI_MODE_AGENT:
-			piapi_native_destroy( cntx );
-			break;
+			return piapi_native_destroy( cntx );
 
 		default:
 			break;
 	}
 
-	return 0;
+	return -1;
 }
 
 int
@@ -94,36 +73,19 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			if( piapi_debug )
-				printf("Starting native collect\n");
-
-			pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+			return piapi_native_collect( cntx );
 
 		case PIAPI_MODE_PROXY:
-			if( piapi_debug )
-				printf("Starting proxy collect\n");
-
-			piapi_proxy_collect( cntx );
-
-			if( piapi_debug )
-				printf("Stopping proxy collect\n");
-			break;
+			return piapi_proxy_collect( cntx );
 
 		case PIAPI_MODE_AGENT:
-			if( piapi_debug )
-				printf("Starting agent collect\n");
-
-			piapi_agent_collect( cntx );
-
-			if( piapi_debug )
-				printf("Stopping agent collect\n");
-			break;
+			return piapi_agent_collect( cntx );
 
 		default:
 			break;
 	}
 
-	return 0;
+	return -1;
 }
 
 int
