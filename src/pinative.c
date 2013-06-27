@@ -195,9 +195,9 @@ piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 }
 
 int
-piapi_native_clear( void *cntx, piapi_port_t port )
+piapi_native_clear( void *cntx )
 {
-	bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+	bzero( &(counters.sampler[PIAPI_CNTX(cntx)->port]), sizeof( piapi_counter_t ) );
 
 	return 0;
 }

@@ -150,12 +150,6 @@ piapi_agent_counter( void *cntx )
 }
 
 static void
-piapi_agent_clear( void *cntx )
-{
-	piapi_native_clear( cntx, PIAPI_CNTX(cntx)->port );
-}
-
-static void
 piapi_agent_thread( void *cntx )
 {
 	struct sockaddr_in addr;
@@ -227,7 +221,7 @@ piapi_agent_thread( void *cntx )
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
 				piapi_agent_counter( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "clear" ) ) {
-				piapi_agent_clear( cntx );
+				piapi_native_clear( cntx );
 			}
 		}
 

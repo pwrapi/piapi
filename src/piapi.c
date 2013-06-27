@@ -35,6 +35,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 			return piapi_agent_init( *cntx );
 
 		default:
+			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
@@ -44,8 +45,6 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 int
 piapi_destroy( void *cntx )
 {
-	PIAPI_CNTX(cntx)->worker_run = 0;
-
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
 			return piapi_native_destroy( cntx );
@@ -57,6 +56,7 @@ piapi_destroy( void *cntx )
 			return piapi_native_destroy( cntx );
 
 		default:
+			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
@@ -80,9 +80,8 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			return piapi_proxy_collect( cntx );
 
 		case PIAPI_MODE_AGENT:
-			return 0;
-
 		default:
+			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
@@ -111,6 +110,7 @@ piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 			break;
 
 		default:
+			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
@@ -128,19 +128,20 @@ piapi_clear( void *cntx, piapi_port_t port )
 			if( piapi_debug )
 				printf("Clearing counter for port %d\n", port);
 
-			piapi_native_clear( cntx, port );
-			break;
+			piapi_native_clear( cntx );
+			return 0;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
 				printf("Clearing proxy counter for port %d\n", port);
 
 			piapi_proxy_clear( cntx );
-			break;
+			return 0;
 
 		default:
+			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
-	return 0;
+	return -1;
 }
