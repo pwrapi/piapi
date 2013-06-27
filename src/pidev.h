@@ -6,10 +6,6 @@
  */
 
 #include <stdint.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define MAX_PORTNUM      15
 
