@@ -188,6 +188,9 @@ piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 	*sample = counters.sampler[port].sample[i];
 	sample->cntx = cntx;
 
+	if( PIAPI_CNTX(cntx)->callback )
+		PIAPI_CNTX(cntx)->callback( sample );
+
 	return 0;
 }
 

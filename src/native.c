@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 	sleep( 2 );
 
 	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
-	piapi_callback( &sample );
 
 	piapi_destroy( cntx );
 

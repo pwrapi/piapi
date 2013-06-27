@@ -155,8 +155,8 @@ piapi_agent_clear( void *cntx )
 	piapi_native_clear( cntx, PIAPI_CNTX(cntx)->port );
 }
 
-int
-piapi_agent_collect( void *cntx )
+static void
+piapi_agent_thread( void *cntx )
 {
 	struct sockaddr_in addr;
 	socklen_t socklen = sizeof(addr);
@@ -172,7 +172,7 @@ piapi_agent_collect( void *cntx )
 		int rc = select( max_fd+1, &read_fds, 0, 0, 0 );
 		if( rc < 0 ) {
 			printf( "ERROR: select() failed! rc=%d\n", rc );
-			return -1;
+			return;
 		}
 
 		if( FD_ISSET( PIAPI_CNTX(cntx)->fd, &read_fds ) ) {
@@ -232,8 +232,6 @@ piapi_agent_collect( void *cntx )
 		}
 
 	}
-
-	return 0;
 }
 
 int
@@ -249,6 +247,8 @@ piapi_agent_init( void *cntx )
 	}
 
 	PIAPI_CNTX(cntx)->callback = piapi_agent_callback;
+	pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_agent_thread, cntx);
+
 	piapi_native_init( cntx );
 
 	if( piapi_agent_debug )
@@ -260,7 +260,9 @@ piapi_agent_init( void *cntx )
 int
 piapi_agent_destroy( void *cntx )
 {
+	PIAPI_CNTX(cntx)->worker_run = 0;
 	close( PIAPI_CNTX(cntx)->fd );
+
 	piapi_native_destroy( cntx );
 
 	return 0;

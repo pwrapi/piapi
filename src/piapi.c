@@ -66,9 +66,11 @@ piapi_destroy( void *cntx )
 int
 piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency )
 {
-	PIAPI_CNTX(cntx)->port = port;
-	PIAPI_CNTX(cntx)->samples = samples;
-	PIAPI_CNTX(cntx)->frequency = frequency;
+	if( PIAPI_CNTX(cntx)->mode != PIAPI_MODE_AGENT ) {
+		PIAPI_CNTX(cntx)->port = port;
+		PIAPI_CNTX(cntx)->samples = samples;
+		PIAPI_CNTX(cntx)->frequency = frequency;
+	}
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
@@ -78,7 +80,7 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 			return piapi_proxy_collect( cntx );
 
 		case PIAPI_MODE_AGENT:
-			return piapi_agent_collect( cntx );
+			return 0;
 
 		default:
 			break;

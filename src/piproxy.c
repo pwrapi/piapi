@@ -250,6 +250,7 @@ piapi_proxy_counter( void *cntx )
 
 	if( PIAPI_CNTX(cntx)->callback ) {
 		piapi_proxy_parse( buf, rc, &sample );
+		PIAPI_CNTX(cntx)->callback( &sample );
 	}
 
 	if( piapi_proxy_debug )
@@ -295,6 +296,7 @@ piapi_proxy_init( void *cntx )
 int
 piapi_proxy_destroy( void *cntx )
 {
+	PIAPI_CNTX(cntx)->worker_run = 0;
 	close( PIAPI_CNTX(cntx)->fd );
 
 	return 0;
