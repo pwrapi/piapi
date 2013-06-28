@@ -1,4 +1,0 @@
-#!/bin/bash
-
-kill `ps auxw |grep agent.pl |grep -v grep | awk '{print $2}'` 
-kill `ps auxw |grep sample.pl |grep -v grep | awk '{print $2}'`

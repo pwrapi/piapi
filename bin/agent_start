@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo $1 
-cd /home/power
-nohup ./agent.pl -h 10.54.0.1 -s $1 2>&1 > /tmp/start_agent.log & 
