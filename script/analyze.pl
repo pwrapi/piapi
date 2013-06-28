@@ -135,7 +135,7 @@ sub save_data {
     foreach my $node (sort keys %raw) {
         foreach my $port (sort keys %{$raw{$node}}) {
             foreach my $type (sort keys %{$raw{$node}{$port}}) {
-                open (my $data, ">", "../dat/results/" . $node . "." . $id . "_" . $port . "_" . $type . ".dat");
+                open (my $data, ">", "results/" . $node . "." . $id . "_" . $port . "_" . $type . ".dat");
                 foreach my $timestamp (sort keys %{$raw{$node}{$port}{$type}}) {
                     foreach my $val ($raw{$node}{$port}{$type}{$timestamp}) {
                         print $data $timestamp . " " . $val . "\n";
@@ -152,14 +152,14 @@ sub graph {
         foreach my $port (sort keys %{$raw{$node}}) {
             my $cmd = "gnuplot -e \"node=\\\"" . $node . "\\\"; port=" . $port . "; id=" . $id . "; ";
             $cmd .= "crt=\\\"" . $screen . "\\\";" if $screen eq "yes";
-            $cmd .= "; load '../dat/plots/" . $gpfile . "'\"";
+            $cmd .= "; load 'plots/" . $gpfile . "'\"";
             system($cmd);
         }
     }
 }
 
 sub stats {
-    open (my $data, ">>", "../dat/results/summary." . $id . ".dat");
+    open (my $data, ">>", "results/summary." . $id . ".dat");
 
     if ($verbose eq "yes") {
         print $data "# HOST PORT A(avg) A(min) A(max) V(avg) V(min) V(max) W(avg) W(min) W(max) t(tot) t(min) t(max) Power(joules)\n";
