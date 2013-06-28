@@ -12,14 +12,14 @@ STATICLIB = lib$(LIBNAME).a
 OBJS = piapi.o piproxy.o piagent.o pinative.o piutil.o pidev.o proxy.o agent.o native.o
 
 all: lib $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)
-	$(CC) $(CFLAGS) proxy.o -L. -l$(LIBNAME) -o proxy 
-	$(CC) $(CFLAGS) agent.o -L. -l$(LIBNAME) -o agent 
-	$(CC) $(CFLAGS) native.o -L. -l$(LIBNAME) -o native 
+	$(CC) $(CFLAGS) $(TESTOBJS) -L../lib -l$(LIBNAME) -o ../bin/$(TARGET)
+	$(CC) $(CFLAGS) proxy.o -L../lib -l$(LIBNAME) -o ../bin/proxy 
+	$(CC) $(CFLAGS) agent.o -L../lib -l$(LIBNAME) -o ../bin/agent 
+	$(CC) $(CFLAGS) native.o -L../lib -l$(LIBNAME) -o ../bin/native 
 
 clean:
-	rm -f out/* $(TARGET) $(TESTOBJS) $(STATICLIB) $(OBJS)
+	rm -f out/* ../bin/$(TARGET) ../lib/$(STATICLIB) $(OBJS)
 
 lib: $(OBJS)
-	$(AR) rcs $(STATICLIB) $(OBJS)
+	$(AR) rcs ../lib/$(STATICLIB) $(OBJS)
 	
