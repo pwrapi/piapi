@@ -1,4 +1,5 @@
 #CROSS_COMPILE=arm-linux-gnueabihf-
+PREFIX = @prefix@
 
 CC = $(CROSS_COMPILE)gcc
 AR = $(CROSS_COMPILE)ar
@@ -23,3 +24,7 @@ clean:
 lib: $(OBJS)
 	$(AR) rcs $(STATICLIB) $(OBJS)
 	
+install:
+	cp picommon.h piapi.h $(PREFIX)/include
+	cp libpiapi.a $(PREFIX)/lib
+	cp $(TARGET) proxy agent native $(PREFIX)/bin
