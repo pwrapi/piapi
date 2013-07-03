@@ -10,7 +10,16 @@ LIBNAME = piapi
 
 TESTOBJS = $(TARGET).o
 STATICLIB = lib$(LIBNAME).a
-OBJS = piapi.o piproxy.o piagent.o pinative.o piutil.o pidev.o proxy.o agent.o native.o getRawPower.o
+OBJS = 	piapi.o     \
+	piproxy.o   \
+	piagent.o   \
+	pinative.o  \
+	piutil.o    \
+	pidev.o     \
+	proxy.o     \
+	agent.o     \
+	native.o    \
+	$(TARGET).o
 
 all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)
@@ -25,6 +34,10 @@ lib: $(OBJS)
 	$(AR) rcs $(STATICLIB) $(OBJS)
 	
 install:
+	mkdir -p $(PREFIX)
+	mkdir -p $(PREFIX)/include
 	cp picommon.h piapi.h $(PREFIX)/include
+	mkdir -p $(PREFIX)/lib
 	cp libpiapi.a $(PREFIX)/lib
+	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) proxy agent native $(PREFIX)/bin
