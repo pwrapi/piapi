@@ -19,6 +19,7 @@ OBJS = 	piapi.o     \
 	proxy.o     \
 	agent.o     \
 	native.o    \
+	logger.o    \
 	$(TARGET).o
 
 all: lib $(TESTOBJS)
@@ -26,6 +27,7 @@ all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) proxy.o -L. -l$(LIBNAME) -o proxy 
 	$(CC) $(CFLAGS) agent.o -L. -l$(LIBNAME) -o agent 
 	$(CC) $(CFLAGS) native.o -L. -l$(LIBNAME) -o native 
+	$(CC) $(CFLAGS) logger.o -L. -l$(LIBNAME) -o logger
 
 clean:
 	rm -f out/* $(TARGET) $(STATICLIB) $(OBJS)
@@ -40,4 +42,4 @@ install:
 	mkdir -p $(PREFIX)/lib
 	cp libpiapi.a $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
-	cp $(TARGET) proxy agent native $(PREFIX)/bin
+	cp $(TARGET) proxy agent native logger $(PREFIX)/bin

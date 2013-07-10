@@ -153,6 +153,8 @@ piapi_proxy_thread( void *cntx )
 		if( PIAPI_CNTX(cntx)->callback ) {
 			piapi_proxy_parse( buf, rc, &sample );
 			PIAPI_CNTX(cntx)->callback( &sample );
+		} else {
+			printf("%s\n", buf);
 		}
 	}
 }
