@@ -30,7 +30,7 @@ all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) logger.o -L. -l$(LIBNAME) -o logger
 
 clean:
-	rm -f out/* $(TARGET) $(STATICLIB) $(OBJS)
+	rm -f out/* $(TARGET) proxy agent native logger $(STATICLIB) $(OBJS)
 
 lib: $(OBJS)
 	$(AR) rcs $(STATICLIB) $(OBJS)
