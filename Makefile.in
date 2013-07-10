@@ -43,3 +43,4 @@ install:
 	cp libpiapi.a $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) proxy agent native logger $(PREFIX)/bin
+	cp -R script $(PREFIX)/script
