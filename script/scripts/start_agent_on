@@ -6,6 +6,14 @@ my $start = shift;
     defined($start) or die "Must provide first agent in range\n";
 my $fin = shift;
     defined($fin) or die "Must provide last agent in range\n";
+my $port;
+$port = shift or do {
+    !defined($port) and $port = 20202;
+};
+my $rport;
+$rport = shift or do {
+    !defined($rport) and $rport = 20203;
+};
 my $interval;
 $interval = shift or do {
     !defined($interval) and $interval = 1;
@@ -17,6 +25,6 @@ print "starting agents on teller-pm$start through teller-pm$fin " .
 my $ret;
 for my $num ($start..$fin) {
     if ($num < 10) { $num = "0" . $num; }
-    system("ssh teller-pm$num ./agent_start $interval &");
+    system("ssh teller-pm$num ./agent_start $port $rport $interval &");
 }
 sleep(2);
