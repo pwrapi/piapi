@@ -21,7 +21,7 @@ int piapi_proxy_init( void *cntx );
  *  - shutdown the worker thread
  *  - close the connection to agent
  */
-int piapi_proxy_destroy( void *cntx );
+int piapi_proxy_destroy( void **cntx );
 
 /*! \fn int piapi_proxy_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency )
  *  \brief Collect samples on a remote agent port

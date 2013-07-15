@@ -157,7 +157,7 @@ piapi_native_init( void *cntx )
 }
 
 int
-piapi_native_destroy( void *cntx )
+piapi_native_destroy( void **cntx )
 {
 	if( piapi_native_debug )
        		printf( "Native counters shutting down\n" );
@@ -168,6 +168,7 @@ piapi_native_destroy( void *cntx )
 	if( piapi_native_debug )
        		printf( "Native communication closed\n" );
 
+	*cntx = 0x0;
 	return 0;
 }
 

@@ -23,6 +23,6 @@ int piapi_agent_init( void *cntx );
  *  - close listener on local well-known port (20201)
  *  - destroy the local native interface to the device
  */
-int piapi_agent_destroy( void *cntx );
+int piapi_agent_destroy( void **cntx );
 
 #endif

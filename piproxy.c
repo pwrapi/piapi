@@ -296,10 +296,11 @@ piapi_proxy_init( void *cntx )
 }
 
 int
-piapi_proxy_destroy( void *cntx )
+piapi_proxy_destroy( void **cntx )
 {
-	PIAPI_CNTX(cntx)->worker_run = 0;
-	close( PIAPI_CNTX(cntx)->fd );
+	PIAPI_CNTX(*cntx)->worker_run = 0;
+	close( PIAPI_CNTX(*cntx)->fd );
 
+	*cntx = 0x0;
 	return 0;
 }

@@ -43,17 +43,17 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
 }
 
 int
-piapi_destroy( void *cntx )
+piapi_destroy( void **cntx )
 {
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			return piapi_native_destroy( cntx );
+			return piapi_native_destroy( *cntx );
 
 		case PIAPI_MODE_PROXY:
-			return piapi_proxy_destroy( cntx );
+			return piapi_proxy_destroy( *cntx );
 
 		case PIAPI_MODE_AGENT:
-			return piapi_native_destroy( cntx );
+			return piapi_native_destroy( *cntx );
 
 		default:
 			printf( "Warning: Non-supported operation\n" );

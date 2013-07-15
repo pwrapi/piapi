@@ -24,7 +24,7 @@ int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback );
  *  Destruction of the PIAPI accomplishes the following:
  *  - calls the appropriate destructor for the configuration
  */
-int piapi_destroy( void *cntx );
+int piapi_destroy( void **cntx );
 
 /*! \fn int piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency )
  *  \brief Collect samples on a port

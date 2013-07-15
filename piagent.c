@@ -252,13 +252,14 @@ piapi_agent_init( void *cntx )
 }
 
 int
-piapi_agent_destroy( void *cntx )
+piapi_agent_destroy( void **cntx )
 {
-	PIAPI_CNTX(cntx)->worker_run = 0;
-	close( PIAPI_CNTX(cntx)->fd );
+	PIAPI_CNTX(*cntx)->worker_run = 0;
+	close( PIAPI_CNTX(*cntx)->fd );
 
-	piapi_native_destroy( cntx );
+	piapi_native_destroy( *cntx );
 
+	*cntx = 0x0;
 	return 0;
 }
 
