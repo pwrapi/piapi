@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <errno.h>
+#include <arpa/inet.h>
 
 static int piapi_debug = 0;
 
@@ -19,6 +20,7 @@ int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )
 {
 	int opt;
+	unsigned int saddr;
 
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
@@ -32,7 +34,8 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
-				PIAPI_CNTX(*cntx)->sa_addr = atoi(optarg);
+				inet_pton( AF_INET, optarg, &saddr );
+				PIAPI_CNTX(*cntx)->sa_addr = saddr;
 				break;
 			case 'p':
 				PIAPI_CNTX(*cntx)->sa_port = atoi(optarg);
