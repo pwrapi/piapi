@@ -35,7 +35,9 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 		switch( opt ) {
 			case 'a':
 				inet_pton( AF_INET, optarg, &saddr );
-				PIAPI_CNTX(*cntx)->sa_addr = saddr;
+				PIAPI_CNTX(*cntx)->sa_addr = ntohl(saddr);
+				if( piapi_debug )
+					printf( "Converted %s to %08x\n", optarg, saddr );
 				break;
 			case 'p':
 				PIAPI_CNTX(*cntx)->sa_port = atoi(optarg);
