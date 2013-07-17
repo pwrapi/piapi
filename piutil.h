@@ -34,6 +34,8 @@ typedef struct piapi_counters {
 struct piapi_context {
 	int fd, cfd;
 	piapi_mode_t mode;
+	unsigned int sa_addr;
+	unsigned short sa_port;
 
 	char command[40];
 	piapi_port_t port;

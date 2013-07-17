@@ -16,13 +16,34 @@
 static int piapi_debug = 0;
 
 int
-piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback )
+piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )
 {
+	int opt;
+
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
 
 	PIAPI_CNTX(*cntx)->mode = mode;
 	PIAPI_CNTX(*cntx)->callback = callback;
+
+	PIAPI_CNTX(*cntx)->sa_addr = PIAPI_AGNT_SADDR;
+	PIAPI_CNTX(*cntx)->sa_port = PIAPI_AGNT_PORT;
+
+	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
+		switch( opt ) {
+			case 'a':
+				PIAPI_CNTX(*cntx)->sa_addr = atoi(optarg);
+				break;
+			case 'p':
+				PIAPI_CNTX(*cntx)->sa_port = atoi(optarg);
+				break;
+			case '?':
+				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
+				exit( -1 );
+			default:
+				abort( );
+		} 
+	}
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:

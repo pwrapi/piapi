@@ -176,8 +176,8 @@ piapi_proxy_connect( void *cntx )
 
 	bzero((void *)&addr, sizeof(addr));
         addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = htonl( PIAPI_AGNT_SADDR );
-	addr.sin_port = htons( PIAPI_AGNT_PORT );
+	addr.sin_addr.s_addr = htonl( PIAPI_CNTX(cntx)->sa_addr );
+	addr.sin_port = htons( PIAPI_CNTX(cntx)->sa_port );
 
 	rc = connect( PIAPI_CNTX(cntx)->fd, (struct sockaddr *) &addr, sizeof(addr) );
 	if( rc < 0 ) {
@@ -194,7 +194,7 @@ piapi_proxy_connect( void *cntx )
 			*((char *)(&addr.sin_addr.s_addr)+3) );
 
 	if( piapi_proxy_debug )
-        	printf( "Connected to agent port %d\n", PIAPI_AGNT_PORT );
+        	printf( "Connected to agent port %d\n", PIAPI_CNTX(cntx)->sa_port );
 
 	return 0;
 }

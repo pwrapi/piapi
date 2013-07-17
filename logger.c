@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	void *cntx;
 
 	signal( SIGINT, signal_handler );
-	piapi_init( &cntx, PIAPI_MODE_PROXY, 0x0 ); 
+	piapi_init( &cntx, PIAPI_MODE_PROXY, 0x0, argc, argv ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 0, 100 );

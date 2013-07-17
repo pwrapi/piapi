@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	unsigned int port;
 	void *cntx;
 
-	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback ); 
+	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	piapi_port_t port;
 	void *cntx;
 
-	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback ); 
+	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );

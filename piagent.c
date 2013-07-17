@@ -118,7 +118,7 @@ piapi_agent_listen( void *cntx )
 	bzero((void *)&addr, sizeof(addr));
         addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons( PIAPI_AGNT_PORT );
+	addr.sin_port = htons( PIAPI_CNTX(cntx)->sa_port );
 
 	rc = bind( PIAPI_CNTX(cntx)->fd, (struct sockaddr *) &addr, sizeof(addr) );
 	if( rc < 0 ) {
@@ -135,7 +135,7 @@ piapi_agent_listen( void *cntx )
 	}
 
 	if( piapi_agent_debug )
-		printf( "Agent is listening on port %d\n", PIAPI_AGNT_PORT );
+		printf( "Agent is listening on port %d\n", PIAPI_CNTX(cntx)->sa_port );
 
 	return 0;
 }

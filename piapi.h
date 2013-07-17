@@ -8,13 +8,15 @@
  *  \param cntx handle to context state
  *  \param mode configuration type (native, proxy, agent)
  *  \param callback results callback function
+ *  \param argc number of arguments in vector
+ *  \param argv argument vector for passed parameters
  *  \return 0 on success, negative on failure
  *
  *  Initialization of the PIAPI accomplishes the following:
  *  - sets mode and callback for the context
  *  - calls the appropriate initializer for the configuration
  */
-int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback );
+int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv );
 
 /*! \fn int piapi_destroy( void *cntx )
  *  \brief Destroy PIAPI
