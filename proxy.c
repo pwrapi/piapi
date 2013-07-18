@@ -25,6 +25,9 @@ piapi_callback( piapi_sample_t *sample )
 		sample->min.volts, sample->min.amps, sample->min.watts,
 		sample->max.volts, sample->max.amps, sample->max.watts,
 		sample->time_total, sample->energy );
+
+	if( sample->number == sample->total )
+		piapi_sampling = 0;
 }
 
 int main(int argc, char *argv[])
@@ -35,10 +38,10 @@ int main(int argc, char *argv[])
 	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
-	piapi_collect( cntx, PIAPI_PORT_CPU, 0, 100 );
+	piapi_collect( cntx, PIAPI_PORT_CPU, 100, 100 );
 	while( piapi_sampling );
 
-	piapi_destroy( cntx );
+	piapi_destroy( &cntx );
 
 	return 0;
 }

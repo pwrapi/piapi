@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
 
-	piapi_destroy( cntx );
+	piapi_destroy( &cntx );
 
 	return 0;
 }

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
 	while( 1 );
 
-	piapi_destroy( cntx );
+	piapi_destroy( &cntx );
 
 	return 0;
 }
