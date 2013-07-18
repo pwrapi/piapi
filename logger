@@ -1,6 +1,6 @@
 #!/bin/sh
 
-path=.
+path=`pwd`
 name=teller
 ipprefix=10.54.21
 
@@ -23,7 +23,7 @@ do
 		t) port=${OPTARG};;
 		s) samp=${OPTARG};;
 		f) freq=${OPTARG};;
-		\?) echo "Usage: $0 [-l lowerbound] [-u upperbound] [-t sensorport] [-s samples] [-f frequency]";;
+		\?) echo "Usage: $0 [-l lowerbound] [-u upperbound] [-t sensorport] [-s samples] [-f frequency] [-p outputpath]";;
 	esac
 done
 
