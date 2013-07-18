@@ -1,5 +1,9 @@
 #!/bin/sh
 
+path=.
+name=teller
+ipprefix=10.54.21
+
 lower=0
 upper=-1
 
@@ -7,10 +11,13 @@ port=1
 samp=1
 freq=100
 
-while getopts l:u:t:s:f: opt
+while getopts n:p:i:l:u:t:s:f: opt
 do
 	case "${opt}"
 	in
+		p) path=${OPTARG};;
+		n) name=${OPTARG};;
+		i) ipprefix=${OPTARG};;
 		l) lower=${OPTARG};;
 		u) upper=${OPTARG};;
 		t) port=${OPTARG};;
@@ -22,7 +29,8 @@ done
 
 for ((node=$lower; node<=$upper; ++node))
 do
-	./proxy -a 10.54.21.$node -t $port -s $samp -f $freq > $node.out &
+	echo "Collecting $samp samples from $name-pm$node to $path/$name$node.out"
+	./proxy -a $ipprefix.$node -t $port -s $samp -f $freq > $path/$name$node.out &
 done
 
 
