@@ -1,0 +1,28 @@
+#!/bin/sh
+
+lower=0
+upper=-1
+
+port=1
+samp=1
+freq=100
+
+while getopts l:u:t:s:f: opt
+do
+	case "${opt}"
+	in
+		l) lower=${OPTARG};;
+		u) upper=${OPTARG};;
+		t) port=${OPTARG};;
+		s) samp=${OPTARG};;
+		f) freq=${OPTARG};;
+		\?) echo "Usage: $0 [-l lowerbound] [-u upperbound] [-t sensorport] [-s samples] [-f frequency]";;
+	esac
+done
+
+for ((node=$lower; node<=$upper; ++node))
+do
+	./proxy -a 10.54.21.$node -t $port -s $samp -f $freq > $node.out &
+done
+
+
