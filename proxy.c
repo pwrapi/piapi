@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
-	piapi_collect( cntx, PIAPI_PORT_CPU, 100, 100 );
+	piapi_collect( cntx, 0, 0, 0 );
 	while( piapi_sampling );
 
 	piapi_destroy( &cntx );

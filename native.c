@@ -39,28 +39,13 @@ piapi_callback( piapi_sample_t *sample )
 
 int main(int argc, char *argv[])
 {
-	piapi_sample_t sample;
-	piapi_port_t port;
 	void *cntx;
 
 	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
-	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
+	piapi_collect( cntx, 0, 0, 0 );
 	while( piapi_sampling );
-
-	for( port = PIAPI_PORT_MIN; port < PIAPI_PORT_MAX; port++ ) {
-		piapi_sampling = 1;
-		piapi_collect( cntx, port, 100, 100 );
-		while( piapi_sampling );
-	}
-
-	piapi_clear( cntx, PIAPI_PORT_CPU );
-	sleep( 2 );
-
-	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
-
-	piapi_destroy( &cntx );
 
 	return 0;
 }

@@ -30,8 +30,11 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 
 	PIAPI_CNTX(*cntx)->sa_addr = PIAPI_AGNT_SADDR;
 	PIAPI_CNTX(*cntx)->sa_port = PIAPI_AGNT_PORT;
+	PIAPI_CNTX(*cntx)->port = PIAPI_PORT_CPU;
+	PIAPI_CNTX(*cntx)->samples = 1;
+	PIAPI_CNTX(*cntx)->frequency = 100;
 
-	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -52,8 +55,17 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 				if( piapi_debug )
 					printf( "Using port of %u\n", PIAPI_CNTX(*cntx)->sa_port );
 				break;
+			case 't':
+				PIAPI_CNTX(*cntx)->port = atoi(optarg);
+				break;
+			case 's':
+				PIAPI_CNTX(*cntx)->samples = atoi(optarg);
+				break;
+			case 'f':
+				PIAPI_CNTX(*cntx)->frequency = atoi(optarg);
+				break;
 			case '?':
-				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
+				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport] [-s samples] [-f frequency]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -111,9 +123,9 @@ int
 piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency )
 {
 	if( PIAPI_CNTX(cntx)->mode != PIAPI_MODE_AGENT ) {
-		PIAPI_CNTX(cntx)->port = port;
-		PIAPI_CNTX(cntx)->samples = samples;
-		PIAPI_CNTX(cntx)->frequency = frequency;
+		if( port ) PIAPI_CNTX(cntx)->port = port;
+		if( samples ) PIAPI_CNTX(cntx)->samples = samples;
+		if( frequency ) PIAPI_CNTX(cntx)->frequency = frequency;
 	}
 
 	switch( PIAPI_CNTX(cntx)->mode ) {
