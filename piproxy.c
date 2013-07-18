@@ -153,8 +153,6 @@ piapi_proxy_thread( void *cntx )
 		if( PIAPI_CNTX(cntx)->callback ) {
 			piapi_proxy_parse( buf, rc, &sample );
 			PIAPI_CNTX(cntx)->callback( &sample );
-		} else {
-			printf("%s\n", buf);
 		}
 	}
 }
@@ -166,7 +164,12 @@ piapi_proxy_connect( void *cntx )
 	ssize_t rc;
 
 	if( piapi_proxy_debug )
-		printf( "Establishing agent connection\n" );
+		printf( "Establishing agent connection with %u.%u.%u.%u on port %u\n",
+			*((char *)(&(PIAPI_CNTX(cntx)->sa_addr))+3),
+			*((char *)(&(PIAPI_CNTX(cntx)->sa_addr))+2),
+			*((char *)(&(PIAPI_CNTX(cntx)->sa_addr))+1),
+			*((char *)(&(PIAPI_CNTX(cntx)->sa_addr))+0),
+			PIAPI_CNTX(cntx)->sa_port );
 
         PIAPI_CNTX(cntx)->fd = socket( PF_INET, SOCK_STREAM, 0 );
         if( PIAPI_CNTX(cntx)->fd < 0 ) {
@@ -296,11 +299,10 @@ piapi_proxy_init( void *cntx )
 }
 
 int
-piapi_proxy_destroy( void **cntx )
+piapi_proxy_destroy( void *cntx )
 {
-	PIAPI_CNTX(*cntx)->worker_run = 0;
-	close( PIAPI_CNTX(*cntx)->fd );
+	PIAPI_CNTX(cntx)->worker_run = 0;
+	close( PIAPI_CNTX(cntx)->fd );
 
-	*cntx = 0x0;
 	return 0;
 }

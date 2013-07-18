@@ -13,12 +13,26 @@ static void signal_handler(int sig)
 		piapi_sampling = 0;		
 }
 
+int piapi_sampling;
+
+void
+piapi_callback( piapi_sample_t *sample )
+{
+	printf( "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f\n",
+		sample->number, sample->total, sample->time_sec, sample->time_usec,
+		sample->raw.volts, sample->raw.amps, sample->raw.watts,
+		sample->avg.volts, sample->avg.amps, sample->avg.watts,
+		sample->min.volts, sample->min.amps, sample->min.watts,
+		sample->max.volts, sample->max.amps, sample->max.watts,
+		sample->time_total, sample->energy );
+}
+
 int main(int argc, char *argv[])
 {
 	void *cntx;
 
 	signal( SIGINT, signal_handler );
-	piapi_init( &cntx, PIAPI_MODE_PROXY, 0x0, argc, argv ); 
+	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, argc, argv ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 0, 100 );

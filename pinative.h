@@ -22,7 +22,7 @@ int piapi_native_init( void *cntx );
  *  - shutdown the worker thread
  *  - close the hardware devices
  */
-int piapi_native_destroy( void **cntx );
+int piapi_native_destroy( void *cntx );
 
 /*! \fn int piapi_native_collect( void *cntx )
  *  \brief Collect samples on a local native port

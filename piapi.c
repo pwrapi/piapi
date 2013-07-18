@@ -12,7 +12,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <errno.h>
-#include <arpa/inet.h>
 
 static int piapi_debug = 0;
 
@@ -20,6 +19,7 @@ int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )
 {
 	int opt;
+	char *token;
 	unsigned int saddr;
 
 	*cntx = malloc( sizeof(struct piapi_context) );
@@ -34,13 +34,23 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
-				inet_pton( AF_INET, optarg, &saddr );
-				PIAPI_CNTX(*cntx)->sa_addr = ntohl(saddr);
+				token = strtok( optarg, "." );
+				saddr = atoi(token) << 24;
+				token = strtok( NULL, "." );
+				saddr |= ( atoi(token) << 16 );
+				token = strtok( NULL, "." );
+				saddr |= ( atoi(token) << 8 );
+				token = strtok( NULL, "." );
+				saddr |= atoi(token);
+
+				PIAPI_CNTX(*cntx)->sa_addr = saddr;
 				if( piapi_debug )
-					printf( "Converted %s to %08x\n", optarg, saddr );
+					printf( "Using saddr of 0x%08x\n", PIAPI_CNTX(*cntx)->sa_addr );
 				break;
 			case 'p':
 				PIAPI_CNTX(*cntx)->sa_port = atoi(optarg);
+				if( piapi_debug )
+					printf( "Using port of %u\n", PIAPI_CNTX(*cntx)->sa_port );
 				break;
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
@@ -71,22 +81,30 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 int
 piapi_destroy( void **cntx )
 {
-	switch( PIAPI_CNTX(cntx)->mode ) {
+	int retval = -1;
+
+	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			return piapi_native_destroy( *cntx );
+			retval = piapi_native_destroy( *cntx );
+			break;
 
 		case PIAPI_MODE_PROXY:
-			return piapi_proxy_destroy( *cntx );
+			retval = piapi_proxy_destroy( *cntx );
+			break;
 
 		case PIAPI_MODE_AGENT:
-			return piapi_native_destroy( *cntx );
+			retval = piapi_native_destroy( *cntx );
+			break;
 
 		default:
 			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
-	return -1;
+	free( *cntx );
+	*cntx = 0x0;
+
+	return retval;
 }
 
 int

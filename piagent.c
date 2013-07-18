@@ -83,16 +83,16 @@ piapi_agent_callback( piapi_sample_t *sample )
 	char buf[256] = "";
 	unsigned int len;
 
-	len = sprintf(buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
+	len = sprintf( buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
 		sample->number, sample->total, sample->time_sec, sample->time_usec,
 		sample->raw.volts, sample->raw.amps, sample->raw.watts,
 		sample->avg.volts, sample->avg.amps, sample->avg.watts,
 		sample->min.volts, sample->min.amps, sample->min.watts,
 		sample->max.volts, sample->max.amps, sample->max.watts,
-		sample->time_total, sample->energy);
+		sample->time_total, sample->energy );
 
 	if( piapi_agent_debug )
-		printf( "Sending sample (%d) %s\n", len, buf);
+		printf( "Sending sample (%d) %s\n", len, buf );
 
 	if( sample->cntx )
 		writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
@@ -252,14 +252,13 @@ piapi_agent_init( void *cntx )
 }
 
 int
-piapi_agent_destroy( void **cntx )
+piapi_agent_destroy( void *cntx )
 {
-	PIAPI_CNTX(*cntx)->worker_run = 0;
-	close( PIAPI_CNTX(*cntx)->fd );
+	PIAPI_CNTX(cntx)->worker_run = 0;
+	close( PIAPI_CNTX(cntx)->fd );
 
-	piapi_native_destroy( *cntx );
+	piapi_native_destroy( cntx );
 
-	*cntx = 0x0;
 	return 0;
 }
 
