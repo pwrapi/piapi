@@ -205,8 +205,6 @@ piapi_agent_thread( void *cntx )
 			char buf[ 256 ];
 			ssize_t rc = read( fd, buf, sizeof(buf)-1 );
 			if( rc <= 0 ) {
-				if( piapi_agent_debug )
-					printf( "%d: closed connection rc=%zd\n", fd, rc );
 				FD_CLR( fd, &fds );
 				continue;
 			}
@@ -220,9 +218,6 @@ piapi_agent_thread( void *cntx )
 					break;
 				buf[--rc] = '\0';
 			}
-
-			if( piapi_agent_debug )
-				printf( "%d: read %zd bytes: '%s'\n", fd, rc, buf);
 
 			PIAPI_CNTX(cntx)->cfd = fd;
 			piapi_agent_parse( buf, rc, cntx );

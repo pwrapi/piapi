@@ -128,20 +128,8 @@ piapi_proxy_thread( void *cntx )
 
 	PIAPI_CNTX(cntx)->worker_run = 1;
 	while( PIAPI_CNTX(cntx)->worker_run ) {
-		if( piapi_proxy_debug )
-			printf( "%d: attempting read\n", PIAPI_CNTX(cntx)->fd);
-
 		rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
-		if( rc <= 0 ) {
-			if( piapi_proxy_debug )
-				printf( "%d: closed connection rc=%zd\n", PIAPI_CNTX(cntx)->fd, rc );
-			continue;
-		}
-
-		if( piapi_proxy_debug )
-			printf( "%d: checking read length\n", PIAPI_CNTX(cntx)->fd);
-
-		if( rc == 0 )
+		if( rc <= 0 )
 			continue;
 
 		buf[rc] = '\0';
@@ -150,9 +138,6 @@ piapi_proxy_thread( void *cntx )
 				break;
 			buf[--rc] = '\0';
 		}
-
-		if( piapi_proxy_debug )
-			printf( "%d: read %zd bytes: '%s'\n", PIAPI_CNTX(cntx)->fd, rc, buf);
 
 		if( PIAPI_CNTX(cntx)->callback ) {
 			piapi_proxy_parse( buf, rc, &sample );
@@ -245,14 +230,15 @@ piapi_proxy_counter( void *cntx )
 	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf("Error while attempting to request counter\n");
+		printf( "Error while attempting to request counter\n" );
 		return -1;
 	}
 
 	rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
-
-	if( piapi_proxy_debug )
-		printf( "%d: checking read length\n", PIAPI_CNTX(cntx)->fd);
+	if( rc < 0 ) {
+		printf( "Error during socket read\n" );
+		return -1;
+	}
 
 	buf[rc] = '\0';
 	while( rc > 0 ) {
@@ -260,9 +246,6 @@ piapi_proxy_counter( void *cntx )
 			break;
 		buf[--rc] = '\0';
 	}
-
-	if( piapi_proxy_debug )
-		printf( "%d: read %zd bytes: '%s'\n", PIAPI_CNTX(cntx)->fd, rc, buf);
 
 	if( PIAPI_CNTX(cntx)->callback ) {
 		piapi_proxy_parse( buf, rc, &sample );
