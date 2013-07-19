@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static int piapi_debug = 0;
+static int piapi_debug = 1;
 
 int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )

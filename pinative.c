@@ -10,7 +10,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifndef PIAPI_DEBUG
 static int piapi_native_debug = 0;
+#else
+static int piapi_native_debug = 1;
+#endif
 
 static unsigned int frequency = SAMPLE_FREQ;
 static piapi_counters_t counters;
@@ -126,8 +130,8 @@ piapi_native_thread( void *cntx )
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
 
-	PIAPI_CNTX(cntx)->worker_run = 1;
-	while( PIAPI_CNTX(cntx)->worker_run &&
+	PIAPI_CNTX(cntx)->sample_run = 1;
+	while( PIAPI_CNTX(cntx)->sample_run &&
 		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
 		if( PIAPI_CNTX(cntx)->callback ) {
@@ -164,6 +168,7 @@ piapi_native_destroy( void *cntx )
        		printf( "Native counters shutting down\n" );
 
 	counters.samplers_run = 0;
+	pthread_join( counters.samplers, NULL );
 	pidev_close();
 
 	if( piapi_native_debug )
@@ -178,7 +183,7 @@ piapi_native_collect( void *cntx )
 	if( piapi_native_debug )
        		printf( "Starting native collection\n" );
 
-	pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+	pthread_create(&(PIAPI_CNTX(cntx)->sample), 0x0, (void *)&piapi_native_thread, cntx);
 	return 0;
 }
 

@@ -45,6 +45,8 @@ struct piapi_context {
 	piapi_callback_t callback;
 	pthread_t worker;
 	int worker_run;
+	pthread_t sample;
+	int sample_run;
 };
 
 #define PIAPI_CNTX(X) ((struct piapi_context *)(X))

@@ -10,7 +10,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifndef PIAPI_DEBUG
 static int piapi_agent_debug = 0;
+#else
+static int piapi_agent_debug = 1;
+#endif
 
 static int 
 piapi_agent_parse( char *buf, unsigned int len, void *cntx )
@@ -94,10 +98,17 @@ piapi_agent_callback( piapi_sample_t *sample )
 	if( piapi_agent_debug )
 		printf( "Sending sample (%d) %s\n", len, buf );
 
-	if( sample->cntx )
-		writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len );
-	else
+	if( sample->cntx ) {
+		if( writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len ) < 0 ) {
+			PIAPI_CNTX(sample->cntx)->sample_run = 0;
+			pthread_join( PIAPI_CNTX(sample->cntx)->sample, 0x0 );
+			printf( "Connection closed" );
+			return;
+		}
+	} else {
 		printf( "Missing sample context\n" );
+		return;
+	}
 }
 
 static int
@@ -224,7 +235,6 @@ piapi_agent_thread( void *cntx )
 				piapi_native_clear( cntx );
 			}
 		}
-
 	}
 }
 
@@ -255,6 +265,7 @@ int
 piapi_agent_destroy( void *cntx )
 {
 	PIAPI_CNTX(cntx)->worker_run = 0;
+	pthread_join( PIAPI_CNTX(cntx)->worker, NULL );
 	close( PIAPI_CNTX(cntx)->fd );
 
 	piapi_native_destroy( cntx );

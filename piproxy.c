@@ -9,7 +9,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifndef PIAPI_DEBUG
 static int piapi_proxy_debug = 0;
+#else
+static int piapi_proxy_debug = 1;
+#endif
 
 static int 
 piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
@@ -215,7 +219,10 @@ piapi_proxy_collect( void *cntx )
 	len = sprintf( buf, "%s:%u:%u:%u", PIAPI_CNTX(cntx)->command,
 		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->samples, PIAPI_CNTX(cntx)->frequency );
 
-	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf("Error while attempting to initiate collection\n");
+		return -1;
+	}
 
 	if( piapi_proxy_debug )
 		printf( "Successfully started collect\n");
@@ -237,7 +244,11 @@ piapi_proxy_counter( void *cntx )
 	strcpy( PIAPI_CNTX(cntx)->command, "counter" );
 	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
-	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf("Error while attempting to request counter\n");
+		return -1;
+	}
+
 	rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
 
 	if( piapi_proxy_debug )
@@ -276,7 +287,10 @@ piapi_proxy_clear( void *cntx )
 	strcpy( PIAPI_CNTX(cntx)->command, "clear" );
 	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
-	writen( PIAPI_CNTX(cntx)->fd, buf, len );
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf("Error while attempting to request counter\n");
+		return -1;
+	}
 
 	if( piapi_proxy_debug )
 		printf( "Successfully cleared counter\n");
@@ -302,6 +316,7 @@ int
 piapi_proxy_destroy( void *cntx )
 {
 	PIAPI_CNTX(cntx)->worker_run = 0;
+	pthread_cancel( PIAPI_CNTX(cntx)->worker ); /* Can't join, could be on blocking read */
 	close( PIAPI_CNTX(cntx)->fd );
 
 	return 0;
