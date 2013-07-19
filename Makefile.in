@@ -1,13 +1,27 @@
-#CROSS_COMPILE=arm-linux-gnueabihf-
 PREFIX = @prefix@
-DEBUG = "no"
+DBG ?= n
+LVL ?= 1
+XC ?= n
+
+ifeq ($(XC),y)
+CROSS_COMPILE=arm-linux-gnueabihf-
+endif
 
 CC = $(CROSS_COMPILE)gcc
 AR = $(CROSS_COMPILE)ar
 CFLAGS = -Wall -O0 -pthread
 
-ifeq ($(DEBUG),"yes")
-CFLAGS += -g -DPIAPI_DEBUG
+ifeq ($(DBG),y)
+CFLAGS += -g
+ifeq ($(LVL),0)
+CFLAGS += -DPIAPI_DEBUG
+endif
+ifeq ($(LVL),1)
+CFLAGS += -DPIAPI_PROXY_DEBUG -DPIAPI_AGENT_DEBUG
+endif
+ifeq ($(LVL),2)
+CFLAGS += -DPIAPI_PROXY_DEBUG -DPIAPI_AGENT_DEBUG -DPIAPI_NATIVE_DEBUG
+endif
 endif
 
 TARGET = getRawPower

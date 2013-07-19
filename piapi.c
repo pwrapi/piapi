@@ -13,7 +13,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifndef PIAPI_DEBUG
+static int piapi_debug = 0;
+#else
 static int piapi_debug = 1;
+#endif
 
 int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )

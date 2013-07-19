@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifndef PIAPI_DEBUG
+#ifndef PIAPI_PROXY_DEBUG
 static int piapi_proxy_debug = 0;
 #else
 static int piapi_proxy_debug = 1;

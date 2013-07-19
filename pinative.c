@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifndef PIAPI_DEBUG
+#ifndef PIAPI_NATIVE_DEBUG
 static int piapi_native_debug = 0;
 #else
 static int piapi_native_debug = 1;
@@ -167,8 +167,12 @@ piapi_native_destroy( void *cntx )
 	if( piapi_native_debug )
        		printf( "Native counters shutting down\n" );
 
+	PIAPI_CNTX(cntx)->worker_run = 0;
+	pthread_join( PIAPI_CNTX(cntx)->worker, NULL);
+
 	counters.samplers_run = 0;
 	pthread_join( counters.samplers, NULL );
+
 	pidev_close();
 
 	if( piapi_native_debug )
