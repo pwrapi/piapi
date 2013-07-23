@@ -40,15 +40,15 @@ int piapi_native_collect( void *cntx );
  *  
  *  Query counter on a local native sensor port, reporting sample over the callback function and passed parameter
  */
-int piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample );
+int piapi_native_counter( void *cntx );
 
 /*! \fn int piapi_native_clear( void *cntx, piapi_port_t port )
- *  \brief Clear counter on a local native port
+ *  \brief reset counter on a local native port
  *  \param cntx handle to context state
  *  \return 0 on success, negative on failure
  *  
- *  Clear counter on a local native sensor port reseting all values to zero
+ *  Reset counter on a local native sensor port reseting all values to zero
  */
-int piapi_native_clear( void *cntx );
+int piapi_native_reset( void *cntx );
 
 #endif

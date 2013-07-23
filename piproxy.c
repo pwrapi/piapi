@@ -259,15 +259,15 @@ piapi_proxy_counter( void *cntx )
 }
 
 int
-piapi_proxy_clear( void *cntx )
+piapi_proxy_reset( void *cntx )
 {
 	char buf[ 256 ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Requesting agent to clear counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+		printf( "Requesting agent to reset counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
 
-	strcpy( PIAPI_CNTX(cntx)->command, "clear" );
+	strcpy( PIAPI_CNTX(cntx)->command, "reset" );
 	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
@@ -276,7 +276,7 @@ piapi_proxy_clear( void *cntx )
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully cleared counter\n");
+		printf( "Successfully reset counter\n");
 
 	return 0;
 }

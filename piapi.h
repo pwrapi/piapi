@@ -44,21 +44,20 @@ int piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned
  *  \brief Query counter on a port
  *  \param cntx handle to context state
  *  \param port sensor port to query counter on
- *  \param sample current counter sample values
  *  \return 0 on success, negative on failure
  *  
- *  Query counter on a sensor port, reporting sample over the callback function and passed parameter
+ *  Query counter on a sensor port, reporting sample over the callback function
  */
-int piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample );
+int piapi_counter( void *cntx, piapi_port_t port );
 
 /*! \fn int piapi_clear( void *cntx, piapi_port_t port )
- *  \brief Clear counter on a port
+ *  \brief Reset counter on a port
  *  \param cntx handle to context state
  *  \param port sensor port to query counter on
  *  \return 0 on success, negative on failure
  *  
- *  Clear counter on a sensor port reseting all values to zero
+ *  Reset counter on a sensor port reseting all values to zero
  */
-int piapi_clear( void *cntx, piapi_port_t port );
+int piapi_reset( void *cntx, piapi_port_t port );
 
 #endif

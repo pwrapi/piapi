@@ -63,7 +63,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 		} 
 
 		return 0;
-	} else if( !strcmp( token, "clear" ) ) {
+	} else if( !strcmp( token, "reset" ) ) {
 		strcpy( PIAPI_CNTX(cntx)->command, token );
 
 		if( (token = strtok( NULL, ":" )) == NULL)
@@ -154,10 +154,7 @@ piapi_agent_listen( void *cntx )
 static void
 piapi_agent_counter( void *cntx )
 {
-	piapi_sample_t sample;
-
-	piapi_native_counter( cntx, PIAPI_CNTX(cntx)->port, &sample );
-	piapi_agent_callback( &sample );
+	piapi_native_counter( cntx );
 }
 
 static void
@@ -226,8 +223,8 @@ piapi_agent_thread( void *cntx )
 				piapi_native_collect( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
 				piapi_agent_counter( cntx );
-			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "clear" ) ) {
-				piapi_native_clear( cntx );
+			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
+				piapi_native_reset( cntx );
 			}
 		}
 	}

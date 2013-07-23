@@ -40,7 +40,6 @@ piapi_callback( piapi_sample_t *sample )
 
 int main(int argc, char *argv[])
 {
-	piapi_sample_t sample;
 	unsigned int port;
 	void *cntx;
 
@@ -56,11 +55,10 @@ int main(int argc, char *argv[])
 		while( piapi_sampling );
 	}
 
-	piapi_clear( cntx, PIAPI_PORT_CPU );
+	piapi_reset( cntx, PIAPI_PORT_CPU );
 	sleep( 2 );
 
-	bzero( &sample, sizeof( piapi_sample_t ) );
-	piapi_counter( cntx, PIAPI_PORT_CPU, &sample);
+	piapi_counter( cntx, PIAPI_PORT_CPU );
 
 	piapi_destroy( &cntx );
 

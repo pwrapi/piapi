@@ -192,20 +192,21 @@ piapi_native_collect( void *cntx )
 }
 
 int
-piapi_native_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
+piapi_native_counter( void *cntx )
 {
+	piapi_port_t port = PIAPI_CNTX(cntx)->port;
 	unsigned int i = counters.sampler[port].number%SAMPLE_RING_SIZE;
-	*sample = counters.sampler[port].sample[i];
-	sample->cntx = cntx;
+	piapi_sample_t sample = counters.sampler[port].sample[i];
+	sample.cntx = cntx;
 
 	if( PIAPI_CNTX(cntx)->callback )
-		PIAPI_CNTX(cntx)->callback( sample );
+		PIAPI_CNTX(cntx)->callback( &sample );
 
 	return 0;
 }
 
 int
-piapi_native_clear( void *cntx )
+piapi_native_reset( void *cntx )
 {
 	bzero( &(counters.sampler[PIAPI_CNTX(cntx)->port]), sizeof( piapi_counter_t ) );
 

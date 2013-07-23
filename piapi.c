@@ -22,9 +22,10 @@ static int piapi_debug = 1;
 int
 piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )
 {
-	int opt;
+	int opt, retval = -1;
 	char *token;
 	unsigned int saddr;
+	unsigned int counter = 0, reset = 0;
 
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
@@ -38,7 +39,7 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 	PIAPI_CNTX(*cntx)->samples = 1;
 	PIAPI_CNTX(*cntx)->frequency = 100;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:cr" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -68,8 +69,15 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 			case 'f':
 				PIAPI_CNTX(*cntx)->frequency = atoi(optarg);
 				break;
+			case 'c':
+				counter = 1;
+				break;
+			case 'r':
+				reset = 1;
+				break;
 			case '?':
-				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport] [-s samples] [-f frequency]\n", argv[0] );
+				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
+					"\t[-s samples] [-f frequency] [-c]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -78,20 +86,30 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			return piapi_native_init( *cntx );
+			retval = piapi_native_init( *cntx );
+			break;
 
 		case PIAPI_MODE_PROXY:
-			return piapi_proxy_init( *cntx );
+			retval = piapi_proxy_init( *cntx );
+			break;
 
 		case PIAPI_MODE_AGENT:
-			return piapi_agent_init( *cntx );
+			retval = piapi_agent_init( *cntx );
+			break;
 
 		default:
 			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
-	return -1;
+	if( retval >= 0 ) {
+		if ( counter )
+			retval = piapi_counter( *cntx, PIAPI_CNTX( *cntx )->port );
+		if ( reset )
+			retval = piapi_reset( *cntx, PIAPI_CNTX( *cntx )->port );
+	}
+
+	return retval;
 }
 
 int
@@ -149,7 +167,7 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 }
 
 int
-piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
+piapi_counter( void *cntx, piapi_port_t port )
 {
 	PIAPI_CNTX(cntx)->port = port;
 
@@ -159,7 +177,7 @@ piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 			if( piapi_debug )
 				printf("Retrieving counter for port %d\n", port);
 
-			piapi_native_counter( cntx, port, sample );
+			piapi_native_counter( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
@@ -178,7 +196,7 @@ piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
 }
 
 int
-piapi_clear( void *cntx, piapi_port_t port )
+piapi_reset( void *cntx, piapi_port_t port )
 {
 	PIAPI_CNTX(cntx)->port = port;
 
@@ -186,16 +204,16 @@ piapi_clear( void *cntx, piapi_port_t port )
 		case PIAPI_MODE_NATIVE:
 		case PIAPI_MODE_AGENT:
 			if( piapi_debug )
-				printf("Clearing counter for port %d\n", port);
+				printf("Reseting counter for port %d\n", port);
 
-			piapi_native_clear( cntx );
+			piapi_native_reset( cntx );
 			return 0;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
-				printf("Clearing proxy counter for port %d\n", port);
+				printf("Reseting proxy counter for port %d\n", port);
 
-			piapi_proxy_clear( cntx );
+			piapi_proxy_reset( cntx );
 			return 0;
 
 		default:
