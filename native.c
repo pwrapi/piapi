@@ -1,10 +1,18 @@
 #include "piapi.h"
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 int piapi_sampling;
+
+static void signal_handler(int sig)
+{
+	if( sig == SIGINT )
+		piapi_sampling = 0;		
+}
 
 void
 piapi_callback( piapi_sample_t *sample )
@@ -39,13 +47,41 @@ piapi_callback( piapi_sample_t *sample )
 
 int main(int argc, char *argv[])
 {
+	unsigned int port = PIAPI_PORT_CPU,
+		samples = 0,
+		frequency = 0;
+	int opt;
 	void *cntx;
 
-	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, argc, argv ); 
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:c" )) != -1 ) {
+		switch( opt ) {
+			case 't':
+				port = atoi(optarg);
+				break;
+			case 's':
+				samples = atoi(optarg);
+				break;
+			case 'f':
+				frequency = atoi(optarg);
+				break;
+			case '?':
+				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency]\n", argv[0] );
+				exit( -1 );
+			default:
+				abort( );
+		} 
+	}
 
-	piapi_sampling = 1;
-	piapi_collect( cntx, 0, 0, 0 );
-	while( piapi_sampling );
+	signal( SIGINT, signal_handler );
+	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0 ); 
+
+	if( samples ) {
+		piapi_sampling = 1;
+		piapi_collect( cntx, port, samples, frequency );
+		while( piapi_sampling );
+	}
+
+	piapi_destroy( &cntx );
 
 	return 0;
 }

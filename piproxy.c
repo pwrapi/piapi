@@ -218,10 +218,8 @@ piapi_proxy_collect( void *cntx )
 int
 piapi_proxy_counter( void *cntx )
 {
-	piapi_sample_t sample;
 	char buf[ 256 ] = "";
 	unsigned int len;
-	ssize_t rc;
 
 	if( piapi_proxy_debug )
 		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
@@ -232,24 +230,6 @@ piapi_proxy_counter( void *cntx )
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
 		printf( "Error while attempting to request counter\n" );
 		return -1;
-	}
-
-	rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
-	if( rc < 0 ) {
-		printf( "Error during socket read\n" );
-		return -1;
-	}
-
-	buf[rc] = '\0';
-	while( rc > 0 ) {
-		if( !isspace( buf[rc-1] ) )
-			break;
-		buf[--rc] = '\0';
-	}
-
-	if( PIAPI_CNTX(cntx)->callback ) {
-		piapi_proxy_parse( buf, rc, &sample );
-		PIAPI_CNTX(cntx)->callback( &sample );
 	}
 
 	if( piapi_proxy_debug )

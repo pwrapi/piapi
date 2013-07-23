@@ -8,15 +8,15 @@
  *  \param cntx handle to context state
  *  \param mode configuration type (native, proxy, agent)
  *  \param callback results callback function
- *  \param argc number of arguments in vector
- *  \param argv argument vector for passed parameters
+ *  \param saddr socket ip address
+ *  \param sport socket port
  *  \return 0 on success, negative on failure
  *
  *  Initialization of the PIAPI accomplishes the following:
  *  - sets mode and callback for the context
  *  - calls the appropriate initializer for the configuration
  */
-int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv );
+int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, unsigned int saddr, unsigned short sport );
 
 /*! \fn int piapi_destroy( void *cntx )
  *  \brief Destroy PIAPI

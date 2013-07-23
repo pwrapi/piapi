@@ -20,96 +20,36 @@ static int piapi_debug = 1;
 #endif
 
 int
-piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, char argc, char **argv )
+piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, unsigned int saddr, unsigned short sport )
 {
-	int opt, retval = -1;
-	char *token;
-	unsigned int saddr;
-	unsigned int counter = 0, reset = 0;
-
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
 
 	PIAPI_CNTX(*cntx)->mode = mode;
 	PIAPI_CNTX(*cntx)->callback = callback;
 
-	PIAPI_CNTX(*cntx)->sa_addr = PIAPI_AGNT_SADDR;
-	PIAPI_CNTX(*cntx)->sa_port = PIAPI_AGNT_PORT;
-	PIAPI_CNTX(*cntx)->port = PIAPI_PORT_CPU;
-	PIAPI_CNTX(*cntx)->samples = 1;
-	PIAPI_CNTX(*cntx)->frequency = 100;
+	PIAPI_CNTX(*cntx)->sa_addr = (saddr ? saddr : PIAPI_AGNT_SADDR);
+	if( piapi_debug )
+		printf( "Using saddr of 0x%08x\n", PIAPI_CNTX(*cntx)->sa_addr );
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:cr" )) != -1 ) {
-		switch( opt ) {
-			case 'a':
-				token = strtok( optarg, "." );
-				saddr = atoi(token) << 24;
-				token = strtok( NULL, "." );
-				saddr |= ( atoi(token) << 16 );
-				token = strtok( NULL, "." );
-				saddr |= ( atoi(token) << 8 );
-				token = strtok( NULL, "." );
-				saddr |= atoi(token);
-
-				PIAPI_CNTX(*cntx)->sa_addr = saddr;
-				if( piapi_debug )
-					printf( "Using saddr of 0x%08x\n", PIAPI_CNTX(*cntx)->sa_addr );
-				break;
-			case 'p':
-				PIAPI_CNTX(*cntx)->sa_port = atoi(optarg);
-				if( piapi_debug )
-					printf( "Using port of %u\n", PIAPI_CNTX(*cntx)->sa_port );
-				break;
-			case 't':
-				PIAPI_CNTX(*cntx)->port = atoi(optarg);
-				break;
-			case 's':
-				PIAPI_CNTX(*cntx)->samples = atoi(optarg);
-				break;
-			case 'f':
-				PIAPI_CNTX(*cntx)->frequency = atoi(optarg);
-				break;
-			case 'c':
-				counter = 1;
-				break;
-			case 'r':
-				reset = 1;
-				break;
-			case '?':
-				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
-					"\t[-s samples] [-f frequency] [-c]\n", argv[0] );
-				exit( -1 );
-			default:
-				abort( );
-		} 
-	}
+	PIAPI_CNTX(*cntx)->sa_port = (sport ? sport : PIAPI_AGNT_PORT);
+	if( piapi_debug )
+		printf( "Using port of %u\n", PIAPI_CNTX(*cntx)->sa_port );
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
-			retval = piapi_native_init( *cntx );
-			break;
+			return piapi_native_init( *cntx );
 
 		case PIAPI_MODE_PROXY:
-			retval = piapi_proxy_init( *cntx );
-			break;
+			return piapi_proxy_init( *cntx );
 
 		case PIAPI_MODE_AGENT:
-			retval = piapi_agent_init( *cntx );
-			break;
+			return piapi_agent_init( *cntx );
 
 		default:
 			printf( "Warning: Non-supported operation\n" );
-			break;
+			return -1;
 	}
-
-	if( retval >= 0 ) {
-		if ( counter )
-			retval = piapi_counter( *cntx, PIAPI_CNTX( *cntx )->port );
-		if ( reset )
-			retval = piapi_reset( *cntx, PIAPI_CNTX( *cntx )->port );
-	}
-
-	return retval;
 }
 
 int
@@ -127,7 +67,7 @@ piapi_destroy( void **cntx )
 			break;
 
 		case PIAPI_MODE_AGENT:
-			retval = piapi_native_destroy( *cntx );
+			retval = piapi_agent_destroy( *cntx );
 			break;
 
 		default:

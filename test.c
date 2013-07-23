@@ -1,9 +1,10 @@
 #include "piapi.h"
 
-#include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <signal.h>
 
 int piapi_sampling;
 
@@ -40,10 +41,37 @@ piapi_callback( piapi_sample_t *sample )
 
 int main(int argc, char *argv[])
 {
-	unsigned int port;
+	unsigned int saddr = 0,
+		sport = 0,
+		port;
+	int opt;
+	char *token;
 	void *cntx;
 
-	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, argc, argv ); 
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:c" )) != -1 ) {
+		switch( opt ) {
+			case 'a':
+				token = strtok( optarg, "." );
+				saddr = atoi(token) << 24;
+				token = strtok( NULL, "." );
+				saddr |= ( atoi(token) << 16 );
+				token = strtok( NULL, "." );
+				saddr |= ( atoi(token) << 8 );
+				token = strtok( NULL, "." );
+				saddr |= atoi(token);
+				break;
+			case 'p':
+				sport = atoi(optarg);
+				break;
+			case '?':
+				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
+				exit( -1 );
+			default:
+				abort( );
+		} 
+	}
+
+	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
