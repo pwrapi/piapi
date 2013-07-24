@@ -90,8 +90,17 @@ int main(int argc, char *argv[])
 		while( piapi_sampling );
 	}
 
-	if( counter ) piapi_counter( cntx, port );
-	if( reset ) piapi_reset( cntx, port );	
+	if( counter ) {
+		piapi_sampling = 1;
+		piapi_counter( cntx, port );
+		while( piapi_sampling );
+	}
+
+	if( reset ) {
+		piapi_sampling = 1;
+		piapi_reset( cntx, port );	
+		while( piapi_sampling );
+	}
 
 	piapi_destroy( &cntx );
 

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	int opt;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:c" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "t:s:f:" )) != -1 ) {
 		switch( opt ) {
 			case 't':
 				port = atoi(optarg);
