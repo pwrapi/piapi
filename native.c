@@ -12,6 +12,8 @@ static void signal_handler(int sig)
 {
 	if( sig == SIGINT )
 		piapi_sampling = 0;		
+	sleep(2);
+	exit(0);
 }
 
 void
