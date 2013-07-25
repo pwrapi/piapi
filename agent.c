@@ -6,9 +6,10 @@
 #include <unistd.h>
 #include <signal.h>
 
-int piapi_sampling;
+static int piapi_sampling = 0;
 
-static void signal_handler(int sig)
+static void
+signal_handler(int sig)
 {
 	if( sig == SIGINT )
 		piapi_sampling = 0;		
@@ -16,7 +17,8 @@ static void signal_handler(int sig)
 	exit(0);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	unsigned int saddr = 0,
 		sport = 0;
