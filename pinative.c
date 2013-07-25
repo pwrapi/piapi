@@ -195,12 +195,20 @@ int
 piapi_native_counter( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+	unsigned int begin = port, end = port;
 	unsigned int i = counters.sampler[port].number%SAMPLE_RING_SIZE;
 	piapi_sample_t sample = counters.sampler[port].sample[i];
 	sample.cntx = cntx;
 
-	if( PIAPI_CNTX(cntx)->callback )
-		PIAPI_CNTX(cntx)->callback( &sample );
+	if( PIAPI_CNTX(cntx)->callback ) {
+		if( port == PIAPI_PORT_ALL ) {
+			begin = PIAPI_PORT_MIN;
+			end = PIAPI_PORT_MAX;
+		}
+
+		for( i = begin; i < end; i++ )
+			PIAPI_CNTX(cntx)->callback( &sample );
+	}
 
 	return 0;
 }
