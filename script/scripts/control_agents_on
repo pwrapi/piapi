@@ -9,7 +9,7 @@ my $fin = shift;
 my $action = shift or die "Must provide action for agent (start|stop)\n";
 my $port;
 $port = shift or do {
-    !defined($port) and $port = 8;
+    !defined($port) and $port = 20202;
 };
 my $sensorport;
 $sensorport = shift or do {
