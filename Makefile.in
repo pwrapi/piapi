@@ -2,6 +2,7 @@ PREFIX = @prefix@
 DBG ?= n
 LVL ?= 1
 XC ?= n
+SPI ?= n
 
 ifeq ($(XC),y)
 CROSS_COMPILE=arm-linux-gnueabihf-
@@ -24,6 +25,10 @@ CFLAGS += -DPIAPI_PROXY_DEBUG -DPIAPI_AGENT_DEBUG -DPIAPI_NATIVE_DEBUG
 endif
 endif
 
+ifeq ($(SPI),y)
+CFLAGS += -DPIAPI_SPI
+endif
+
 TARGET = getRawPower
 LIBNAME = piapi
 
@@ -34,12 +39,15 @@ OBJS = 	piapi.o     \
 	piagent.o   \
 	pinative.o  \
 	piutil.o    \
-	pidev.o     \
 	proxy.o     \
 	agent.o     \
 	native.o    \
 	test.o      \
 	$(TARGET).o
+
+ifeq ($(SPI),y)
+OBJS +=	pidev.o
+endif
 
 all: lib $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)

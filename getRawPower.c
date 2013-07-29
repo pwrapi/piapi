@@ -51,8 +51,10 @@ int main(int argc, char *argv[])
         if((portNumber < 0) || (portNumber > MAX_PORTNUM)) 
             { printUsage(argv[0]); }
 
+#ifdef PIAPI_SPI
         // Collect raw readings and calculate power
         pidev_read(portNumber, &sample);
+#endif
 
         // What time is it now?
         if( timeCollect ) {
@@ -74,7 +76,9 @@ int main(int argc, char *argv[])
 
     }  // end for() loop 
 
+#ifdef PIAPI_SPI
     pidev_close();
+#endif
 
     return 0;
 }

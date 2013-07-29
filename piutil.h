@@ -5,6 +5,7 @@
 
 #include <pthread.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <stdio.h>
 
 /* The well-known powerinsight agent saddr */

@@ -23,7 +23,10 @@ static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 {
     reading_t raw;
+
+#ifdef PIAPI_SPI
     pidev_read(port, &raw);
+#endif
 
     reading->volts = raw.milivolts/1000.0;
     reading->amps = raw.miliamps/1000.0;
@@ -173,7 +176,9 @@ piapi_native_destroy( void *cntx )
 	counters.samplers_run = 0;
 	pthread_join( counters.samplers, NULL );
 
+#ifdef PIAPI_SPI
 	pidev_close();
+#endif
 
 	if( piapi_native_debug )
        		printf( "Native communication closed\n" );
