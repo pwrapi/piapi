@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
 	while( piapi_sampling);
 
-	for( port = PIAPI_PORT_MIN; port < PIAPI_PORT_MAX; port++ ) {
+	for( port = PIAPI_PORT_MIN; port <= PIAPI_PORT_MAX; port++ ) {
 		piapi_sampling = 1;
 		piapi_collect( cntx, port, 100, 100 );
 		while( piapi_sampling );

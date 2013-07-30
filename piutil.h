@@ -26,7 +26,7 @@ typedef struct piapi_counter {
 } piapi_counter_t;
 
 typedef struct piapi_counters {
-	piapi_counter_t sampler[PIAPI_PORT_MAX];
+	piapi_counter_t sampler[PIAPI_PORT_ALL];
 
 	pthread_t samplers;
 	int samplers_run;
