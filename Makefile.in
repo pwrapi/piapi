@@ -5,7 +5,8 @@ XC ?= n
 SPI ?= n
 
 ifeq ($(XC),y)
-CROSS_COMPILE=arm-linux-gnueabihf-
+CROSS_COMPILE = arm-linux-gnueabihf-
+SPI = y
 endif
 
 CC = $(CROSS_COMPILE)gcc
