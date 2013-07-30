@@ -91,7 +91,7 @@ piapi_native_counters( void *arg )
 
 	unsigned int i;
 
-	bzero( &counters.sampler, sizeof( piapi_counter_t ) * PIAPI_PORT_MAX );
+	bzero( &counters.sampler, sizeof( piapi_counter_t ) * PIAPI_PORT_ALL );
 
 	if( piapi_native_debug )
 		printf( "Counter thread running\n" );
@@ -126,8 +126,8 @@ static void
 piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
-	piapi_reading_t min[PIAPI_PORT_MAX], max[PIAPI_PORT_MAX], avg[PIAPI_PORT_MAX];
-	struct timeval t[PIAPI_PORT_MAX];
+	piapi_reading_t min[PIAPI_PORT_ALL], max[PIAPI_PORT_ALL], avg[PIAPI_PORT_ALL];
+	struct timeval t[PIAPI_PORT_ALL];
 
 	sample.cntx = cntx;
 	sample.number = 0;
