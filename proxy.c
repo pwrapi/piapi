@@ -22,9 +22,9 @@ void
 piapi_callback( piapi_sample_t *sample )
 {
 	if( !verbose ) {
-		printf( "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f\n",
+		printf( "%u:%u:%lu:%lu:%u:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f\n",
 			sample->number, sample->total, sample->time_sec, sample->time_usec,
-			sample->raw.volts, sample->raw.amps, sample->raw.watts,
+			sample->port, sample->raw.volts, sample->raw.amps, sample->raw.watts,
 			sample->avg.volts, sample->avg.amps, sample->avg.watts,
 			sample->min.volts, sample->min.amps, sample->min.watts,
 			sample->max.volts, sample->max.amps, sample->max.watts,
@@ -33,6 +33,7 @@ piapi_callback( piapi_sample_t *sample )
 		printf( "PIAPI:\n");
 		printf( "\tsample - %u of %u\n", sample->number, sample->total );
 		printf( "\ttime   - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+		printf( "\tport   - %u\n", sample->port );
 		printf( "\tvolts  - %f\n", sample->raw.volts );
 		printf( "\tamps   - %f\n", sample->raw.amps );
 		printf( "\twatts  - %f\n", sample->raw.watts );

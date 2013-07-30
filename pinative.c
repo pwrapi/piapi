@@ -126,8 +126,8 @@ static void
 piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
-	piapi_reading_t min, max, avg;
-	struct timeval t = { 0, 0 };
+	piapi_reading_t min[PIAPI_PORT_MAX], max[PIAPI_PORT_MAX], avg[PIAPI_PORT_MAX];
+	struct timeval t[PIAPI_PORT_MAX];
 
 	sample.cntx = cntx;
 	sample.number = 0;
@@ -138,13 +138,21 @@ piapi_native_thread( void *cntx )
 		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
 		if( PIAPI_CNTX(cntx)->callback ) {
-			if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
-				printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
-				return;
+			unsigned int begin = PIAPI_CNTX(cntx)->port, end = PIAPI_CNTX(cntx)->port;
+			if( PIAPI_CNTX(cntx)->port == PIAPI_PORT_ALL ) {
+				begin = PIAPI_PORT_MIN;
+				end = PIAPI_PORT_MAX;
 			}
+			for( sample.port = begin; sample.port <= end; sample.port++ ) {
+				if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
+					printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
+					return;
+				}
 
-			piapi_dev_stats( &sample, &avg, &min, &max, &t );
-			PIAPI_CNTX(cntx)->callback( &sample );
+				piapi_dev_stats( &sample, &(avg[sample.port]), &(min[sample.port]),
+					&(max[sample.port]), &(t[sample.port]) );
+				PIAPI_CNTX(cntx)->callback( &sample );
+			}
 		}
 		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
 	}

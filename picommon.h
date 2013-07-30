@@ -34,6 +34,7 @@ typedef struct piapi_sample {
         unsigned int total;
         unsigned long time_sec;
         unsigned long time_usec;
+        unsigned int port;
 	piapi_reading_t raw;
         piapi_reading_t min;
         piapi_reading_t max;

@@ -41,6 +41,10 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 
 	if( (token = strtok( NULL, ":" )) == NULL)
 		return -1;
+	sample->port = atoi(token);
+
+	if( (token = strtok( NULL, ":" )) == NULL)
+		return -1;
 	sample->raw.volts = atof(token);
 
 	if( (token = strtok( NULL, ":" )) == NULL)
@@ -98,6 +102,7 @@ piapi_proxy_parse( char *buf, unsigned int len, piapi_sample_t *sample )
 	if( piapi_proxy_debug ) {
 		printf( "\tsample     - %u of %u\n", sample->number, sample->total );
 		printf( "\ttime       - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+		printf( "\tport       - %u\n", sample->port );
 		printf( "\traw volts  - %f\n", sample->raw.volts );
 		printf( "\traw amps   - %f\n", sample->raw.amps );
 		printf( "\traw watts  - %f\n", sample->raw.watts );

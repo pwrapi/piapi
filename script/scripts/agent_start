@@ -1,5 +1,5 @@
 #!/bin/bash
 
 echo "port=$1 rport=$2 sample=$3" 
-cd /home/power/script
+cd /home/power/script/scripts
 nohup ./agent.pl -h 10.54.0.1 -p $1 -r $2 -s $3 2>&1 > /tmp/start_agent.log & 

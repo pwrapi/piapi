@@ -87,9 +87,9 @@ piapi_agent_callback( piapi_sample_t *sample )
 	char buf[256] = "";
 	unsigned int len;
 
-	len = sprintf( buf, "%u:%u:%lu:%lu:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
+	len = sprintf( buf, "%u:%u:%lu:%lu:%u:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
 		sample->number, sample->total, sample->time_sec, sample->time_usec,
-		sample->raw.volts, sample->raw.amps, sample->raw.watts,
+		sample->port, sample->raw.volts, sample->raw.amps, sample->raw.watts,
 		sample->avg.volts, sample->avg.amps, sample->avg.watts,
 		sample->min.volts, sample->min.amps, sample->min.watts,
 		sample->max.volts, sample->max.amps, sample->max.watts,
