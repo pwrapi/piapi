@@ -13,7 +13,7 @@ signal_handler(int sig)
 {
 	if( sig == SIGINT )
 		piapi_sampling = 0;		
-	sleep(2);
+	sleep(1);
 	exit(0);
 }
 

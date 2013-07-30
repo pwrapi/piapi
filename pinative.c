@@ -98,7 +98,7 @@ piapi_native_counters( void *arg )
 
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
-		for( i = PIAPI_PORT_MIN; i < PIAPI_PORT_MAX; i++ ) {
+		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
 			unsigned int j = ++(counters.sampler[i].number)%SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].number = j;
 			counters.sampler[i].sample[j].total = j;
