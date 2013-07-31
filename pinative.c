@@ -129,6 +129,12 @@ piapi_native_thread( void *cntx )
 	piapi_reading_t min[PIAPI_PORT_ALL], max[PIAPI_PORT_ALL], avg[PIAPI_PORT_ALL];
 	struct timeval t[PIAPI_PORT_ALL];
 
+	bzero( &sample, sizeof( piapi_sample_t ) );
+	bzero( min, sizeof( piapi_reading_t ) * PIAPI_PORT_ALL );
+	bzero( max, sizeof( piapi_reading_t ) * PIAPI_PORT_ALL );
+	bzero( avg, sizeof( piapi_reading_t ) * PIAPI_PORT_ALL );
+	bzero( t, sizeof( struct timeval ) * PIAPI_PORT_ALL );
+
 	sample.cntx = cntx;
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
