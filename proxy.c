@@ -138,6 +138,7 @@ main(int argc, char *argv[])
 		while( piapi_sampling );
 	}
 
+	sleep( 1 );
 	piapi_destroy( &cntx );
 
 	return 0;
