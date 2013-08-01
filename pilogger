@@ -30,7 +30,7 @@ done
 for ((node=$lower; node<=$upper; ++node))
 do
 	echo "Collecting $samp samples from $name-pm$node to $path/$name$node.out"
-	piproxy -a $ipprefix.$node -t $port -s $samp -f $freq > $path/$name$node.out &
+	./piproxy -a $ipprefix.$node -t $port -s $samp -f $freq > $path/$name$node.out &
 done
 
 
