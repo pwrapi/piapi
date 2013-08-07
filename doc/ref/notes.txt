@@ -1,0 +1,74 @@
+isci2003
+
+- processor power measurement and estimation methodology
+- prior work used performance counters to estimate energy
+- this work on counter-based power estimation on aggressively-clock-gated super-scalar processors
+- gather live based on performance counters
+- analysis using bayesian similarity matrices (probablistic)
+- total-power using sampled multimeter data (correllated with perf counters)
+- clamp multimeter on appropriate power lines
+- simulation not good for thermal research
+- large thermal constants mandate long simulation runs
+
+
+feng2005
+
+- framework for direct automatic profiling of power consumption for non-interactive, parallel scientific applications on high-performance distributed systems
+- study of NAS parallel benchmarks on a 32-node beowulf cluster
+- study of power-performance efficiency "operating point"
+- 10 multi-meters per node connected through shunt resistor through ATX extension cables
+- non-concurrent collection (fix on one node, then rerun on another node fixed) that is time consuming and manual
+- 4 samples per second communicate through RS232 connections
+- derived and deduced power measurements for each component (CPU, memory, NIC, disk)
+- memory system power is extrapolated through experiments with 1, 2, 3, 4 memory modules
+- CPU is the only true measurement since it is isolated
+- compared with intel and ibm specs
+- requires source code modification (instrumenting)
+- the average power consumption goes down as the number of nodes increase
+- three strategies for scheduling: performance, energy, energy-performance
+- scheduler could use EDP (energy-delay product) or ED2P as in mobile computing
+- does not address how to provide the scheduler with application-specific information
+- cites work for single system mostly
+- first to aim towards developing power profiling tools for parallel apps and distributed systems at component level
+- limited scalability and sampling frequency
+
+
+laros2009
+
+- implementation of a scalable power measurement framework
+- implemented power conserving measures on LWK (Catamount)
+- scalable mechanism for fine-grained high frequency power measurements
+- Cray motherboard provide interfaces that can be exploited to measure power usage
+- tiered network using onboard embedded processor and in cabinet processor
+- per socket collection at 100 Hz with +/-2 amperes accuracy
+- beat CNL on power management during idle current draw
+- also save on heat reduction power usage since less heat is being generated on idle nodes
+- LWK will halt slave cores when idle and awaken when signaled by master core
+- monitored application power signatures (characteristic signatures)
+- increased power efficiency while reducing runtime
+- first quantitative study of OS noise using kernel-level noise injection framework in LWK
+- work shows possible to collect scalable, granular, high-frequency power on HPC platforms (bb makes it practical)
+- cites related work for resource scheduling based on energy has been done for real-time and embedded systems
+ 
+bedard2011
+
+- low-cost power monitoring devices that operate inside commodity computer systems
+- inserted between a system's power supply and motherboard
+- on six DC rails and reporting measurments at 50 Hz / 3 KHz over USB
+- fits in a standard 3.5" hard drive bay
+- using AC monitors like PowerEgg and WattsUp inadequate
+- fast variations in the DC load often do not translate to corresponding variations on the AC side of the supply
+- others don't scale to large clusters due to high equipment cost
+- powermon isolates measurements between a machine's subsystems
+- standard ATX pin interface
+- can be used in a "self-monitoring" configuration
+- clock synchonization can be managed across systems
+- reduced overhead on host system (bb solution has no overhead)
+- 12-bit sampling resolution (bb cape has 10-bit)
+- uses a 5-milliohm sense resistor (bb cape cables are passive)
+- can accomodate currents up to 10 amperes on each trace (bb cape is higher)
+- powermon temperature rise of 4C, powermon2 rise of 20C with 10 amp load (a lot of heat)
+- configurable sample rate and sensor state (like bb)
+- output 32-bit words with sensor data and timestamp (like bb)
+- total cost less than $150 each when fabricated in quantities of 5 or more
+
