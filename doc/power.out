@@ -1,0 +1,26 @@
+Is State of the Art Good Enough for Power Measurements
+(1) Abstract
+(2) Introduction
+(3) Related Work
+(4) Methods
+    (a) Instrumentation
+        (i) PowerInsight
+        (ii) Powermon2
+        (iii) Watts-Up
+        (iv) DMM
+    (b) System Level Data Collection
+        (i) PIAPI
+        (ii) Powermon2 Collection Script
+        (iii) Watss-Up Collection Script
+    (c) Experiments
+        (i) HPCC (Challenge Suite)
+        (ii) Power / Energy Measurements on All
+(5) Experimental Analysis
+    (a) Fidelity
+    (b) Accuracy
+    (c) Difficulty
+    (d) Cost
+    (e) Feasibility
+(6) Conclusions
+(7) Future Work
+(8) Acknowledgements
