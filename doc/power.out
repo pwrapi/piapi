@@ -1,7 +1,10 @@
 Is State of the Art Good Enough for Power Measurements
 (1) Abstract
 (2) Introduction
+    (a) Survey the Field
+    (b) Emphasis the need for Comparitive Study
 (3) Related Work
+    (a) Power Research Instrumentation Studies
 (4) Methods
     (a) Instrumentation
         (i) PowerInsight
@@ -12,6 +15,7 @@ Is State of the Art Good Enough for Power Measurements
         (i) PIAPI
         (ii) Powermon2 Collection Script
         (iii) Watss-Up Collection Script
+        (iv) SCPI Control and Query Script
     (c) Experiments
         (i) HPCC (Challenge Suite)
         (ii) Power / Energy Measurements on All
@@ -23,4 +27,5 @@ Is State of the Art Good Enough for Power Measurements
     (e) Feasibility
 (6) Conclusions
 (7) Future Work
+    (a) Power-Aware Computing
 (8) Acknowledgements
