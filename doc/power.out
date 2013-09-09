@@ -1,24 +1,41 @@
 Is State of the Art Good Enough for Power Measurements
 (1) Abstract
 (2) Introduction
-    (a) Survey the Field
-    (b) Emphasis the need for Comparitive Study
+    (a) Motivation
+    (b) Survey the Field
+    (c) Emphasis the need for Comparitive Study
+    (d) Contributions
+        (i) Capabilities of Power Insight (low-level features)
+        (ii) Discussion of Useful HW Extensions
 (3) Related Work
-    (a) Power Research Instrumentation Studies
+    (a) Broad Set of Work
+    (b) Power Research Instrumentation Studies
 (4) Methods
-    (a) Instrumentation
+    (a) Instrumentation (Details of Specific Work)
         (i) PowerInsight
-        (ii) Powermon2
-        (iii) Watts-Up
-        (iv) DMM
+        (ii) Powermon2 - reference paper for validation
+        (iii) Watts-Up - reference paper for validation
+        (iv) DMM / DAQ
+        (v) Table of Specs (sample rate, max load, etc)
     (b) System Level Data Collection
         (i) PIAPI
         (ii) Powermon2 Collection Script
         (iii) Watss-Up Collection Script
         (iv) SCPI Control and Query Script
     (c) Experiments
-        (i) HPCC (Challenge Suite)
-        (ii) Power / Energy Measurements on All
+        (i) Motivation
+            - Introduing Course Granularity (accuracy, scale, etc)
+        (ii) Goals
+        (iii) Methodology
+        (iv) Setup (Configuration)
+        (v) Results
+            * Macro Benchmarks
+                - HPCC (Challenge Suite)
+                - Mantevo miniApps
+                - Power / Energy Measurements on All
+            * Micro Benchmarks
+                - Demonstrate limitation of sampling frequency
+                - Demonstrate overhead on CPU
 (5) Experimental Analysis
     (a) Fidelity
     (b) Accuracy
@@ -26,6 +43,8 @@ Is State of the Art Good Enough for Power Measurements
     (d) Cost
     (e) Feasibility
 (6) Conclusions
+    (a) Impact of This Work (restate)
 (7) Future Work
-    (a) Power-Aware Computing
+    (a) Future Potential
+    (b) Power-Aware Computing
 (8) Acknowledgements
