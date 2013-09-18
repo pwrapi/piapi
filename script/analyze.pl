@@ -115,6 +115,7 @@ sub load_data {
         if (($id == 0 or $pid == $id) and
             ($nodename eq "" or $nodename eq $node)) {
             my $timestamp = ($sec+$usec/1000000); 
+            if ($lowerbound == 0) { $lowerbound = $timestamp; }
             if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
                 $raw{$node}{$port}{"A"}{$timestamp} = ($mA/1000); 
                 $raw{$node}{$port}{"V"}{$timestamp} = ($mV/1000); 
@@ -151,6 +152,7 @@ sub load_data_new {
             $max_mV, $max_mA, $max_mW, $time, $energy)  = split(':', $_);
 
         my $timestamp = ($sec+$usec/1000000); 
+        if ($lowerbound == 0) { $lowerbound = $timestamp; }
         if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
             $raw{$node}{$port}{"A"}{$timestamp} = $mA; 
             $raw{$node}{$port}{"V"}{$timestamp} = $mV; 
@@ -180,7 +182,7 @@ sub save_data {
                 open (my $data, ">", "results/" . $node . "." . $id . "_" . $port . "_" . $type . ".dat");
                 foreach my $timestamp (sort keys %{$raw{$node}{$port}{$type}}) {
                     foreach my $val ($raw{$node}{$port}{$type}{$timestamp}) {
-                        print $data $timestamp . " " . $val . "\n";
+                        print $data $timestamp-$lowerbound . " " . $val . "\n";
                     }
                 }
                 close $data;
