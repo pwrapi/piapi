@@ -22,10 +22,14 @@ my $format;
 
 Analyze->config;
 
-if (defined($format)) {
-    Analyze->load_data_new;
-} else {
+if ($format eq "") {
     Analyze->load_data;
+} else {
+    if ($format eq "pi") {
+        Analyze->load_data_pi;
+    } else {
+        Analyze->load_data_wu;
+    }
 }
 
 if (defined($dat)) {
@@ -56,7 +60,7 @@ and verbosity to off.
 =cut
 sub config {
     my %options=();
-    getopts("f:n:i:l:u:g:dpesvzx", \%options);
+    getopts("f:n:i:l:u:g:z:dpesvx", \%options);
 
     $datafile = "power.dat";
     $id = 0;
@@ -64,6 +68,7 @@ sub config {
     $gpfile = "power.gp";
     $verbose = "no";
     $screen = "no";
+    $format = "";
 
     $datafile = $options{f} if defined $options{f};
     $nodename = $options{n} if defined $options{n};
@@ -79,13 +84,13 @@ sub config {
     $dat = "yes" if defined $options{d};
     $plot = "yes" if defined $options{p};
     $energy = "yes" if defined $options{e};
-    $format = "yes" if defined $options{z};
+    $format = $options{z} if defined $options{z};
 
     if (defined $options{x}) {
         print "\n";
         print "    ./analyze.pl [-f filename]\n";
         print "                 [-i sampleid] [-n nodename]\n";
-        print "                 [-g gpfile] [-d] [-p] [-s] [-v] [-z]\n";
+        print "                 [-g gpfile] [-d] [-p] [-s] [-v] [-z format]\n";
         print "\n";
         print "    filename is the input data file (default power.dat)\n";
         print "    sampleid indicates the session (defaults to all)\n";
@@ -96,7 +101,7 @@ sub config {
         print "    creates individual detail plot files with -p (default off)\n";
         print "    graph output is to file unless -s (outputs to screen)\n";
         print "    verbose output is toggled by -v\n";
-        print "    raw data file format is toggled by -z\n";
+        print "    raw data file format is changed by -z\n";
         print "\n";
 
         exit;
@@ -139,7 +144,77 @@ sub load_data {
     close $data;
 }
 
-sub load_data_new {
+sub load_data_pi {
+    open (my $data, "<", $datafile) or die "Could not open $datafile";
+
+    my $header = <$data>;
+    my $node = $nodename;
+
+    while(<$data>) {
+        chomp($_);
+        my ($sample, $samples, $sec, $usec, $port, $V, $A, $W,
+            $Vavg, $Aavg, $Wavg, $Vmin, $Amin, $Wmin,
+            $Vmax, $Amax, $Wmax, $time, $energy)  = split(':', $_);
+
+        my $timestamp = ($sec+$usec/1000000); 
+        if ($lowerbound == 0) { $lowerbound = $timestamp; }
+        if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
+            $raw{$node}{$port}{"A"}{$timestamp} = $A; 
+            $raw{$node}{$port}{"V"}{$timestamp} = $V; 
+            $raw{$node}{$port}{"W"}{$timestamp} = $W; 
+    
+            if ($verbose eq "yes") {
+                print "Sample: " . $sample . " of " . $samples . "\n";
+                print "  Port: " . $port . "\n";
+                print "  Time: " . $timestamp . "\n";
+                print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
+                print " Volts: " . $raw{$node}{$port}{"V"}{$timestamp} . "\n";
+                print " Watts: " . $raw{$node}{$port}{"W"}{$timestamp} . "\n";
+                print "\n";
+            }
+        } else {
+            last if($timestamp > $upperbound + 100);
+        }
+    }
+
+    close $data;
+}
+
+sub load_data_wu {
+    open (my $data, "<", $datafile) or die "Could not open $datafile";
+
+    my $header = <$data>;
+    my $node = $nodename;
+    my $port = 1;
+
+    while(<$data>) {
+        chomp($_);
+        my ($timestamp, $command, $arg1, $arg2, $W, $V, $A, $Whr,
+            $cost, $Whrmo, $costmo, $Wmax, $Vmax, $Amax,
+            $Wmin, $Vmin, $Amin, $pf, $dc, $pc, $hz, $VA)  = split(',', $_);
+
+        if ($lowerbound == 0) { $lowerbound = $timestamp; }
+        if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
+            $raw{$node}{$port}{"A"}{$timestamp} = $A*10; 
+            $raw{$node}{$port}{"V"}{$timestamp} = $V*10; 
+            $raw{$node}{$port}{"W"}{$timestamp} = $W*10; 
+    
+            if ($verbose eq "yes") {
+                print "  Time: " . $timestamp . "\n";
+                print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
+                print " Volts: " . $raw{$node}{$port}{"V"}{$timestamp} . "\n";
+                print " Watts: " . $raw{$node}{$port}{"W"}{$timestamp} . "\n";
+                print "\n";
+            }
+        } else {
+            last if($timestamp > $upperbound + 100);
+        }
+    }
+
+    close $data;
+}
+
+sub load_data_pm {
     open (my $data, "<", $datafile) or die "Could not open $datafile";
 
     my $header = <$data>;
