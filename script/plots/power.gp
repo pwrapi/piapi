@@ -21,17 +21,17 @@ set xlabel "seconds"
 set title "Voltage for from ".node." port #".port
 set ylabel "volts"
 set origin 0.0,0.6
-plot results."_V.dat" using 1:2 with lines title 'Sensor'
+plot results."_V.dat" using 1:2 with lines notitle
 
 set title "Amperage for from ".node." port #".port
 set ylabel "amps"
 set origin 0.0,0.3
-plot results."_A.dat" using 1:2 with lines title 'Sensor'
+plot results."_A.dat" using 1:2 with lines notitle
 
 set title "Wattage for from ".node." port #".port
 set ylabel "watts"
 set origin 0.0,0.0
-plot results."_W.dat" using 1:2 with lines title 'Sensor'
+plot results."_W.dat" using 1:2 with lines notitle
 
 unset multiplot
 

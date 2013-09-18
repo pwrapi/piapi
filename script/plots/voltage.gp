@@ -17,7 +17,7 @@ set xlabel "seconds"
 
 set title "Voltage for from ".node." port #".port
 set ylabel "volts"
-plot results."_V.dat" using 1:2 with lines title 'Sensor'
+plot results."_V.dat" using 1:2 with lines notitle
 
 if (!exists("crt")) set term x11
 if (!exists("crt")) set output
