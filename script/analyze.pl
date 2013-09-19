@@ -74,7 +74,7 @@ sub config {
     $nodename = $options{n} if defined $options{n};
     $id = $options{i} if defined $options{i};
     $lowerbound = 0;
-    $upperbound = 999999999999;
+    $upperbound = 999999999999999999;
     $lowerbound = $options{l} if defined $options{l};
     $upperbound = $options{u} if defined $options{u};
     $timespan = $upperbound - $lowerbound;
