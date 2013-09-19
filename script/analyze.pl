@@ -27,6 +27,8 @@ if ($format eq "") {
 } else {
     if ($format eq "pi") {
         Analyze->load_data_pi;
+    } elsif ($format eq "pm") {
+        Analyze->load_data_pm;
     } else {
         Analyze->load_data_wu;
     }
@@ -154,7 +156,7 @@ sub load_data_pi {
         chomp($_);
         my ($sample, $samples, $sec, $usec, $port, $V, $A, $W,
             $Vavg, $Aavg, $Wavg, $Vmin, $Amin, $Wmin,
-            $Vmax, $Amax, $Wmax, $time, $energy)  = split(':', $_);
+            $Vmax, $Amax, $Wmax, $time, $energy) = split(':', $_);
 
         my $timestamp = ($sec+$usec/1000000); 
         if ($lowerbound == 0) { $lowerbound = $timestamp; }
@@ -165,6 +167,39 @@ sub load_data_pi {
     
             if ($verbose eq "yes") {
                 print "Sample: " . $sample . " of " . $samples . "\n";
+                print "  Port: " . $port . "\n";
+                print "  Time: " . $timestamp . "\n";
+                print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
+                print " Volts: " . $raw{$node}{$port}{"V"}{$timestamp} . "\n";
+                print " Watts: " . $raw{$node}{$port}{"W"}{$timestamp} . "\n";
+                print "\n";
+            }
+        } else {
+            last if($timestamp > $upperbound + 100);
+        }
+    }
+
+    close $data;
+}
+
+sub load_data_pm {
+    open (my $data, "<", $datafile) or die "Could not open $datafile";
+
+    my $header = <$data>;
+    my $node = $nodename;
+
+    while(<$data>) {
+        chomp($_);
+        my ($sec, $usec, $port, $V, $A, $W) = split(',', $_);
+
+        my $timestamp = ($sec+$usec/1000000); 
+        if ($lowerbound == 0) { $lowerbound = $timestamp; }
+        if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
+            $raw{$node}{$port}{"A"}{$timestamp} = $A; 
+            $raw{$node}{$port}{"V"}{$timestamp} = $V; 
+            $raw{$node}{$port}{"W"}{$timestamp} = $W; 
+    
+            if ($verbose eq "yes") {
                 print "  Port: " . $port . "\n";
                 print "  Time: " . $timestamp . "\n";
                 print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
@@ -191,51 +226,15 @@ sub load_data_wu {
         chomp($_);
         my ($timestamp, $command, $arg1, $arg2, $W, $V, $A, $Whr,
             $cost, $Whrmo, $costmo, $Wmax, $Vmax, $Amax,
-            $Wmin, $Vmin, $Amin, $pf, $dc, $pc, $hz, $VA)  = split(',', $_);
+            $Wmin, $Vmin, $Amin, $pf, $dc, $pc, $hz, $VA) = split(',', $_);
 
         if ($lowerbound == 0) { $lowerbound = $timestamp; }
         if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
-            $raw{$node}{$port}{"A"}{$timestamp} = $A*10; 
-            $raw{$node}{$port}{"V"}{$timestamp} = $V*10; 
-            $raw{$node}{$port}{"W"}{$timestamp} = $W*10; 
+            $raw{$node}{$port}{"A"}{$timestamp} = $A/10; 
+            $raw{$node}{$port}{"V"}{$timestamp} = $V/10; 
+            $raw{$node}{$port}{"W"}{$timestamp} = $W/10; 
     
             if ($verbose eq "yes") {
-                print "  Time: " . $timestamp . "\n";
-                print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
-                print " Volts: " . $raw{$node}{$port}{"V"}{$timestamp} . "\n";
-                print " Watts: " . $raw{$node}{$port}{"W"}{$timestamp} . "\n";
-                print "\n";
-            }
-        } else {
-            last if($timestamp > $upperbound + 100);
-        }
-    }
-
-    close $data;
-}
-
-sub load_data_pm {
-    open (my $data, "<", $datafile) or die "Could not open $datafile";
-
-    my $header = <$data>;
-    my $node = $nodename;
-
-    while(<$data>) {
-        chomp($_);
-        my ($sample, $samples, $sec, $usec, $port, $mV, $mA, $mW,
-            $avg_mV, $avg_mA, $avg_mW, $min_mV, $min_mA, $min_mW,
-            $max_mV, $max_mA, $max_mW, $time, $energy)  = split(':', $_);
-
-        my $timestamp = ($sec+$usec/1000000); 
-        if ($lowerbound == 0) { $lowerbound = $timestamp; }
-        if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
-            $raw{$node}{$port}{"A"}{$timestamp} = $mA; 
-            $raw{$node}{$port}{"V"}{$timestamp} = $mV; 
-            $raw{$node}{$port}{"W"}{$timestamp} = $mW; 
-    
-            if ($verbose eq "yes") {
-                print "Sample: " . $sample . " of " . $samples . "\n";
-                print "  Port: " . $port . "\n";
                 print "  Time: " . $timestamp . "\n";
                 print "  Amps: " . $raw{$node}{$port}{"A"}{$timestamp} . "\n";
                 print " Volts: " . $raw{$node}{$port}{"V"}{$timestamp} . "\n";
