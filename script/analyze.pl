@@ -230,7 +230,7 @@ sub load_data_wu {
 
         if ($lowerbound == 0) { $lowerbound = $timestamp; }
         if ($timestamp >= $lowerbound and $timestamp <= $upperbound) {
-            $raw{$node}{$port}{"A"}{$timestamp} = $A/10; 
+            $raw{$node}{$port}{"A"}{$timestamp} = $A/1000; 
             $raw{$node}{$port}{"V"}{$timestamp} = $V/10; 
             $raw{$node}{$port}{"W"}{$timestamp} = $W/10; 
     
