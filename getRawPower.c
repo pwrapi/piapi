@@ -24,25 +24,21 @@ static void printUsage(const char *prog)
 	exit(1);
 }
 
-
 /***********************************************************/
 int main(int argc, char *argv[])
 {
-    int i, portNumber;
-    struct timeval start, now;
-    reading_t sample;
+    int i, portNumber ;
+    int j ;
+    struct timeval start, now ;
 
-    if(argc < 2) {
-        printUsage(argv[0]);
-    }
+    if(argc < 2)    { printUsage(argv[0]); }
+
 
     // Starting time
-    if( timeCollect ) {
-        gettimeofday( &start, NULL );
-    } else {
-        printf("%-4s %5s %5s %7s %7s %7s\n",
-            "Pt#", "A", "V", "mA", "mV", "mW"); 
-    }
+    gettimeofday( &start, NULL );
+
+//    printf("%-4s %5s %5s %7s %7s %7s\n",
+//            "Pt#", "A", "V", "mA", "mV", "mW"); 
 
     // MAIN EXEC LOOP
     for(i=0; i<(argc-1); i++) 
@@ -55,24 +51,26 @@ int main(int argc, char *argv[])
         // Collect raw readings and calculate power
         pidev_read(portNumber, &sample);
 #endif
-
         // What time is it now?
-        if( timeCollect ) {
-            gettimeofday( &now, NULL );
-        }
+        gettimeofday( &now, NULL );
+
+        // Collect raw readings
+        getReadings(portNumber);
+
+        // Calculate power
+        calcValues(portNumber); 
 
         // Print results
-        if( timeCollect ) {
-                printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
-                    start.tv_sec, now.tv_sec - start.tv_sec,
-                    now.tv_usec - start.tv_usec,
-                    portNumber, sample.Asamp, sample.Vsamp/16,
-                    sample.miliamps,sample.milivolts,sample.miliwatts );
-        } else {
-                printf("%-4d %5d %5d %7d %7d %7d\n", 
-                    portNumber, sample.Asamp, sample.Vsamp/16,
-                    sample.miliamps,sample.milivolts,sample.miliwatts );
-        }
+if( 1 ) {
+        printf("%-4d %5d %5d %7d %7d %7d\n", 
+            portNumber, sample.Asamp, sample.Vsamp/16,
+            sample.miliamps,sample.milivolts,sample.miliwatts );
+} else {
+        printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
+            start.tv_sec, now.tv_sec - start.tv_sec, now.tv_usec,
+            portNumber, sample.Asamp, sample.Vsamp/16,
+            sample.miliamps,sample.milivolts,sample.miliwatts );
+};
 
     }  // end for() loop 
 
@@ -80,6 +78,7 @@ int main(int argc, char *argv[])
     pidev_close();
 #endif
 
-    return 0;
-}
+    return (0);
+}   // end main()
+
 
