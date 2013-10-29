@@ -110,7 +110,7 @@ main(int argc, char *argv[])
 				break;
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
-					"\t[-s samples] [-f frequency] [-c] [-r]\n", argv[0] );
+					"\t[-s samples] [-f frequency] [-c] [-r] [-v]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
