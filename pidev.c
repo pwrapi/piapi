@@ -5,7 +5,6 @@
 
 #include "pidev.h"
 
-#include <stdint.h>
 #include <unistd.h>
 #include <errno.h>
 #include <error.h>
@@ -24,7 +23,6 @@
 #define SPI_SPEED        (1000000)
 #define MEASURE_AMPS     1
 #define MEASURE_VOLTS    0
-#define MAX_PORTNUM      15
 
 // Offset = .1*Vdd
 // Gain = 185mV/1000mA @ 5V Vdd
@@ -49,10 +47,10 @@
 static uint16_t spiTransfer(int fd, int port);
 static uint16_t spiVTransfer(int fd, int port);
 static uint16_t ainTransfer(int fd, int port);
-static void getArgs(int argc, char *argv[]);
-void getReadings(int portNumber);		// port numbers are cardinal 
-void openSPI( int dev );
-void openAIN( int dev );
+static void openSPI( int dev );
+static void openAIN( int dev );
+static void closeSPI( int dev );
+static void closeAIN( int dev );
 
 /* 
  *  There are 3 spi chip selects available: 
@@ -65,26 +63,19 @@ struct {
    const char *  file ;  // Name of file to be opened
    uint16_t  (*xfer)(int fd, int port) ;  // Transfer function to read
    void  (*open)( int dev );  // Open function
+   void  (*close)( int dev );  // Close function
 } devList[] = {
-        { -1, "/dev/spidev1.0", spiTransfer, openSPI },
-        { -1, "/dev/spidev2.0", spiVTransfer, openSPI },
-        { -1, "/dev/spidev2.1", spiTransfer, openSPI },
-        { -1, "/sys/devices/platform/omap/tsc/ain1", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain2", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain3", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain4", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain5", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain6", ainTransfer, openAIN },
-        { -1, "/sys/devices/platform/omap/tsc/ain7", ainTransfer, openAIN }
+        { -1, "/dev/spidev1.0", spiTransfer, openSPI, closeSPI },
+        { -1, "/dev/spidev2.0", spiVTransfer, openSPI, closeSPI },
+        { -1, "/dev/spidev2.1", spiTransfer, openSPI, closeSPI },
+        { -1, "/sys/devices/platform/omap/tsc/ain1", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain2", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain3", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain4", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain5", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain6", ainTransfer, openAIN, closeAIN },
+        { -1, "/sys/devices/platform/omap/tsc/ain7", ainTransfer, openAIN, closeAIN }
     }; ;
-
-typedef struct reading {
-    uint16_t    Asamp;          // Raw sample
-    uint16_t    Vsamp;          // Raw sample
-    int32_t     miliamps;       // Calculated value
-    int32_t     milivolts;      // Calculated value
-    int32_t     miliwatts;      // Calculated value
-} reading_t;
 
 typedef struct portConfig {
     int         ampsADC_chNum;
@@ -124,7 +115,7 @@ static portConfig_t  portConfig[] = {
 /***********************************************************/
 static uint16_t spiTransfer(int fd, int port)
 {
-    int         result, i;
+    int         result;
     uint16_t    retVal; 
     uint8_t     tx[] = { 0x01, 0x00, 0x00, };
     uint8_t     rx[] = { 0,    0,    0,    };
@@ -172,7 +163,7 @@ static uint16_t ainTransfer(int fd, int port)
 {
     int  i ;
     char  buf[16] ;
-    char  actual ;
+    uint8_t  actual ;
     int  val, sum, min, max ;
     uint16_t  retVal; 
 
@@ -216,42 +207,7 @@ static uint16_t ainTransfer(int fd, int port)
 
 
 /***********************************************************/
-void getReadings(int portNumber, reading_t *sample) 
-{
-    int  dev, fd, port ;
-
-    // Get Amps device for this port
-    dev = portConfig[portNumber].AmpSpiDevNum ;
-    port = portConfig[portNumber].ampsADC_chNum ;
-
-    // Has it been opened?
-    if( devList[dev].fd < 0 ) {
-        // No, Open it
-        (devList[dev].open)( dev );
-    };
-    fd = devList[dev].fd ;
-
-    // get amps sample
-    sample.Asamp = (devList[dev].xfer)( fd, port );
-
-    // Get Volts device for this port
-    dev = portConfig[portNumber].VoltSpiDevNum ;
-    port = portConfig[portNumber].voltsADC_chNum ;
-
-    // Has it been opened?
-    if( devList[dev].fd < 0 ) {
-        (devList[dev].open)( dev );
-    };
-    fd = devList[dev].fd ;
-
-    // get volts sample (16bit fraction of 4.096 volts)
-    sample->Vsamp = (devList[dev].xfer)( fd, port );
-
-}   // end get_readings()
-
-
-/***********************************************************/
-void openSPI( int dev )
+static void openSPI( int dev )
 {
     int  fd ;
     int  retVal, setting ;
@@ -296,10 +252,9 @@ void openSPI( int dev )
 }
 
 /***********************************************************/
-void openAIN( int dev )
+static void openAIN( int dev )
 {
     int  fd ;
-    int  retVal, setting ;
 
     // Make sure it's not already open?
     if( devList[dev].fd >= 0 ) {
@@ -316,8 +271,57 @@ void openAIN( int dev )
     devList[dev].fd = fd ;
 }
 
+static void closeSPI( int dev ) {
+
+    if( devList[dev].fd >= 0 ) {
+        close( devList[dev].fd );
+    }
+}
+
+static void closeAIN( int dev ) {
+
+    if( devList[dev].fd >= 0 ) {
+        close( devList[dev].fd );
+    }
+}
+
 /***********************************************************/
-void calcValues(int portNumber, reading_t *sample)
+static void getReadings(int portNumber, reading_t *sample) 
+{
+    int  dev, fd, port ;
+
+    // Get Amps device for this port
+    dev = portConfig[portNumber].AmpSpiDevNum ;
+    port = portConfig[portNumber].ampsADC_chNum ;
+
+    // Has it been opened?
+    if( devList[dev].fd < 0 ) {
+        // No, Open it
+        (devList[dev].open)( dev );
+    };
+    fd = devList[dev].fd ;
+
+    // get amps sample
+    sample->Asamp = (devList[dev].xfer)( fd, port );
+
+    // Get Volts device for this port
+    dev = portConfig[portNumber].VoltSpiDevNum ;
+    port = portConfig[portNumber].voltsADC_chNum ;
+
+    // Has it been opened?
+    if( devList[dev].fd < 0 ) {
+        (devList[dev].open)( dev );
+    };
+    fd = devList[dev].fd ;
+
+    // get volts sample (16bit fraction of 4.096 volts)
+    sample->Vsamp = (devList[dev].xfer)( fd, port );
+
+}   // end get_readings()
+
+
+/***********************************************************/
+static void calcValues(int portNumber, reading_t *sample)
 {
 
     // calculate miliamps
@@ -387,7 +391,7 @@ void calcValues(int portNumber, reading_t *sample)
 
     // calculate miliwatts
     sample->miliwatts = sample->miliamps * sample->milivolts;
-    sample.miliwatts /= 1000;  // convert from E-6 to E-3
+    sample->miliwatts /= 1000;  // convert from E-6 to E-3
 
 }   // end calcValues()
 
