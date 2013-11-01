@@ -112,6 +112,7 @@ static portConfig_t  portConfig[] = {
 };  
 
 typedef enum portVolt {
+    VOLT_UNKNOWN = -1,
     VOLT_SCALE = 0,
     VOLT_3_3 = 1,
     VOLT_5 = 2,
@@ -124,23 +125,39 @@ typedef struct portMap {
 } portMap_t;
 
 static portMap_t portMap[] = {
-    {  0, VOLT_SCALE },
-    {  1, VOLT_12    },
-    {  2, VOLT_12    },
-    {  3, VOLT_5     },
-    {  4, VOLT_5     },
-    {  5, VOLT_3_3   },
-    {  6, VOLT_12    },
-    {  7, VOLT_3_3   },
-    {  8, VOLT_12    },
-    {  9, VOLT_SCALE },
-    { 10, VOLT_12    },
-    { 11, VOLT_5     },
-    { 12, VOLT_12    },
-    { 13, VOLT_SCALE },
-    { 14, VOLT_SCALE },
-    { 15, VOLT_SCALE },
+    {  0, VOLT_UNKNOWN },
+    {  1, VOLT_UNKNOWN },
+    {  2, VOLT_UNKNOWN },
+    {  3, VOLT_UNKNOWN },
+    {  4, VOLT_UNKNOWN },
+    {  5, VOLT_UNKNOWN },
+    {  6, VOLT_UNKNOWN },
+    {  7, VOLT_UNKNOWN },
+    {  8, VOLT_UNKNOWN },
+    {  9, VOLT_UNKNOWN },
+    { 10, VOLT_UNKNOWN },
+    { 11, VOLT_UNKNOWN },
+    { 12, VOLT_UNKNOWN },
+    { 13, VOLT_UNKNOWN },
+    { 14, VOLT_UNKNOWN },
+    { 15, VOLT_UNKNOWN }
 };
+
+static void configPortMap()
+{
+    FILE *fd;
+
+    fd = fopen( ".config", "r" );
+    if( fd == NULL ) {
+        printf( "Missing configuration file\n" );
+        exit( 1 );
+    }
+
+    for( int i = 0; i < 16; i++ )
+        fscanf( fd, "%d", &(portMap[i].portVoltage) );
+
+    fclose( fd );
+}
 
 /***********************************************************/
 static uint16_t spiTransfer(int fd, int port)
