@@ -146,6 +146,7 @@ static portMap_t portMap[] = {
 static void configPortMap()
 {
     FILE *fd;
+    int i;
 
     fd = fopen( ".config", "r" );
     if( fd == NULL ) {
@@ -153,7 +154,7 @@ static void configPortMap()
         exit( 1 );
     }
 
-    for( int i = 0; i < 16; i++ )
+    for( i = 0; i < 16; i++ )
         fscanf( fd, "%d", &(portMap[i].portVoltage) );
 
     fclose( fd );
@@ -293,6 +294,9 @@ static void openSPI( int dev )
     // See datasheet errata for MCP3008
     spiTransfer(fd, 0);
 
+    // Get installation dependent port mapping
+    configPortMap();
+
     // Completed, save it
     devList[dev].fd = fd ;
 
@@ -313,6 +317,9 @@ static void openAIN( int dev )
     if (fd < 0) {
         error( 1, errno, "Error opening %s read only", devList[dev].file );
     };
+
+    // Get installation dependent port mapping
+    configPortMap();
 
     // Completed, save it
     devList[dev].fd = fd ;
@@ -375,7 +382,7 @@ static void calcValues(int portNumber, reading_t *sample)
     sample->miliamps = SAMPLE2MAMPS(sample->Asamp);
 
     // calculate volts
-    switch (portMap[portNumber]) {
+    switch (portMap[portNumber].portVoltage) {
         default:
         case VOLT_SCALE:  // Read Vcc/Vref
             sample->Vsamp *= 64 ; // Perform Vsamp scaling
