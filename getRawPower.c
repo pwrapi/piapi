@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         // Print results
 	if( timeCollect ) {
         	printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
-            		start.tv_sec, now.tv_sec - start.tv_sec, now.tv_usec,
+            		start.tv_sec, now.tv_sec - start.tv_sec, (long int)(now.tv_usec),
             		portNumber, sample.Asamp, sample.Vsamp/16,
             		sample.miliamps,sample.milivolts,sample.miliwatts );
 	} else {

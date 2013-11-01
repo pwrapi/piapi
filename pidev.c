@@ -111,6 +111,36 @@ static portConfig_t  portConfig[] = {
     {6,    7,      2,          9},       // port 15
 };  
 
+typedef enum portVolt {
+    VOLT_SCALE = 0,
+    VOLT_3_3 = 1,
+    VOLT_5 = 2,
+    VOLT_12 = 3
+} portVolt_t;
+
+typedef struct portMap {
+    int portNumber;
+    portVolt_t portVoltage;
+} portMap_t;
+
+static portMap_t portMap[] = {
+    {  0, VOLT_SCALE },
+    {  1, VOLT_12    },
+    {  2, VOLT_12    },
+    {  3, VOLT_5     },
+    {  4, VOLT_5     },
+    {  5, VOLT_3_3   },
+    {  6, VOLT_12    },
+    {  7, VOLT_3_3   },
+    {  8, VOLT_12    },
+    {  9, VOLT_SCALE },
+    { 10, VOLT_12    },
+    { 11, VOLT_5     },
+    { 12, VOLT_12    },
+    { 13, VOLT_SCALE },
+    { 14, VOLT_SCALE },
+    { 15, VOLT_SCALE },
+};
 
 /***********************************************************/
 static uint16_t spiTransfer(int fd, int port)
@@ -328,67 +358,28 @@ static void calcValues(int portNumber, reading_t *sample)
     sample->miliamps = SAMPLE2MAMPS(sample->Asamp);
 
     // calculate volts
-    switch (portNumber) {
-	default :
-        case 0:  // Read Vcc/Vref
+    switch (portMap[portNumber]) {
+        default:
+        case VOLT_SCALE:  // Read Vcc/Vref
             sample->Vsamp *= 64 ; // Perform Vsamp scaling
-            sample->milivolts = (4096.0*65536)/sample->Vsamp ;
-            sample->miliamps  = (4096.0*1024)/sample->Asamp ;
+            sample->milivolts = (4096.0*65536)/(sample->Vsamp) ;
+            sample->miliamps  = (4096.0*1024)/(sample->Vsamp) ;
             break ;
 
-        case 1:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
+        case VOLT_3_3:
+            sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
             break;
 
-        case 2:
-	    sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
+        case VOLT_5:
+            sample->milivolts = SAMPLE_TO_5VOLTS(sample->Vsamp);
             break;
 
-        case 3:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
+        case VOLT_12:
+            sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
             break;
 
-        case 4:
-	    sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
-            break;
-
-        case 5:
-        case 6:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
-            break;
-
-        case 7:
-	    sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
-            break;
-
-        case 8:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
-            break;
-
-        case 9:
-	    sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
-            break;
-
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
-            break;
-
-        case 14:
-	    sample->milivolts = SAMPLE_TO_3_3VOLTS(sample->Vsamp);
-            break;
-
-        case 15:
-	    sample->milivolts = SAMPLE_TO_12VOLTS(sample->Vsamp);
-            break;
-
-// 	    sample->milivolts = SAMPLE_TO_5VOLTS(sample->Vsamp);
-//          break;
-
-    }   // end switch()
-
+    }
+ 
     // calculate miliwatts
     sample->miliwatts = sample->miliamps * sample->milivolts;
     sample->miliwatts /= 1000;  // convert from E-6 to E-3
