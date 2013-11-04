@@ -387,7 +387,7 @@ static void calcValues(int portNumber, reading_t *sample)
         case VOLT_SCALE:  // Read Vcc/Vref
             sample->Vsamp *= 64 ; // Perform Vsamp scaling
             sample->milivolts = (4096.0*65536)/(sample->Vsamp) ;
-            sample->miliamps  = (4096.0*1024)/(sample->Vsamp) ;
+            sample->miliamps  = (4096.0*1024)/(sample->Asamp) ;
             break ;
 
         case VOLT_3_3:
