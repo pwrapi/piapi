@@ -18,14 +18,16 @@ static int piapi_native_debug = 1;
 
 static unsigned int frequency = SAMPLE_FREQ;
 static piapi_counters_t counters;
-
+static pthread_mutex_t piapi_dev_lock;
 static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 {
     reading_t raw;
 
 #ifdef PIAPI_SPI
+    pthread_mutex_lock(&piapi_dev_lock);
     pidev_read(port, &raw);
+    pthread_mutex_unlock(&piapi_dev_lock);
 #endif
 
     reading->volts = raw.milivolts/1000.0;
@@ -170,6 +172,7 @@ piapi_native_init( void *cntx )
 	if( piapi_native_debug )
        		printf( "\nPower native communication\n" );
 
+	pthread_mutex_init(&piapi_dev_lock, NULL);
 	pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
 
 	if( piapi_native_debug )
@@ -189,6 +192,8 @@ piapi_native_destroy( void *cntx )
 
 	counters.samplers_run = 0;
 	pthread_join( counters.samplers, NULL );
+
+	pthread_mutex_destroy(&piapi_dev_lock);
 
 #ifdef PIAPI_SPI
 	pidev_close();
