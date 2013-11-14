@@ -1,0 +1,10 @@
+#!/bin/sh
+
+while true
+do
+    if pgrep piagent 1>/dev/null;then
+        sleep 1
+    else
+       ./piagent &
+    fi
+done
