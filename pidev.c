@@ -20,8 +20,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #define SPI_BITS         (8)
 #define SPI_DELAY        (0)
-//#define SPI_SPEED        (1000000)
-#define SPI_SPEED        (500000)
+#define SPI_SPEED        (1000000)
 #define MEASURE_AMPS     1
 #define MEASURE_VOLTS    0
 
