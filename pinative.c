@@ -155,8 +155,8 @@ piapi_native_thread( void *cntx )
 				end = PIAPI_PORT_MAX;
 			}
 			for( sample.port = begin; sample.port <= end; sample.port++ ) {
-				if( piapi_dev_collect( PIAPI_CNTX(cntx)->port, &sample.raw ) < 0 ) {
-					printf( "Unable to collect reading on port %d", PIAPI_CNTX(cntx)->port);
+				if( piapi_dev_collect( sample.port, &(sample.raw) ) < 0 ) {
+					printf( "Unable to collect reading on port %d", sample.port);
 					return;
 				}
 
