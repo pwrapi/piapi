@@ -16,7 +16,6 @@ static int piapi_native_debug = 0;
 static int piapi_native_debug = 1;
 #endif
 
-static unsigned int frequency = SAMPLE_FREQ;
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
 static int
@@ -86,6 +85,9 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	}
 }
 
+#ifdef PIAPI_COUNTERS
+static unsigned int frequency = SAMPLE_FREQ;
+
 static void
 piapi_native_counters( void *arg )
 {
@@ -123,6 +125,7 @@ piapi_native_counters( void *arg )
 	if( piapi_native_debug )
 		printf( "Counter thread exiting\n" );
 }
+#endif
 
 static void
 piapi_native_thread( void *cntx )
@@ -141,8 +144,8 @@ piapi_native_thread( void *cntx )
 	sample.number = 0;
 	sample.total = PIAPI_CNTX(cntx)->samples;
 
-	PIAPI_CNTX(cntx)->sample_run = 1;
-	while( PIAPI_CNTX(cntx)->sample_run &&
+	PIAPI_CNTX(cntx)->worker_run = 1;
+	while( PIAPI_CNTX(cntx)->worker_run &&
 		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
 		if( PIAPI_CNTX(cntx)->callback ) {
@@ -214,7 +217,18 @@ piapi_native_collect( void *cntx )
 	if( piapi_native_debug )
        		printf( "Starting native collection\n" );
 
-	pthread_create(&(PIAPI_CNTX(cntx)->sample), 0x0, (void *)&piapi_native_thread, cntx);
+	pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+	return 0;
+}
+
+int
+piapi_native_halt( void *cntx )
+{
+	if( piapi_native_debug )
+       		printf( "Halting native collection\n" );
+
+	PIAPI_CNTX(cntx)->worker_run = 0;
+	pthread_join( PIAPI_CNTX(cntx)->worker, NULL);
 	return 0;
 }
 
@@ -226,6 +240,9 @@ piapi_native_counter( void *cntx )
 	piapi_sample_t sample = counters.sampler[port].sample[i];
 	sample.cntx = cntx;
 
+	if( piapi_native_debug )
+       		printf( "Collecting native counter\n" );
+
 	if( PIAPI_CNTX(cntx)->callback ) {
 		PIAPI_CNTX(cntx)->callback( &sample );
 	}
@@ -236,6 +253,9 @@ piapi_native_counter( void *cntx )
 int
 piapi_native_reset( void *cntx )
 {
+	if( piapi_native_debug )
+       		printf( "Reseting native counter\n" );
+
 	bzero( &(counters.sampler[PIAPI_CNTX(cntx)->port]), sizeof( piapi_counter_t ) );
 
 	return 0;

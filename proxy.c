@@ -124,15 +124,11 @@ main(int argc, char *argv[])
 		piapi_sampling = 1;
 		piapi_collect( cntx, port, samples, frequency );
 		while( piapi_sampling );
-	}
-
-	if( counter ) {
+	} else if( counter ) {
 		piapi_sampling = 1;
 		piapi_counter( cntx, port );
 		while( piapi_sampling );
-	}
-
-	if( reset ) {
+	} else if( reset ) {
 		piapi_sampling = 1;
 		piapi_reset( cntx, port );	
 		while( piapi_sampling );

@@ -221,6 +221,29 @@ piapi_proxy_collect( void *cntx )
 }
 
 int
+piapi_proxy_halt( void *cntx )
+{
+	char buf[ 256 ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Requesting agent to halt collection on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+
+	strcpy( PIAPI_CNTX(cntx)->command, "halt" );
+	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf("Error while attempting to halt collection\n");
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully halted collect\n");
+
+	return 0;
+}
+
+int
 piapi_proxy_counter( void *cntx )
 {
 	char buf[ 256 ] = "";

@@ -33,6 +33,15 @@ int piapi_native_destroy( void *cntx );
  */
 int piapi_native_collect( void *cntx );
 
+/*! \fn int piapi_native_halt( void *cntx )
+ *  \brief Halt collect samples
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Halt collect samples, stopping samples over the callback function
+ */
+int piapi_native_halt( void *cntx );
+
 /*! \fn int piapi_native_counter( void *cntx )
  *  \brief Query counter on a local native port
  *  \param cntx handle to context state

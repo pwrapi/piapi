@@ -40,6 +40,16 @@ int piapi_destroy( void **cntx );
  */
 int piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int frequency );
 
+/*! \fn int piapi_halt( void *cntx, piapi_port_t port )
+ *  \brief Halting collection on a port
+ *  \param cntx handle to context state
+ *  \param port sensor port to halt collection on
+ *  \return 0 on success, negative on failure
+ *  
+ *  Halt collection on a sensor port, stopping reporting sample over the callback function
+ */
+int piapi_halt( void *cntx, piapi_port_t port );
+
 /*! \fn int piapi_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
  *  \brief Query counter on a port
  *  \param cntx handle to context state
@@ -50,7 +60,7 @@ int piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned
  */
 int piapi_counter( void *cntx, piapi_port_t port );
 
-/*! \fn int piapi_clear( void *cntx, piapi_port_t port )
+/*! \fn int piapi_reset( void *cntx, piapi_port_t port )
  *  \brief Reset counter on a port
  *  \param cntx handle to context state
  *  \param port sensor port to query counter on

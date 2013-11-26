@@ -107,6 +107,35 @@ piapi_collect( void *cntx, piapi_port_t port, unsigned int samples, unsigned int
 }
 
 int
+piapi_halt( void *cntx, piapi_port_t port )
+{
+	PIAPI_CNTX(cntx)->port = port;
+
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf("Halting collection for port %d\n", port);
+
+			piapi_native_halt( cntx );
+			return 0;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf("Halting proxy collection for port %d\n", port);
+
+			piapi_proxy_halt( cntx );
+			return 0;
+
+		default:
+			printf( "Warning: Non-supported operation\n" );
+			break;
+	}
+
+	return -1;
+}
+
+int
 piapi_counter( void *cntx, piapi_port_t port )
 {
 	PIAPI_CNTX(cntx)->port = port;

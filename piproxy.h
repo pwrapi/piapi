@@ -32,6 +32,15 @@ int piapi_proxy_destroy( void *cntx );
  */
 int piapi_proxy_collect( void *cntx );
 
+/*! \fn int piapi_proxy_halt( void *cntx )
+ *  \brief Halt collect samples on remote agent port
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Halt collect samples on remote agent sensor port,, stopping samples over the callback function
+ */
+int piapi_proxy_halt( void *cntx );
+
 /*! \fn int piapi_proxy_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
  *  \brief Query counter on a remote agent port
  *  \param cntx handle to context state

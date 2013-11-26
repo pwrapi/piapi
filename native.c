@@ -99,6 +99,7 @@ main(int argc, char *argv[])
 		piapi_sampling = 1;
 		piapi_collect( cntx, port, samples, frequency );
 		while( piapi_sampling );
+		piapi_halt( cntx, port );
 	}
 
 	sleep( 1 );

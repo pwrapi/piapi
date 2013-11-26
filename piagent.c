@@ -50,6 +50,19 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 		} 
 
 		return 0;
+	} else if( !strcmp( token, "halt" ) ) {
+		strcpy( PIAPI_CNTX(cntx)->command, token );
+
+		if( (token = strtok( NULL, ":" )) == NULL)
+			return -1;
+		PIAPI_CNTX(cntx)->port = atoi(token);
+
+		if( piapi_agent_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
+			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+		} 
+
+		return 0;
 	} else if( !strcmp( token, "counter" ) ) {
 		strcpy( PIAPI_CNTX(cntx)->command, token );
 
@@ -100,8 +113,6 @@ piapi_agent_callback( piapi_sample_t *sample )
 
 	if( sample->cntx ) {
 		if( writen( PIAPI_CNTX(sample->cntx)->cfd, buf, len ) < 0 ) {
-			PIAPI_CNTX(sample->cntx)->sample_run = 0;
-			pthread_join( PIAPI_CNTX(sample->cntx)->sample, 0x0 );
 			printf( "Connection closed" );
 			return;
 		}
@@ -149,12 +160,6 @@ piapi_agent_listen( void *cntx )
 		printf( "Agent is listening on port %d\n", PIAPI_CNTX(cntx)->sa_port );
 
 	return 0;
-}
-
-static void
-piapi_agent_counter( void *cntx )
-{
-	piapi_native_counter( cntx );
 }
 
 static void
@@ -221,8 +226,10 @@ piapi_agent_thread( void *cntx )
 
 			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
 				piapi_native_collect( cntx );
+			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "halt" ) ) {
+				piapi_native_halt( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
-				piapi_agent_counter( cntx );
+				piapi_native_counter( cntx );
 			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
 				piapi_native_reset( cntx );
 			}
