@@ -3,6 +3,7 @@ DBG ?= n
 LVL ?= 1
 XC ?= n
 SPI ?= n
+CNT ?= n
 
 ifeq ($(XC),y)
 CROSS_COMPILE = arm-linux-gnueabihf-
@@ -28,6 +29,10 @@ endif
 
 ifeq ($(SPI),y)
 CFLAGS += -DPIAPI_SPI
+endif
+
+ifeq ($(CNT),y)
+CFLAGS += -DPIAPI_COUNTERS
 endif
 
 TARGET = getRawPower

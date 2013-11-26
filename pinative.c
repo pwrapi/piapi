@@ -173,8 +173,9 @@ piapi_native_init( void *cntx )
        		printf( "\nPower native communication\n" );
 
 	pthread_mutex_init(&piapi_dev_lock, NULL);
+#ifdef PIAPI_COUNTERS
 	pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
-
+#endif
 	if( piapi_native_debug )
        		printf( "Native counters initialized\n" );
 
@@ -190,8 +191,10 @@ piapi_native_destroy( void *cntx )
 	PIAPI_CNTX(cntx)->worker_run = 0;
 	pthread_join( PIAPI_CNTX(cntx)->worker, NULL);
 
+#ifdef PIAPI_COUNTERS
 	counters.samplers_run = 0;
 	pthread_join( counters.samplers, NULL );
+#endif
 
 	pthread_mutex_destroy(&piapi_dev_lock);
 
