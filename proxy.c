@@ -75,7 +75,7 @@ main(int argc, char *argv[])
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:crv" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:crvh?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -108,6 +108,7 @@ main(int argc, char *argv[])
 			case 'v':
 				verbose = 1;
 				break;
+			case 'h':
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
 					"\t[-s samples] [-f frequency] [-c] [-r] [-v]\n", argv[0] );

@@ -70,7 +70,7 @@ main(int argc, char *argv[])
 	int opt;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "t:s:f:v" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "t:s:f:vh?" )) != -1 ) {
 		switch( opt ) {
 			case 't':
 				port = atoi(optarg);
@@ -84,6 +84,7 @@ main(int argc, char *argv[])
 			case 'v':
 				verbose = 1;
 				break;
+			case 'h':
 			case '?':
 				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-v]\n", argv[0] );
 				exit( -1 );

@@ -26,7 +26,7 @@ main(int argc, char *argv[])
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:h?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -41,6 +41,7 @@ main(int argc, char *argv[])
 			case 'p':
 				sport = atoi(optarg);
 				break;
+			case 'h':
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
 				exit( -1 );
