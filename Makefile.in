@@ -3,7 +3,7 @@ DBG ?= n
 LVL ?= 1
 XC ?= n
 SPI ?= n
-CNT ?= n
+CNT ?= y
 
 ifeq ($(XC),y)
 CROSS_COMPILE = arm-linux-gnueabihf-
