@@ -38,14 +38,14 @@ endif
 TARGET = getRawPower
 LIBNAME = piapi
 
-TESTOBJS = $(TARGET).o
 STATICLIB = lib$(LIBNAME).a
 OBJS = 	piapi.o     \
 	piproxy.o   \
 	piagent.o   \
 	pinative.o  \
-	piutil.o    \
-	proxy.o     \
+	piutil.o
+
+TESTOBJS = proxy.o  \
 	agent.o     \
 	native.o    \
 	test.o      \
@@ -56,11 +56,11 @@ OBJS +=	pidev.o
 endif
 
 all: lib $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TESTOBJS) -L. -l$(LIBNAME) -o $(TARGET)
-	$(CC) $(CFLAGS) proxy.o -L. -l$(LIBNAME) -o piproxy 
-	$(CC) $(CFLAGS) agent.o -L. -l$(LIBNAME) -o piagent 
-	$(CC) $(CFLAGS) native.o -L. -l$(LIBNAME) -o pinative
-	$(CC) $(CFLAGS) test.o -L. -l$(LIBNAME) -o pitest
+	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
+	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -o piproxy 
+	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -o piagent 
+	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -o pinative
+	$(CC) $(CFLAGS) test.c -L. -l$(LIBNAME) -o pitest
 
 clean:
 	rm -f out/* $(TARGET) piproxy piagent pinative pitest $(STATICLIB) $(OBJS)
