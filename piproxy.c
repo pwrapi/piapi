@@ -134,8 +134,10 @@ piapi_proxy_thread( void *cntx )
 	PIAPI_CNTX(cntx)->worker_run = 1;
 	while( PIAPI_CNTX(cntx)->worker_run ) {
 		rc = read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
-		if( rc <= 0 )
+		if( rc <= 0 ) {
+			sched_yield();
 			continue;
+		}
 
 		buf[rc] = '\0';
 		while( rc > 0 ) {
