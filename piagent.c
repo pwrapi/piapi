@@ -97,7 +97,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 static void
 piapi_agent_callback( piapi_sample_t *sample )
 {
-	char buf[256] = "";
+	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	len = sprintf( buf, "%u:%u:%lu:%lu:%u:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f",
@@ -204,7 +204,7 @@ piapi_agent_thread( void *cntx )
 			if( fd == PIAPI_CNTX(cntx)->fd || !FD_ISSET( fd, &read_fds ) )
 				continue;
 
-			char buf[ 256 ];
+			char buf[ PIAPI_BUF_SIZE ];
 			ssize_t rc = read( fd, buf, sizeof(buf)-1 );
 			if( rc <= 0 ) {
 				FD_CLR( fd, &fds );

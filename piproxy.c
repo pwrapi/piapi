@@ -126,7 +126,7 @@ static void
 piapi_proxy_thread( void *cntx )
 {
 	piapi_sample_t sample;
-	char buf[ 256 ];
+	char buf[ PIAPI_BUF_SIZE ];
 	ssize_t rc;
 
 	sample.cntx = cntx;
@@ -201,7 +201,7 @@ piapi_proxy_connect( void *cntx )
 int
 piapi_proxy_collect( void *cntx )
 {
-	char buf[ 256 ] = "";
+	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )
@@ -225,7 +225,7 @@ piapi_proxy_collect( void *cntx )
 int
 piapi_proxy_halt( void *cntx )
 {
-	char buf[ 256 ] = "";
+	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )
@@ -248,7 +248,7 @@ piapi_proxy_halt( void *cntx )
 int
 piapi_proxy_counter( void *cntx )
 {
-	char buf[ 256 ] = "";
+	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )
@@ -271,7 +271,7 @@ piapi_proxy_counter( void *cntx )
 int
 piapi_proxy_reset( void *cntx )
 {
-	char buf[ 256 ] = "";
+	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )

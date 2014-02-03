@@ -14,11 +14,14 @@
 /* The well-known powerinsight agent port */
 #define PIAPI_AGNT_PORT     20201
 
-#define SAMPLE_FREQ 10
-#define SAMPLE_RING_SIZE (1 << 15)
+#define PIAPI_BUF_SIZE (1 << 10)
+
+#define PIAPI_SAMPLE_FREQ 10
+#define PIAPI_SAMPLE_RING_SIZE (1 << 15)
+
 
 typedef struct piapi_counter {
-	piapi_sample_t sample[SAMPLE_RING_SIZE];
+	piapi_sample_t sample[PIAPI_SAMPLE_RING_SIZE];
 
 	unsigned int number;
 	piapi_reading_t min, max, avg;

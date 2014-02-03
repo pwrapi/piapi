@@ -86,7 +86,7 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 }
 
 #ifdef PIAPI_COUNTERS
-static unsigned int frequency = SAMPLE_FREQ;
+static unsigned int frequency = PIAPI_SAMPLE_FREQ;
 
 static void
 piapi_native_counters( void *arg )
@@ -103,7 +103,7 @@ piapi_native_counters( void *arg )
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
-			unsigned int j = ++(counters.sampler[i].number)%SAMPLE_RING_SIZE;
+			unsigned int j = ++(counters.sampler[i].number)%PIAPI_SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].number = j;
 			counters.sampler[i].sample[j].total = j;
 
@@ -236,7 +236,7 @@ int
 piapi_native_counter( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	unsigned int i = counters.sampler[port].number%SAMPLE_RING_SIZE;
+	unsigned int i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
 	piapi_sample_t sample = counters.sampler[port].sample[i];
 	sample.cntx = cntx;
 
