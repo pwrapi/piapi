@@ -205,14 +205,14 @@ piapi_agent_thread( void *cntx )
 				continue;
 
 			char buf[ PIAPI_BUF_SIZE ];
-			ssize_t rc = read( fd, buf, sizeof(buf)-1 );
-			if( rc <= 0 ) {
-				FD_CLR( fd, &fds );
-				continue;
-			}
-
-			if( rc == 0 )
-				continue;
+			rc = 0;
+			do {
+				rc += read( fd, buf+rc, 1 );
+				if( rc <= 0 ) {
+					FD_CLR( fd, &fds );
+					continue;
+				}
+			} while( rc && buf[rc-1] != ';' );
 
 			buf[rc] = '\0';
 			while( rc > 0 ) {

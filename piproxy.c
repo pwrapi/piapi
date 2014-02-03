@@ -135,7 +135,7 @@ piapi_proxy_thread( void *cntx )
 	while( PIAPI_CNTX(cntx)->worker_run ) {
 		rc = 0;
 		do {
-			rc += read( PIAPI_CNTX(cntx)->fd, buf, sizeof(buf)-1 );
+			rc += read( PIAPI_CNTX(cntx)->fd, buf+rc, 1 );
 			if( rc <= 0 ) {
 				sched_yield();
 				continue;
@@ -211,7 +211,7 @@ piapi_proxy_collect( void *cntx )
 		printf( "Setting agent to collect on sensor port %u\n", PIAPI_CNTX(cntx)->port);
 
 	strcpy( PIAPI_CNTX(cntx)->command, "collect" );
-	len = sprintf( buf, "%s:%u:%u:%u", PIAPI_CNTX(cntx)->command,
+	len = sprintf( buf, "%s:%u:%u:%u;", PIAPI_CNTX(cntx)->command,
 		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->samples, PIAPI_CNTX(cntx)->frequency );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
@@ -235,7 +235,7 @@ piapi_proxy_halt( void *cntx )
 		printf( "Requesting agent to halt collection on sensor port %u\n", PIAPI_CNTX(cntx)->port);
 
 	strcpy( PIAPI_CNTX(cntx)->command, "halt" );
-	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
 		printf("Error while attempting to halt collection\n");
@@ -258,7 +258,7 @@ piapi_proxy_counter( void *cntx )
 		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
 
 	strcpy( PIAPI_CNTX(cntx)->command, "counter" );
-	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
 		printf( "Error while attempting to request counter\n" );
@@ -281,7 +281,7 @@ piapi_proxy_reset( void *cntx )
 		printf( "Requesting agent to reset counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
 
 	strcpy( PIAPI_CNTX(cntx)->command, "reset" );
-	len = sprintf( buf, "%s:%u", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
 		printf("Error while attempting to request counter\n");
