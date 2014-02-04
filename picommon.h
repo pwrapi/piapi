@@ -2,7 +2,7 @@
 #define PICOMMON_H
 
 typedef enum {
-        PIAPI_PORT_UNKNOWN = 0,
+        PIAPI_PORT_HALF = 0,
         PIAPI_PORT_CPU = 1,
         PIAPI_PORT_R1_12V = 1,
         PIAPI_PORT_12V = 2,
@@ -26,6 +26,7 @@ typedef enum {
 	PIAPI_PORT_ATX_3_3V = 14,
 	PIAPI_PORT_OPT_12V = 15,
 	PIAPI_PORT_MIN = PIAPI_PORT_R1_12V,
+	PIAPI_PORT_MID = PIAPI_PORT_R3_3_3V,
 	PIAPI_PORT_MAX = PIAPI_PORT_OPT_12V,
 	PIAPI_PORT_ALL = 16
 } piapi_port_t;

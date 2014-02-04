@@ -153,6 +153,9 @@ piapi_native_thread( void *cntx )
 			if( PIAPI_CNTX(cntx)->port == PIAPI_PORT_ALL ) {
 				begin = PIAPI_PORT_MIN;
 				end = PIAPI_PORT_MAX;
+			} else if( PIAPI_CNTX(cntx)->port == PIAPI_PORT_HALF ) {
+				begin = PIAPI_PORT_MIN;
+				end = PIAPI_PORT_MID;
 			}
 			for( sample.port = begin; sample.port <= end; sample.port++ ) {
 				if( piapi_dev_collect( sample.port, &(sample.raw) ) < 0 ) {
