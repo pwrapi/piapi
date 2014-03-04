@@ -176,19 +176,19 @@ piapi_reset( void *cntx, piapi_port_t port )
 				printf("Reseting counter for port %d\n", port);
 
 			piapi_native_reset( cntx );
-			return 0;
+			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
 				printf("Reseting proxy counter for port %d\n", port);
 
 			piapi_proxy_reset( cntx );
-			return 0;
+			break;
 
 		default:
 			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
 
-	return -1;
+	return 0;
 }
