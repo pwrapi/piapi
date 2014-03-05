@@ -130,9 +130,7 @@ main(int argc, char *argv[])
 		piapi_counter( cntx, port );
 		while( piapi_sampling );
 	} else if( reset ) {
-		piapi_sampling = 1;
 		piapi_reset( cntx, port );	
-		while( piapi_sampling );
 	}
 
 	sleep( 1 );

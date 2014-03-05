@@ -271,7 +271,7 @@ int
 piapi_native_reset( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	unsigned int i, begin = port, end = port;
+	unsigned int begin = port, end = port;
 
 	if( piapi_native_debug )
        		printf( "Reseting native counter\n" );
@@ -285,9 +285,7 @@ piapi_native_reset( void *cntx )
 	}
 
 	for( port = begin; port <= end; port++ ) {
-		i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
-
-		bzero( &(counters.sampler[i]), sizeof( piapi_counter_t ) );
+		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
 	}
 
 	return 0;
