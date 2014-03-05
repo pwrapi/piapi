@@ -150,7 +150,10 @@ piapi_native_thread( void *cntx )
 		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
 		if( PIAPI_CNTX(cntx)->callback ) {
-			unsigned int begin = PIAPI_CNTX(cntx)->port, end = PIAPI_CNTX(cntx)->port;
+			unsigned int begin, end;
+
+			begin = PIAPI_CNTX(cntx)->port;
+			end = PIAPI_CNTX(cntx)->port;
 			if( PIAPI_CNTX(cntx)->port == PIAPI_PORT_ALL ) {
 				begin = PIAPI_PORT_MIN;
 				end = PIAPI_PORT_MAX;
@@ -240,12 +243,14 @@ int
 piapi_native_counter( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	unsigned int i, begin = port, end = port;
+	unsigned int i, begin, end;
 	piapi_sample_t sample;
 
 	if( piapi_native_debug )
-       		printf( "Collecting native counter\n" );
+       		printf( "Collecting native counter on port %u\n", port );
 
+	begin = port;
+	end = port;
 	if( port == PIAPI_PORT_ALL ) {
 		begin = PIAPI_PORT_MIN;
 		end = PIAPI_PORT_MAX;
@@ -259,6 +264,9 @@ piapi_native_counter( void *cntx )
 		sample = counters.sampler[port].sample[i];
 		sample.cntx = cntx;
 
+		if( piapi_native_debug )
+       			printf( "Collecting native counter on port %u\n", port );
+
 		if( PIAPI_CNTX(cntx)->callback ) {
 			PIAPI_CNTX(cntx)->callback( &sample );
 		}
@@ -271,11 +279,13 @@ int
 piapi_native_reset( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	unsigned int begin = port, end = port;
+	unsigned int begin, end;
 
 	if( piapi_native_debug )
-       		printf( "Reseting native counter\n" );
+       		printf( "Reseting native counter on port %u\n", port );
 
+	begin = port;
+	end = port;
 	if( port == PIAPI_PORT_ALL ) {
 		begin = PIAPI_PORT_MIN;
 		end = PIAPI_PORT_MAX;
@@ -285,6 +295,8 @@ piapi_native_reset( void *cntx )
 	}
 
 	for( port = begin; port <= end; port++ ) {
+		if( piapi_native_debug )
+       			printf( "Reseting native counter on port %u\n", port );
 		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
 	}
 
