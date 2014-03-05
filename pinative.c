@@ -104,6 +104,7 @@ piapi_native_counters( void *arg )
 	while( counters.samplers_run ) {
 		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
 			unsigned int j = ++(counters.sampler[i].number)%PIAPI_SAMPLE_RING_SIZE;
+			counters.sampler[i].sample[j].port = i;
 			counters.sampler[i].sample[j].number = j;
 			counters.sampler[i].sample[j].total = j;
 
@@ -239,15 +240,28 @@ int
 piapi_native_counter( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	unsigned int i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
-	piapi_sample_t sample = counters.sampler[port].sample[i];
-	sample.cntx = cntx;
+	unsigned int i, begin = port, end = port;
+	piapi_sample_t sample;
 
 	if( piapi_native_debug )
        		printf( "Collecting native counter\n" );
 
-	if( PIAPI_CNTX(cntx)->callback ) {
-		PIAPI_CNTX(cntx)->callback( &sample );
+	if( port == PIAPI_PORT_ALL ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MAX;
+	} else if( port == PIAPI_PORT_HALF ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MID;
+	}
+
+	for( port = begin; port <= end; port++ ) {
+		i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
+		sample = counters.sampler[port].sample[i];
+		sample.cntx = cntx;
+
+		if( PIAPI_CNTX(cntx)->callback ) {
+			PIAPI_CNTX(cntx)->callback( &sample );
+		}
 	}
 
 	return 0;
@@ -256,10 +270,25 @@ piapi_native_counter( void *cntx )
 int
 piapi_native_reset( void *cntx )
 {
+	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+	unsigned int i, begin = port, end = port;
+
 	if( piapi_native_debug )
        		printf( "Reseting native counter\n" );
 
-	bzero( &(counters.sampler[PIAPI_CNTX(cntx)->port]), sizeof( piapi_counter_t ) );
+	if( port == PIAPI_PORT_ALL ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MAX;
+	} else if( port == PIAPI_PORT_HALF ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MID;
+	}
+
+	for( port = begin; port <= end; port++ ) {
+		i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
+
+		bzero( &(counters.sampler[i]), sizeof( piapi_counter_t ) );
+	}
 
 	return 0;
 }
