@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#define MS 1000000.0
+#define KS 1000.0
+
 #ifndef PIAPI_NATIVE_DEBUG
 static int piapi_native_debug = 0;
 #else
@@ -29,9 +32,9 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
     pthread_mutex_unlock(&piapi_dev_lock);
 #endif
 
-    reading->volts = raw.milivolts/1000.0;
-    reading->amps = raw.miliamps/1000.0;
-    reading->watts = raw.miliwatts/1000.0;
+    reading->volts = raw.milivolts/KS;
+    reading->amps = raw.miliamps/KS;
+    reading->watts = raw.miliwatts/KS;
 
     return 0;
 }
@@ -78,10 +81,10 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 		sample->energy = sample->raw.watts;
 	} else {
 		sample->time_total = t.tv_sec - tinit->tv_sec +
-			(t.tv_usec - tinit->tv_usec)/1000000.0;
+			(t.tv_usec - tinit->tv_usec)/MS;
 
 		sample->energy += sample->raw.watts *
-			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/1000000.0);
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
 	}
 }
 
@@ -92,8 +95,9 @@ static void
 piapi_native_counters( void *arg )
 {
 	unsigned int frequency = *((unsigned int *)arg);
-
 	unsigned int i;
+	struct timeval t0, t1;
+	unsigned long tdiff;
 
 	bzero( &counters.sampler, sizeof( piapi_counter_t ) * PIAPI_PORT_ALL );
 
@@ -102,6 +106,7 @@ piapi_native_counters( void *arg )
 
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
+		gettimeofday( &t0, 0x0 );
 		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
 			unsigned int j = ++(counters.sampler[i].number)%PIAPI_SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].port = i;
@@ -120,7 +125,12 @@ piapi_native_counters( void *arg )
 			if( piapi_native_debug )
 				piapi_print( i, &(counters.sampler[i].sample[j]) );
 		}
-		usleep( 1000000.0 / frequency );
+		gettimeofday( &t1, 0x0 );
+		tdiff = t1.tv_sec - t0.tv_sec +
+			(t1.tv_usec - t0.tv_usec)/MS;
+
+		if( tdiff < MS / frequency )
+			usleep( MS / frequency - tdiff );
 	}
 
 	if( piapi_native_debug )
@@ -133,7 +143,8 @@ piapi_native_thread( void *cntx )
 {
 	piapi_sample_t sample;
 	piapi_reading_t min[PIAPI_PORT_ALL], max[PIAPI_PORT_ALL], avg[PIAPI_PORT_ALL];
-	struct timeval t[PIAPI_PORT_ALL];
+	struct timeval t[PIAPI_PORT_ALL], t0, t1;
+	unsigned long tdiff;
 
 	bzero( &sample, sizeof( piapi_sample_t ) );
 	bzero( min, sizeof( piapi_reading_t ) * PIAPI_PORT_ALL );
@@ -149,6 +160,7 @@ piapi_native_thread( void *cntx )
 	while( PIAPI_CNTX(cntx)->worker_run &&
 		(PIAPI_CNTX(cntx)->samples == 0 || sample.number < PIAPI_CNTX(cntx)->samples) ) {
 		sample.number++;
+		gettimeofday( &t0, 0x0 );
 		if( PIAPI_CNTX(cntx)->callback ) {
 			unsigned int begin, end;
 
@@ -172,7 +184,12 @@ piapi_native_thread( void *cntx )
 				PIAPI_CNTX(cntx)->callback( &sample );
 			}
 		}
-		usleep( 1000000.0 / PIAPI_CNTX(cntx)->frequency );
+		gettimeofday( &t1, 0x0 );
+		tdiff = t1.tv_sec - t0.tv_sec +
+			(t1.tv_usec - t0.tv_usec)/MS;
+
+		if( tdiff < MS / PIAPI_CNTX(cntx)->frequency )
+			usleep( MS / PIAPI_CNTX(cntx)->frequency - tdiff );
 	}
 }
 
