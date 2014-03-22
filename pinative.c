@@ -57,10 +57,6 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	if( max->amps < sample->raw.amps ) max->amps = sample->raw.amps;
 	if( max->watts < sample->raw.watts ) max->watts = sample->raw.watts;
 
-	avg->volts += sample->raw.volts;
-	avg->amps += sample->raw.amps;
-	avg->watts += sample->raw.watts;
-
 	sample->min.volts = min->volts;
 	sample->min.amps = min->amps;
 	sample->min.watts = min->watts;
@@ -69,23 +65,36 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	sample->max.amps = max->amps;
 	sample->max.watts = max->watts;
 
-	sample->avg.volts = avg->volts / sample->number;
-	sample->avg.amps = avg->amps / sample->number;
-	sample->avg.watts = avg->watts / sample->number;
-
 	if( !tinit->tv_sec ) {
 		tinit->tv_sec = sample->time_sec;
 		tinit->tv_usec = sample->time_usec;
 
 		sample->time_total = 0;
+
 		sample->energy = sample->raw.watts;
+
+		avg->volts = sample->raw.volts;
+		avg->amps = sample->raw.amps;
+		avg->watts = sample->raw.watts;
 	} else {
 		sample->time_total = t.tv_sec - tinit->tv_sec +
 			(t.tv_usec - tinit->tv_usec)/MS;
 
 		sample->energy += sample->raw.watts *
 			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
+
+		avg->volts += sample->raw.volts *
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
+		avg->amps += sample->raw.amps *
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
+		avg->watts += sample->raw.watts *
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
+
 	}
+
+	sample->avg.volts = avg->volts;
+	sample->avg.amps = avg->amps;
+	sample->avg.watts = avg->watts;
 }
 
 #ifdef PIAPI_COUNTERS
