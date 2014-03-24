@@ -73,7 +73,7 @@ install:
 	mkdir -p $(PREFIX)/include
 	cp picommon.h piapi.h $(PREFIX)/include
 	mkdir -p $(PREFIX)/lib
-	cp libpiapi.a $(PREFIX)/lib
+	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
-	cp $(TARGET) piproxy piagent pinative pilogger pimon pitest .config $(PREFIX)/bin
+	cp $(TARGET) piproxy piagent pinative pilogger pimon piver pitest .config $(PREFIX)/bin
 	cp -R script $(PREFIX)/script
