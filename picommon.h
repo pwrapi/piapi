@@ -3,7 +3,7 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 0
-#define PIAPI_REV $Revision$
+#define PIAPI_REV $Rev$
 
 typedef enum {
         PIAPI_PORT_HALF = 0,
