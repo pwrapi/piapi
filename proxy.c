@@ -65,7 +65,7 @@ piapi_callback( piapi_sample_t *sample )
 int
 main(int argc, char *argv[])
 {
-	unsigned int saddr = 0,
+	unsigned int saddr = 0x7f000001,
 		sport = 0,
 		port = PIAPI_PORT_CPU,
 		samples = 1,
