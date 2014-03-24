@@ -47,7 +47,7 @@ main(int argc, char *argv[])
 				break;
 			case 'h':
 			case '?':
-				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
+				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );

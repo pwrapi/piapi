@@ -90,7 +90,7 @@ main(int argc, char *argv[])
 				break;
 			case 'h':
 			case '?':
-				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-v]\n", argv[0] );
+				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-v] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
