@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <sys/time.h>
+#include <strings.h>
 
 static int timeCollect = 0;
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
     struct timeval start, now ;
     reading_t sample;
 
+    bzero( &sample, sizeof( reading_t ) );
     if(argc < 2) {
 	printUsage(argv[0]);
     }

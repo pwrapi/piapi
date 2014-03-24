@@ -11,7 +11,7 @@ endif
 
 CC = $(CROSS_COMPILE)gcc
 AR = $(CROSS_COMPILE)ar
-CFLAGS = -Wall -O0 -pthread
+CFLAGS = -Wall -O3 -pthread -fpic
 
 ifeq ($(DBG),y)
 CFLAGS += -g
@@ -37,7 +37,8 @@ endif
 TARGET = getRawPower
 LIBNAME = piapi
 
-STATICLIB = lib$(LIBNAME).a
+SHAREDLIB = lib$(LIBNAME).so
+
 OBJS = 	piapi.o     \
 	piproxy.o   \
 	piagent.o   \
@@ -54,7 +55,7 @@ ifeq ($(SPI),y)
 OBJS +=	pidev.o
 endif
 
-all: lib $(TESTOBJS)
+all: $(LIBNAME) $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
 	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -o piproxy 
 	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -o piagent 
@@ -64,8 +65,8 @@ all: lib $(TESTOBJS)
 clean:
 	rm -f out/* $(TARGET) piproxy piagent pinative pitest $(STATICLIB) $(OBJS)
 
-lib: $(OBJS)
-	$(AR) rcs $(STATICLIB) $(OBJS)
+$(LIBNAME): $(OBJS)
+	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
 	
 install:
 	mkdir -p $(PREFIX)
