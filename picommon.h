@@ -3,6 +3,7 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 0
+#define PIAPI_BUILD 1
 #define PIAPI_REV_STR "$Rev$"
 
 typedef enum {
@@ -66,6 +67,7 @@ typedef struct piapi_sample {
 typedef struct piapi_version {
 	unsigned int major;
 	unsigned int minor;
+	unsigned int build;
 	unsigned int rev;
 } piapi_version_t;
 

@@ -67,15 +67,16 @@ main(int argc, char *argv[])
 	unsigned int saddr = 0,
 		sport = 0,
 		port = PIAPI_PORT_CPU,
-		samples = 0,
-		frequency = 100,
+		samples = 1,
+		frequency = 1,
 		counter = 0,
-		reset = 0;
+		reset = 0,
+		info = 0;
 	int opt;
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:crvh?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:crvhi?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -108,6 +109,9 @@ main(int argc, char *argv[])
 			case 'v':
 				verbose = 1;
 				break;
+			case 'i':
+				info = 1;
+				break;
 			case 'h':
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
@@ -116,6 +120,16 @@ main(int argc, char *argv[])
 			default:
 				abort( );
 		} 
+	}
+
+	if( info ) {
+		piapi_version_t version;
+
+		piapi_info( &version );
+		printf( "PIAPI Version %u.%u.%u-r%u\n",
+			version.major, version.minor, version.build, version.rev );
+
+		return 0;
 	}
 
 	signal( SIGINT, signal_handler );

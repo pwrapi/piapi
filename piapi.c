@@ -193,14 +193,18 @@ piapi_reset( void *cntx, piapi_port_t port )
 	return 0;
 }
 
-int piapi_version( piapi_version_t *version )
+int piapi_info( piapi_version_t *version )
 {
+	char rev[80] = PIAPI_REV_STR;
+
 	version->major = PIAPI_MAJOR;
 	version->minor = PIAPI_MINOR;
-	version->rev = PIAPI_REV;
-
+	version->build = PIAPI_BUILD;
+	version->rev = atoi( strchr( rev, ':' ) + 1 );
+	
 	if( piapi_debug )
-		printf( "PIAPI version %u.%u-r%u\n", version->major, version->minor, version->rev );
+		printf( "PIAPI version %u.%u.%u-r%u\n",
+			version->major, version->minor, version->build, version->rev );
 
 	return 0;
 }

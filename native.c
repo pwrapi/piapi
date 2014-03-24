@@ -65,12 +65,13 @@ int
 main(int argc, char *argv[])
 {
 	unsigned int port = PIAPI_PORT_CPU,
-		samples = 0,
-		frequency = 0;
+		samples = 1,
+		frequency = 1,
+		info = 0;
 	int opt;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "t:s:f:vh?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "t:s:f:vhi?" )) != -1 ) {
 		switch( opt ) {
 			case 't':
 				port = atoi(optarg);
@@ -84,6 +85,9 @@ main(int argc, char *argv[])
 			case 'v':
 				verbose = 1;
 				break;
+			case 'i':
+				info = 1;
+				break;
 			case 'h':
 			case '?':
 				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-v]\n", argv[0] );
@@ -91,6 +95,16 @@ main(int argc, char *argv[])
 			default:
 				abort( );
 		} 
+	}
+
+	if( info ) {
+		piapi_version_t version;
+
+		piapi_info( &version );
+		printf( "PIAPI Version %u.%u.%u-r%u\n",
+			version.major, version.minor, version.build, version.rev );
+
+		return 0;
 	}
 
 	signal( SIGINT, signal_handler );

@@ -21,12 +21,13 @@ int
 main(int argc, char *argv[])
 {
 	unsigned int saddr = 0,
-		sport = 0;
+		sport = 0,
+		info = 0;
 	int opt;
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:h?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:hi?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -41,6 +42,9 @@ main(int argc, char *argv[])
 			case 'p':
 				sport = atoi(optarg);
 				break;
+			case 'i':
+				info = 1;
+				break;
 			case 'h':
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port]\n", argv[0] );
@@ -48,6 +52,16 @@ main(int argc, char *argv[])
 			default:
 				abort( );
 		} 
+	}
+
+	if( info ) {
+		piapi_version_t version;
+
+		piapi_info( &version );
+		printf( "PIAPI Version %u.%u.%u-r%u\n",
+			version.major, version.minor, version.build, version.rev );
+
+		return 0;
 	}
 
 	signal( SIGINT, signal_handler );
