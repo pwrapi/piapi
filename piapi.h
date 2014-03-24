@@ -70,4 +70,14 @@ int piapi_counter( void *cntx, piapi_port_t port );
  */
 int piapi_reset( void *cntx, piapi_port_t port );
 
+/*! \fn int piapi_version( void *cntx, piapi_version_t *version )
+ *  \brief Retrieve version information
+ *  \param cntx handle to context state
+ *  \param version information regarding version
+ *  \return 0 on success, negative on failure
+ *  
+ *  Retrieve version information on piapi API
+ */
+int piapi_version( void *cntx, piapi_version_t *version );
+
 #endif

@@ -284,7 +284,7 @@ piapi_proxy_reset( void *cntx )
 	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf("Error while attempting to request counter\n");
+		printf("Error while attempting to reset counter\n");
 		return -1;
 	}
 

@@ -115,14 +115,14 @@ piapi_halt( void *cntx, piapi_port_t port )
 		case PIAPI_MODE_NATIVE:
 		case PIAPI_MODE_AGENT:
 			if( piapi_debug )
-				printf("Halting collection for port %d\n", port);
+				printf( "Halting collection for port %d\n", port );
 
 			piapi_native_halt( cntx );
 			return 0;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
-				printf("Halting proxy collection for port %d\n", port);
+				printf( "Halting proxy collection for port %d\n", port );
 
 			piapi_proxy_halt( cntx );
 			return 0;
@@ -144,14 +144,14 @@ piapi_counter( void *cntx, piapi_port_t port )
 		case PIAPI_MODE_NATIVE:
 		case PIAPI_MODE_AGENT:
 			if( piapi_debug )
-				printf("Retrieving counter for port %d\n", port);
+				printf( "Retrieving counter for port %d\n", port );
 
 			piapi_native_counter( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
-				printf("Retrieving proxy counter for port %d\n", port);
+				printf( "Retrieving proxy counter for port %d\n", port );
 
 			piapi_proxy_counter( cntx );
 			break;
@@ -173,14 +173,14 @@ piapi_reset( void *cntx, piapi_port_t port )
 		case PIAPI_MODE_NATIVE:
 		case PIAPI_MODE_AGENT:
 			if( piapi_debug )
-				printf("Reseting counter for port %d\n", port);
+				printf( "Reseting counter for port %d\n", port );
 
 			piapi_native_reset( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
-				printf("Reseting proxy counter for port %d\n", port);
+				printf( "Reseting proxy counter for port %d\n", port );
 
 			piapi_proxy_reset( cntx );
 			break;
@@ -189,6 +189,18 @@ piapi_reset( void *cntx, piapi_port_t port )
 			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
+
+	return 0;
+}
+
+int piapi_version( piapi_version_t *version )
+{
+	version->major = PIAPI_MAJOR;
+	version->minor = PIAPI_MINOR;
+	version->rev = PIAPI_REV;
+
+	if( piapi_debug )
+		printf( "PIAPI version %u.%u-r%u\n", version->major, version->minor, version->rev );
 
 	return 0;
 }

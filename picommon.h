@@ -1,6 +1,10 @@
 #ifndef PICOMMON_H
 #define PICOMMON_H
 
+#define PIAPI_MAJOR 1
+#define PIAPI_MINOR 0
+#define PIAPI_REV $Id$
+
 typedef enum {
         PIAPI_PORT_HALF = 0,
         PIAPI_PORT_CPU = 1,
@@ -58,6 +62,12 @@ typedef struct piapi_sample {
 	float time_total;
         float energy;
 } piapi_sample_t;
+
+typedef struct piapi_version {
+	unsigned int major;
+	unsigned int minor;
+	unsigned int rev;
+} piapi_version_t;
 
 typedef void (*piapi_callback_t)( piapi_sample_t *);
 

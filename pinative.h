@@ -52,7 +52,7 @@ int piapi_native_halt( void *cntx );
 int piapi_native_counter( void *cntx );
 
 /*! \fn int piapi_native_clear( void *cntx, piapi_port_t port )
- *  \brief reset counter on a local native port
+ *  \brief Reset counter on a local native port
  *  \param cntx handle to context state
  *  \return 0 on success, negative on failure
  *  
