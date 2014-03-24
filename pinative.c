@@ -222,7 +222,6 @@ piapi_native_destroy( void *cntx )
 	counters.samplers_run = 0;
 	pthread_join( counters.samplers, NULL );
 #endif
-
 	pthread_mutex_destroy(&piapi_dev_lock);
 
 #ifdef PIAPI_SPI

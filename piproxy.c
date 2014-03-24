@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sched.h>
 
 #ifndef PIAPI_PROXY_DEBUG
 static int piapi_proxy_debug = 0;

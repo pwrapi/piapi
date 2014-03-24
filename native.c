@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sched.h>
 
 static int piapi_sampling = 0;
 static int verbose = 0;
@@ -57,7 +58,7 @@ piapi_callback( piapi_sample_t *sample )
 		}
 	}
 
-	if( sample->number == sample->total )
+	if( sample->number && sample->number == sample->total )
 		piapi_sampling = 0;
 }
 
@@ -110,12 +111,9 @@ main(int argc, char *argv[])
 	signal( SIGINT, signal_handler );
 	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0 ); 
 
-	if( samples ) {
-		piapi_sampling = 1;
-		piapi_collect( cntx, port, samples, frequency );
-		while( piapi_sampling );
-		piapi_halt( cntx, port );
-	}
+	piapi_sampling = 1;
+	piapi_collect( cntx, port, samples, frequency );
+	while( piapi_sampling ) sched_yield();
 
 	sleep( 1 );
 	piapi_destroy( &cntx );

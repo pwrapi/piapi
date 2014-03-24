@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sched.h>
 
 static int piapi_sampling = 0;
 
@@ -68,7 +69,7 @@ main(int argc, char *argv[])
 	piapi_init( &cntx, PIAPI_MODE_AGENT, 0x0, saddr, sport ); 
 
 	piapi_sampling = 1;
-	while( piapi_sampling );
+	while( piapi_sampling ) sched_yield();
 
 	piapi_destroy( &cntx );
 
