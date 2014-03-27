@@ -37,28 +37,38 @@ writen(int fd, const void *vptr, size_t n)
 }
 
 void
-piapi_print( piapi_port_t port, struct piapi_sample *sample )
+piapi_print( piapi_port_t port, piapi_sample_t *sample, int verbose )
 {
-        printf( "Sample on port %d:\n", port);
-        printf( "\tsample       - %u of %u\n", sample->number, sample->total );
-        printf( "\ttime         - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
-        printf( "\tvolts        - %f\n", sample->raw.volts );
-        printf( "\tamps         - %f\n", sample->raw.amps );
-        printf( "\twatts        - %f\n", sample->raw.watts );
+	if( !verbose ) {
+		printf( "%u:%u:%lu:%lu:%u:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f\n",
+			sample->number, sample->total, sample->time_sec, sample->time_usec,
+			sample->port, sample->raw.volts, sample->raw.amps, sample->raw.watts,
+			sample->avg.volts, sample->avg.amps, sample->avg.watts,
+			sample->min.volts, sample->min.amps, sample->min.watts,
+			sample->max.volts, sample->max.amps, sample->max.watts,
+			sample->time_total, sample->energy );
+	} else {
+	        printf( "Sample on port %d:\n", port);
+        	printf( "\tsample       - %u of %u\n", sample->number, sample->total );
+	        printf( "\ttime         - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
+        	printf( "\tvolts        - %f\n", sample->raw.volts );
+        	printf( "\tamps         - %f\n", sample->raw.amps );
+        	printf( "\twatts        - %f\n", sample->raw.watts );
 
-        printf( "\tavg volts    - %f\n", sample->avg.volts );
-       	printf( "\tavg amps     - %f\n", sample->avg.amps );
-  	printf( "\tavg watts    - %f\n", sample->avg.watts );
+        	printf( "\tavg volts    - %f\n", sample->avg.volts );
+       		printf( "\tavg amps     - %f\n", sample->avg.amps );
+  		printf( "\tavg watts    - %f\n", sample->avg.watts );
 
-        printf( "\tmin volts    - %f\n", sample->min.volts );
-       	printf( "\tmin amps     - %f\n", sample->min.amps );
-  	printf( "\tmin watts    - %f\n", sample->min.watts );
+        	printf( "\tmin volts    - %f\n", sample->min.volts );
+       		printf( "\tmin amps     - %f\n", sample->min.amps );
+  		printf( "\tmin watts    - %f\n", sample->min.watts );
 
-        printf( "\tmax volts    - %f\n", sample->max.volts );
-       	printf( "\tmax amps     - %f\n", sample->max.amps );
-  	printf( "\tmax watts    - %f\n", sample->max.watts );
+        	printf( "\tmax volts    - %f\n", sample->max.volts );
+       		printf( "\tmax amps     - %f\n", sample->max.amps );
+  		printf( "\tmax watts    - %f\n", sample->max.watts );
 
-        printf( "\ttotal time   - %f\n", sample->time_total );
-        printf( "\ttotal energy - %f\n", sample->energy );
+        	printf( "\ttotal time   - %f\n", sample->time_total );
+        	printf( "\ttotal energy - %f\n", sample->energy );
+	}
 }
 

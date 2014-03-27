@@ -56,6 +56,6 @@ struct piapi_context {
 
 ssize_t writen(int fd, const void *vptr, size_t n);
 
-void piapi_print( piapi_port_t port, struct piapi_sample *sample );
+void piapi_print( piapi_port_t port, piapi_sample_t *sample, int verbose );
 
 #endif

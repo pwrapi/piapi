@@ -15,8 +15,10 @@
 
 #ifndef PIAPI_NATIVE_DEBUG
 static int piapi_native_debug = 0;
+static int piapi_native_log = 1;
 #else
 static int piapi_native_debug = 1;
+static int piapi_native_log = 0;
 #endif
 
 static piapi_counters_t counters;
@@ -122,8 +124,11 @@ piapi_native_counters( void *arg )
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
 
+			if( piapi_native_log )
+				piapi_print( i, &(counters.sampler[i].sample[j]), 0 );
+
 			if( piapi_native_debug )
-				piapi_print( i, &(counters.sampler[i].sample[j]) );
+				piapi_print( i, &(counters.sampler[i].sample[j]), 1 );
 		}
 		gettimeofday( &t1, 0x0 );
 		tdiff = t1.tv_sec - t0.tv_sec +
