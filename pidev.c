@@ -155,7 +155,10 @@ static void configPortMap()
     }
 
     for( i = 0; i < 16; i++ )
-        fscanf( fd, "%d", &(portMap[i].portVoltage) );
+        if( fscanf( fd, "%d", &(portMap[i].portVoltage) ) != 1) {
+            printf( "Failed to read input configuration for port %d/", i );
+            exit( 1 );
+        }
 
     fclose( fd );
 }
