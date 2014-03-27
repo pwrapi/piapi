@@ -314,6 +314,7 @@ piapi_native_reset( void *cntx )
 		if( piapi_native_debug )
        			printf( "Reseting native counter on port %u\n", port );
 		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+		counters.sampler[port].generation++;
 	}
 
 	return 0;
