@@ -3,7 +3,7 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 0
-#define PIAPI_BUILD 2
+#define PIAPI_BUILD 3
 #define PIAPI_REV_STR "$Rev$"
 
 typedef enum {
