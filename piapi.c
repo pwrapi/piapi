@@ -193,6 +193,63 @@ piapi_reset( void *cntx, piapi_port_t port )
 	return 0;
 }
 
+int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency )
+{
+	PIAPI_CNTX(cntx)->port = port;
+	PIAPI_CNTX(cntx)->frequency = frequency;
+
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf( "Controlling counter log for port %d to %u\n", port, frequency );
+
+			piapi_native_counter( cntx );
+			break;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf( "Controlling proxy counter log for port %d to %u\n", port, frequency );
+
+			piapi_proxy_counter( cntx );
+			break;
+
+		default:
+			printf( "Warning: Non-supported operation\n" );
+			break;
+	}
+
+	return 0;
+}
+
+int piapi_mark( void *cntx, char *marker )
+{
+	strcpy( PIAPI_CNTX(cntx)->command, marker );
+
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf( "Marking counter log with %s\n", marker );
+
+			piapi_native_counter( cntx );
+			break;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf( "Marking proxy log with %s\n", marker );
+
+			piapi_proxy_counter( cntx );
+			break;
+
+		default:
+			printf( "Warning: Non-supported operation\n" );
+			break;
+	}
+
+	return 0;
+}
+
 int piapi_info( piapi_version_t *version )
 {
 	char rev[80] = PIAPI_REV_STR;

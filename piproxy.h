@@ -60,4 +60,22 @@ int piapi_proxy_counter( void *cntx );
  */
 int piapi_proxy_reset( void *cntx );
 
+/*! \fn int piapi_proxy_log( void *cntx )
+ *  \brief Control frequency of counter logging
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Control the frequency that the remote agent counter logs are written with zero indicating off
+ */
+int piapi_proxy_log( void *cntx );
+
+/*! \fn int piapi_proxy_mark( void *cntx )
+ *  \brief Insert a marker into counter log
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Insert a text marker to into the remote agent counter sample log
+ */
+int piapi_proxy_mark( void *cntx );
+
 #endif

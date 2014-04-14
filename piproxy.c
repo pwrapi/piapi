@@ -296,6 +296,53 @@ piapi_proxy_reset( void *cntx )
 }
 
 int
+piapi_proxy_log( void *cntx )
+{
+	char buf[ PIAPI_BUF_SIZE ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Controlling agent log counter frequency to %u on sensor port %u\n",
+			PIAPI_CNTX(cntx)->frequency, PIAPI_CNTX(cntx)->port );
+
+	strcpy( PIAPI_CNTX(cntx)->command, "log" );
+	len = sprintf( buf, "%s:%u:%u;", PIAPI_CNTX(cntx)->command,
+		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->frequency );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf( "Error while attempting to control agent log counter frequency\n" );
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully controlled agent log counter frequency\n");
+
+	return 0;
+}
+
+int
+piapi_proxy_mark( void *cntx )
+{
+	char buf[ PIAPI_BUF_SIZE ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Marking agent log with %s\n", PIAPI_CNTX(cntx)->command );
+
+	len = sprintf( buf, "mark:%s;", PIAPI_CNTX(cntx)->command );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf( "Error while attempting to mark agent log\n" );
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully marked agent log\n");
+
+	return 0;
+}
+
+int
 piapi_proxy_init( void *cntx )
 {
 	if( piapi_proxy_connect( cntx ) )

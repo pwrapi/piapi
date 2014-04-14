@@ -122,7 +122,7 @@ piapi_native_counters( void *arg )
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
 
-			if( !(j % PIAPI_SAMPLE_FREQ) )
+			if( counters.sampler[i].log && !(j % (PIAPI_SAMPLE_FREQ/counters.sampler[i].log)) )
 				piapi_print( i, &(counters.sampler[i].sample[j]), 0 );
 
 			if( piapi_native_debug )
@@ -326,3 +326,40 @@ piapi_native_reset( void *cntx )
 	return 0;
 }
 
+int piapi_native_log( void *cntx )
+{
+	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+	unsigned int frequency = PIAPI_CNTX(cntx)->frequency;
+	unsigned int begin, end;
+
+	if( piapi_native_debug )
+       		printf( "Reseting native counter log on port %u to %u\n", port, frequency );
+
+	begin = port;
+	end = port;
+	if( port == PIAPI_PORT_ALL ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MAX;
+	} else if( port == PIAPI_PORT_HALF ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MID;
+	}
+
+	for( port = begin; port <= end; port++ ) {
+		if( piapi_native_debug )
+       			printf( "Setting native counter log on port %u to %u\n", port, frequency );
+		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+		counters.sampler[port].log = frequency;
+	}
+
+	return 0;
+}
+
+int piapi_native_mark( void *cntx )
+{
+	char *marker = PIAPI_CNTX(cntx)->command;
+
+	printf( "# MARK - %s\n", marker );
+
+	return 0;
+}

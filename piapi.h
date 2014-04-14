@@ -70,6 +70,27 @@ int piapi_counter( void *cntx, piapi_port_t port );
  */
 int piapi_reset( void *cntx, piapi_port_t port );
 
+/*! \fn int piapi_log( void *cntx, unsigned int frequency )
+ *  \brief Control frequency of counter logging
+ *  \param cntx handle to context state
+ *  \param port sensor port to control counter log on
+ *  \param frequency number of samples per second
+ *  \return 0 on success, negative on failure
+ *  
+ *  Control the frequency that the remote agent counter logs are written with zero indicating off
+ */
+int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency );
+
+/*! \fn int piapi_mark( void *cntx, char *marker )
+ *  \brief Insert a marker into counter log
+ *  \param cntx handle to context state
+ *  \param marker string to insert into log
+ *  \return 0 on success, negative on failure
+ *  
+ *  Insert a text marker to into the remote agent counter sample log
+ */
+int piapi_mark( void *cntx, char *marker );
+
 /*! \fn int piapi_info( piapi_version_t *version )
  *  \brief Retrieve version information
  *  \param cntx handle to context state

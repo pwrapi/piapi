@@ -60,4 +60,22 @@ int piapi_native_counter( void *cntx );
  */
 int piapi_native_reset( void *cntx );
 
+/*! \fn int piapi_native_log( void *cntx )
+ *  \brief Control frequency of counter logging
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Control the frequency that the counter logs are written with zero indicating off
+ */
+int piapi_native_log( void *cntx );
+
+/*! \fn int piapi_native_mark( void *cntx )
+ *  \brief Insert a marker into counter log
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Insert a text marker to into counter sample log
+ */
+int piapi_native_mark( void *cntx );
+
 #endif
