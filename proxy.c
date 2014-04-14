@@ -70,14 +70,15 @@ main(int argc, char *argv[])
 		port = PIAPI_PORT_CPU,
 		samples = 1,
 		frequency = 1,
+		log = 0,
 		counter = 0,
 		reset = 0,
 		info = 0;
 	int opt;
-	char *token;
+	char *token, *mark = "";
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:crvhi?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:t:s:f:m:lcrvhi?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -101,6 +102,12 @@ main(int argc, char *argv[])
 			case 'f':
 				frequency = atoi(optarg);
 				break;
+			case 'l':
+				log = atoi(optarg);
+				break;
+			case 'm':
+				mark = strtok( optarg, " " );
+				break;
 			case 'c':
 				counter = 1;
 				break;
@@ -116,7 +123,7 @@ main(int argc, char *argv[])
 			case 'h':
 			case '?':
 				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-t sensorport]\n"
-					"\t[-s samples] [-f frequency] [-c] [-r] [-v] [-i]\n", argv[0] );
+					"\t[-s samples] [-f frequency] [-m mark] [-l] [-c] [-r] [-v] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -142,6 +149,10 @@ main(int argc, char *argv[])
 		while( piapi_sampling ) sched_yield();
 	} else if( reset ) {
 		piapi_reset( cntx, port );	
+	} else if( log ) {
+		piapi_log( cntx, port, frequency );
+	} else if( strcmp( mark, "" ) != 0 ) {
+		piapi_mark( cntx, mark );
 	} else {
 		piapi_sampling = 1;
 		piapi_collect( cntx, port, samples, frequency );
