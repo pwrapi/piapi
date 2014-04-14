@@ -7,5 +7,5 @@ my $num = shift;
 my $port = shift;
 
 if ($num < 10) { $num = "0" . $num; }
-system("ssh root\@teller-pm$num tail -f /tmp/teller-pm$num.log");
+system("ssh root\@teller-pm$num tail -f /var/tmp/teller-pm$num.log");
 
