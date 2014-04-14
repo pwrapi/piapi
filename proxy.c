@@ -102,11 +102,11 @@ main(int argc, char *argv[])
 			case 'f':
 				frequency = atoi(optarg);
 				break;
-			case 'l':
-				log = atoi(optarg);
-				break;
 			case 'm':
 				mark = strtok( optarg, " " );
+				break;
+			case 'l':
+				log = 1;
 				break;
 			case 'c':
 				counter = 1;

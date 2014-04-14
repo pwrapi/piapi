@@ -10,7 +10,6 @@ SPI = y
 endif
 
 CC = $(CROSS_COMPILE)gcc
-AR = $(CROSS_COMPILE)ar
 CFLAGS = -Wall -O3 -pthread -fpic
 
 ifeq ($(DBG),y)

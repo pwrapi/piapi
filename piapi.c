@@ -204,14 +204,14 @@ int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency )
 			if( piapi_debug )
 				printf( "Controlling counter log for port %d to %u\n", port, frequency );
 
-			piapi_native_counter( cntx );
+			piapi_native_log( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
 				printf( "Controlling proxy counter log for port %d to %u\n", port, frequency );
 
-			piapi_proxy_counter( cntx );
+			piapi_proxy_log( cntx );
 			break;
 
 		default:
@@ -232,14 +232,14 @@ int piapi_mark( void *cntx, char *marker )
 			if( piapi_debug )
 				printf( "Marking counter log with %s\n", marker );
 
-			piapi_native_counter( cntx );
+			piapi_native_mark( cntx );
 			break;
 
 		case PIAPI_MODE_PROXY:
 			if( piapi_debug )
 				printf( "Marking proxy log with %s\n", marker );
 
-			piapi_proxy_counter( cntx );
+			piapi_proxy_mark( cntx );
 			break;
 
 		default:
