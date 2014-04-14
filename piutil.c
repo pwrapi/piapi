@@ -37,10 +37,18 @@ writen(int fd, const void *vptr, size_t n)
 }
 
 void
+piapi_print_header( void )
+{
+	printf( "# number total time_sec time_usec port raw.volts raw.amps raw.watts"
+		"avg.volts avg.amps avg.watts min.volts min.amps min.watts"
+		"max.volts max.amps max.watts time_total energy" );
+}
+
+void
 piapi_print( piapi_port_t port, piapi_sample_t *sample, int verbose )
 {
 	if( !verbose ) {
-		printf( "%u:%u:%lu:%lu:%u:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f:%f\n",
+		printf( "%u %u %lu %lu %u %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n",
 			sample->number, sample->total, sample->time_sec, sample->time_usec,
 			sample->port, sample->raw.volts, sample->raw.amps, sample->raw.watts,
 			sample->avg.volts, sample->avg.amps, sample->avg.watts,

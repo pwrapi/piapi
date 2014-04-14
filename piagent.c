@@ -104,17 +104,24 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
 			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
 			printf( "Frequency: %d\n", PIAPI_CNTX(cntx)->frequency );
-		} 
+		}
+
+		return 0; 
 	} else if( !strcmp( token, "mark" ) ) {
 		strcpy( PIAPI_CNTX(cntx)->command, token );
 
-		if( (token = strtok( NULL, ":" )) == NULL)
+		if( (token = strtok( NULL, ";" )) == NULL)
 			return -1;
 		strcpy( PIAPI_CNTX(cntx)->command, token );
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
-		} 
+		}
+		return 0;
+	}
+
+	if( piapi_agent_debug ) {
+		printf( "Warning: unprocessed agent message\n" );
 	}
 
 	return -1;
@@ -230,7 +237,7 @@ piapi_agent_thread( void *cntx )
 			if( fd == PIAPI_CNTX(cntx)->fd || !FD_ISSET( fd, &read_fds ) )
 				continue;
 
-			char buf[ PIAPI_BUF_SIZE ];
+			char buf[ PIAPI_BUF_SIZE ] = "";
 			rc = 0;
 			do {
 				rc += read( fd, buf+rc, 1 );
@@ -248,20 +255,20 @@ piapi_agent_thread( void *cntx )
 			}
 
 			PIAPI_CNTX(cntx)->cfd = fd;
-			piapi_agent_parse( buf, rc, cntx );
-
-			if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
-				piapi_native_collect( cntx );
-			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "halt" ) ) {
-				piapi_native_halt( cntx );
-			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
-				piapi_native_counter( cntx );
-			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
-				piapi_native_reset( cntx );
-			} else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
-				piapi_native_log( cntx );
-			} else {
-				piapi_native_mark( cntx );
+			if( piapi_agent_parse( buf, rc, cntx ) == 0 ) {
+				if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
+					piapi_native_collect( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "halt" ) ) {
+					piapi_native_halt( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
+					piapi_native_counter( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
+					piapi_native_reset( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
+					piapi_native_log( cntx );
+				} else {
+					piapi_native_mark( cntx );
+				}
 			}
 		}
 	}
