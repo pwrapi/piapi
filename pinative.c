@@ -348,7 +348,6 @@ int piapi_native_log( void *cntx )
 	for( port = begin; port <= end; port++ ) {
 		if( piapi_native_debug )
        			printf( "Setting native counter log on port %u to %u\n", port, frequency );
-		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
 		counters.sampler[port].log = frequency;
 	}
 
