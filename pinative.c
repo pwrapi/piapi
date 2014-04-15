@@ -122,7 +122,7 @@ piapi_native_counters( void *arg )
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
 
-			if( counters.sampler[i].log && !(j % (PIAPI_SAMPLE_FREQ/counters.sampler[i].log)) )
+			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
 				piapi_print( i, &(counters.sampler[i].sample[j]), 0 );
 
 			if( piapi_native_debug )
