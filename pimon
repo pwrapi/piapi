@@ -6,7 +6,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/power/lib
 
 while true
 do
-    if pgrep piagent 1>/var/tmp/$LOGFILE;then
+    if pgrep piagent 1>/dev/null;then
         sleep 1
     else
        ./piagent 1> /var/tmp/$LOGFILE &
