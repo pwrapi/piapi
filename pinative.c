@@ -123,10 +123,10 @@ piapi_native_counters( void *arg )
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
 
 			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
-				piapi_print( i, &(counters.sampler[i].sample[j]), 0 );
+				piapi_print( &(counters.sampler[i].sample[j]), 0 );
 
 			if( piapi_native_debug )
-				piapi_print( i, &(counters.sampler[i].sample[j]), 1 );
+				piapi_print( &(counters.sampler[i].sample[j]), 1 );
 			counters.sampler[i].number++;
 		}
 		gettimeofday( &t1, 0x0 );

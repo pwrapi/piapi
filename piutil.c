@@ -45,7 +45,7 @@ piapi_print_header( void )
 }
 
 void
-piapi_print( piapi_port_t port, piapi_sample_t *sample, int verbose )
+piapi_print( piapi_sample_t *sample, int verbose )
 {
 	if( !verbose ) {
 		printf( "%u %u %lu %lu %u %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n",
@@ -56,7 +56,7 @@ piapi_print( piapi_port_t port, piapi_sample_t *sample, int verbose )
 			sample->max.volts, sample->max.amps, sample->max.watts,
 			sample->time_total, sample->energy );
 	} else {
-	        printf( "Sample on port %d:\n", port);
+	        printf( "Sample on port %d:\n", sample->port);
         	printf( "\tsample       - %u of %u\n", sample->number, sample->total );
 	        printf( "\ttime         - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
         	printf( "\tvolts        - %f\n", sample->raw.volts );
