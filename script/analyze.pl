@@ -156,7 +156,7 @@ sub load_data_pi {
         chomp($_);
         my ($sample, $samples, $sec, $usec, $port, $V, $A, $W,
             $Vavg, $Aavg, $Wavg, $Vmin, $Amin, $Wmin,
-            $Vmax, $Amax, $Wmax, $time, $energy) = split(':', $_);
+            $Vmax, $Amax, $Wmax, $time, $energy) = split(' ', $_);
 
         my $timestamp = ($sec+$usec/1000000); 
         if ($lowerbound == 0) { $lowerbound = $timestamp; }
