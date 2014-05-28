@@ -9,7 +9,7 @@ upper=-1
 
 port=1
 samp=1
-freq=100
+freq=1
 
 while getopts n:p:i:l:u:t:s:f: opt
 do
