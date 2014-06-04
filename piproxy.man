@@ -4,15 +4,11 @@
 .SH NAME
 piproxy \- communicate with PowerInsight device
 .SH SYNOPSIS
-piproxy [-a sa_addr] [-p sa_port] [-t sensorport]
-	[-s samples] [-f frequency] [-m mark]
-	[-l] [-c] [-r] [-v] [-i] [-h]
+piproxy [-a sa_addr] [-p sa_port] [-t sensorport] [-s samples] [-f frequency] [-m mark] [-l] [-c] [-r] [-v] [-i] [-h]
 .SH DESCRIPTION
-piproxy is a command line utility for communicating monitor
-and control commands to the PowerInsight embedded device
+piproxy is a command line utility for communicating monitor and control commands to the PowerInsight embedded device
 .SH OPTIONS
-There are no mandatory options necessary for piproxy but
-you can override the default behavoir using optional ones.
+There are no mandatory options necessary for piproxy but you can override the default behavoir using optional ones.
 
 -a [sa_addr]
 	IP address of PowerInsight device (default is localhost)

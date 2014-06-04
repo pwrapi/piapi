@@ -3,6 +3,10 @@
 
 #include "picommon.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*! \fn int piapi_init( void *cntx, piapi_mode_t mode, piapi_callback_t callback )
  *  \brief Initialize PIAPI
  *  \param cntx handle to context state
@@ -100,5 +104,9 @@ int piapi_mark( void *cntx, char *marker );
  *  Retrieve version information on piapi API
  */
 int piapi_info( piapi_version_t *version );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

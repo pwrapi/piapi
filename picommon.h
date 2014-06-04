@@ -6,6 +6,10 @@
 #define PIAPI_BUILD 2
 #define PIAPI_REV_STR "$Rev$"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
         PIAPI_PORT_HALF = 0,
         PIAPI_PORT_CPU = 1,
@@ -72,5 +76,9 @@ typedef struct piapi_version {
 } piapi_version_t;
 
 typedef void (*piapi_callback_t)( piapi_sample_t *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

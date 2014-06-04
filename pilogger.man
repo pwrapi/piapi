@@ -4,15 +4,11 @@
 .SH NAME
 pilogger \- communicate with multiple PowerInsight devices
 .SH SYNOPSIS
-pilogger [-p outputpath] [-n name] [-i ipprefix]
-	[-l lowerbound] [-u upperbound] [-t sensorport]
-	[-s samples] [-f frequency] [-?]
+pilogger [-p outputpath] [-n name] [-i ipprefix] [-l lowerbound] [-u upperbound] [-t sensorport] [-s samples] [-f frequency] [-?]
 .SH DESCRIPTION
-pilogger is a command line utility for communicating monitor
-and control commands to multiple PowerInsight embedded devices
+pilogger is a command line utility for communicating monitor and control commands to multiple PowerInsight embedded devices
 .SH OPTIONS
-There are no mandatory options necessary for pilogger but
-you can override the default behavoir using optional ones.
+There are no mandatory options necessary for pilogger but you can override the default behavoir using optional ones
 
 -p [outputpath]
 	output path for the log data files (default is working directory)
