@@ -4,50 +4,40 @@
 .SH NAME
 piproxy \- communicate with PowerInsight device
 .SH SYNOPSIS
-piproxy [-a sa_addr] [-p sa_port] [-t sensorport] [-s samples] [-f frequency] [-m mark] [-l] [-c] [-r] [-v] [-i] [-h]
+\fBpiproxy\fP [ -a \fIsa_addr\fP ] [ -p \fIsa_port\fP ]
+[ -t \fIsensorport\fP ] [ -s \fIsamples\fP ] [ -f \fIfrequency\fP ]
+[ -m \fImark\fP ] [ -l ] [ -c ] [ -r ] [ -v ] [ -i ] [ -h ]
 .SH DESCRIPTION
-piproxy is a command line utility for communicating monitor and control commands to the PowerInsight embedded device
+\fBpiproxy\fP is a command line utility for communicating monitor
+and control commands to the PowerInsight embedded device
 .SH OPTIONS
-There are no mandatory options necessary for piproxy but you can override the default behavoir using optional ones.
-
--a [sa_addr]
-	IP address of PowerInsight device (default is localhost)
-
--p [sa_port]
-	TCP/IP port of PowerInsight agent (default is 20201)
-
--t [sensorport]
-	sensor port to be used (default is CPU=1)
-
--d [samples]
-	number of samples to collect (default is 1, 0 for infinite)
-
--f [frequency]
-	frequency of collection (default is 1Hz, 0 for off)
-
--m [mark]
-	add marker message to the agent log
-
--l
-	control agent logger (uses port and frequency)
-
--c
-	read counter values (uses port)
-
--r
-	reset counter values to zero (uses port)
-
--v
-	verbosity of results
-
--i
-	information regarding version and build
-
--h
-	usage information
-
-.SH SEE ALSO
-pilogger(8)
+.TP
+\fB-a\fP [ \fIsa_addr\fP ]
+IP address of PowerInsight device (default is localhost)
+\fB-p\fP [ \fIsa_port\fP ]
+TCP/IP port of PowerInsight agent (default is 20201)
+\fB-t\fP [ \fIsensorport\fP ]
+sensor port to be used (default is CPU=1)
+\fB-d\fP [ \fIsamples\fP ]
+number of samples to collect (default is 1, 0 for infinite)
+\fB-f\fP [ \fIfrequency\fP ]
+frequency of collection (default is 1Hz, 0 for off)
+\fB-m\fP [ \fImark\fP ]
+add marker message to the agent log
+\fB-l\fP
+control agent logger (uses port and frequency)
+\fB-c\fP
+read counter values (uses port)
+\fB-r\fP
+reset counter values to zero (uses port)
+\fB-v\fP
+verbosity of results
+\fB-i\fP
+information regarding version and build
+\fB-h\fP
+usage information
+.SH "SEE ALSO"
+pilogger (8)
 .SH BUGS
 No known bugs.
 .SH AUTHOR
