@@ -39,6 +39,6 @@ usage information
 .SH "SEE ALSO"
 pilogger (8)
 .SH BUGS
-No known bugs.
+No known bugs
 .SH AUTHOR
 David DeBonis (ddeboni@sandia.gov)

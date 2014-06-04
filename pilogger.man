@@ -4,42 +4,34 @@
 .SH NAME
 pilogger \- communicate with multiple PowerInsight devices
 .SH SYNOPSIS
-pilogger [-p outputpath] [-n name] [-i ipprefix] [-l lowerbound] [-u upperbound] [-t sensorport] [-s samples] [-f frequency] [-?]
+\fBpilogger\fP [ -p \fIoutputpath\fP ] [ -n \fIname\fP ]
+[ -i \fIipprefix\fP ] [ -l \fIlowerbound\fP ] [ -u \fIupperbound\fP ]
+[ -t \fIsensorport\fP ] [ -s \fIsamples\fP ] [ -f \fIfrequency\fP ] [ -? ]
 .SH DESCRIPTION
-pilogger is a command line utility for communicating monitor and control commands to multiple PowerInsight embedded devices
+\fBpilogger\fP is a command line utility for communicating monitor
+and control commands to multiple PowerInsight embedded devices
 .SH OPTIONS
-There are no mandatory options necessary for pilogger but you can override the default behavoir using optional ones
-
--p [outputpath]
-	output path for the log data files (default is working directory)
-
--n [name]
-	name prefix for the output files (default is teller)
-
--i [ipprefix]
-	IP prefix for the PowerInsight devices (default is 10.54.21)
-
--l [lower]
-	last octet of IP address for PowerInsight device lower bound (default is 0)
-
--u [upper]
-	last octet of IP address for PowerInsight device upper bound (default is -1)
-
--t [sensorport]
-	sensor port to be used (default is CPU=1)
-
--s [samp]
-	number of samples to collect (default is 1, 0 for infinite)
-
--f [frequency]
-	frequency of collection (default is 1Hz, 0 for off)
-
--?
-	usage information
-
-.SH SEE ALSO
-piproxy(8)
+\fB-p\fP [ \fIoutputpath\fP ]
+output path for the log data files (default is working directory)
+\fB-n\fP [ \fIname\fP ]
+name prefix for the output files (default is teller)
+\fB-i\fP [ \fIipprefix\fP ]
+IP prefix for the PowerInsight devices (default is 10.54.21)
+\fB-l\fP [ \fIlower\fP ]
+last octet of IP address for PowerInsight device lower bound (default is 0)
+\fB-u\fP [ \fIupper\fP ]
+last octet of IP address for PowerInsight device upper bound (default is -1)
+\fB-t\fP [ \fIsensorport\fP ]
+sensor port to be used (default is CPU=1)
+\fB-s\fP [ \fIsamp\fP ]
+number of samples to collect (default is 1, 0 for infinite)
+\fB-f\fP [ \fIfrequency\fP ]
+frequency of collection (default is 1Hz, 0 for off)
+\fB-?\fP
+usage information
+.SH "SEE ALSO"
+piproxy (8)
 .SH BUGS
-No known bugs.
+No known bugs
 .SH AUTHOR
 David DeBonis (ddeboni@sandia.gov)
