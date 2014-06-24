@@ -320,8 +320,13 @@ piapi_native_reset( void *cntx )
 	for( port = begin; port <= end; port++ ) {
 		if( piapi_native_debug )
        			printf( "Reseting native counter on port %u\n", port );
-		bzero( &(counters.sampler[port]), sizeof( piapi_counter_t ) );
+
 		counters.sampler[port].generation++;
+		counters.sampler[port].number = 0;
+		bzero( &(counters.sampler[port].t), sizeof( struct timeval ) );
+		bzero( &(counters.sampler[port].max), sizeof( piapi_reading_t ) );
+		bzero( &(counters.sampler[port].avg), sizeof( piapi_reading_t ) );
+		bzero( &(counters.sampler[port].min), sizeof( piapi_reading_t ) );
 	}
 
 	return 0;
