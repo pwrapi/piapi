@@ -104,6 +104,7 @@ piapi_native_counters( void *arg )
 	if( piapi_native_debug )
 		printf( "Counter thread running\n" );
 
+        piapi_print_header( );
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		gettimeofday( &t0, 0x0 );
