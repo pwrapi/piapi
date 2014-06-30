@@ -23,13 +23,12 @@ signal_handler(int sig)
 void
 piapi_callback( piapi_sample_t *sample )
 {
-	static int header = 1;
+	static int header = 0;
 
-	if( header ) {
+	if( !header ) {
             piapi_print_header( );
-            header = 0;
+            header = 1;
         }
-
 	piapi_print( sample, verbose );
 
 	if( sample->total && sample->number == sample->total )

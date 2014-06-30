@@ -25,10 +25,13 @@ piapi_callback( piapi_sample_t *sample )
 {
 	static int header = 0;
 
-	if( header ) piapi_print_header( );
+	if( !header ) {
+            piapi_print_header( );
+            header = 1;
+        }
 	piapi_print( sample, verbose );
 
-	if( sample->number && sample->number == sample->total )
+	if( sample->total && sample->number == sample->total )
 		piapi_sampling = 0;
 }
 
