@@ -14,16 +14,16 @@ signal_handler(int sig)
 {
 	switch ( sig ) {
 		case SIGABRT:
-			printf( "WARNING: abnormal termination signal received\n" );
+			printf( "WARNING: Abnormal termination signal received\n" );
 			break;
 		case SIGFPE:
-			printf( "WARNING: floating point exception signal received\n" );
+			printf( "WARNING: Floating point exception signal received\n" );
 			break;
 		case SIGILL:
-			printf( "WARNING: invalid instruction signal received\n" );
+			printf( "WARNING: Invalid instruction signal received\n" );
 			break;
 		case SIGINT:
-			printf( "WARNING: interactive attention request signal received\n" );
+			printf( "WARNING: Interactive attention request signal received\n" );
 			break;
 		case SIGSEGV:
 			printf( "WARNING: Invalid memory access signal received\n" );

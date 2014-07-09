@@ -41,7 +41,7 @@ piapi_print_header( void )
 {
 	printf( "# number total time_sec time_usec port raw.volts raw.amps raw.watts"
 		"avg.volts avg.amps avg.watts min.volts min.amps min.watts"
-		"max.volts max.amps max.watts time_total energy" );
+		"max.volts max.amps max.watts time_total energy\n" );
 }
 
 void
