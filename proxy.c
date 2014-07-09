@@ -14,9 +14,34 @@ static int verbose = 0;
 static void
 signal_handler(int sig)
 {
-	if( sig == SIGINT )
-		piapi_sampling = 0;
+	switch ( sig ) {
+		case SIGABRT:
+			printf( "WARNING: abnormal termination signal received\n" );
+			break;
+		case SIGFPE:
+			printf( "WARNING: floating point exception signal received\n" );
+			break;
+		case SIGILL:
+			printf( "WARNING: invalid instruction signal received\n" );
+			break;
+		case SIGINT:
+			printf( "WARNING: interactive attention request signal received\n" );
+			break;
+		case SIGSEGV:
+			printf( "WARNING: Invalid memory access signal received\n" );
+			break;
+		case SIGTERM:
+			printf( "WARNING: Termination signal received\n" );
+			break;
+		default:
+			printf( "WARNING: Unknown signal received\n" );
+			break;
+	}
+
+	printf( "WARNING: Signal caught, shutting down sampling\n" );
+	piapi_sampling = 0;
 	sleep(1);
+
 	exit(0);
 }
 
@@ -113,7 +138,15 @@ main(int argc, char *argv[])
 		return 0;
 	}
 
-	signal( SIGINT, signal_handler );
+	if( signal( SIGABRT, signal_handler ) == SIG_ERR ||
+	    signal( SIGFPE, signal_handler ) == SIG_ERR ||
+	    signal( SIGILL, signal_handler ) == SIG_ERR ||
+	    signal( SIGINT, signal_handler ) == SIG_ERR ||
+	    signal( SIGSEGV, signal_handler ) == SIG_ERR ||
+	    signal( SIGTERM, signal_handler ) == SIG_ERR ) {
+		printf( "WARNING: Unable to register all signal handlers\n" );
+	}
+
 	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport ); 
 
 	if( counter ) {
