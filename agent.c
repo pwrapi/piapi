@@ -39,8 +39,6 @@ signal_handler(int sig)
 	printf( "WARNING: Signal caught, shutting down sampling\n" );
 	piapi_sampling = 0;
 	sleep(1);
-
-	exit(0);
 }
 
 int
