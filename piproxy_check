@@ -3,17 +3,17 @@
 use strict;
 
 my $start = shift;
-    defined($start) or die "Must provide first proxy in range\n";
+    defined($start) or die "Must provide first agent in range\n";
 my $fin = shift;
-    defined($fin) or die "Must provide last proxy in range\n";
+    defined($fin) or die "Must provide last agent in range\n";
 
 print "checking teller$start through teller$fin\n";
 
 my $count=1;
 for my $num ($start..$fin) {
     if ($num < 10) { $num = "0" . $num; }
-    print "teller$num\n";
-    system("rsh teller$num ps aux | grep piproxy &");
+    print "teller$num:\n";
+    system("rsh teller$num ps aux | grep piproxy");
     $count++;
 }
 sleep(2);
