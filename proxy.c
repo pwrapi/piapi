@@ -52,9 +52,10 @@ piapi_callback( piapi_sample_t *sample )
 {
 	static int header = 0;
 
-	if( !header && !verbose ) {
-            piapi_print_header( );
-            header = 1;
+	if( !header ) {
+		if( !quiet && !verbose )
+        		piapi_print_header( );
+        	header = 1;
         }
 	piapi_print( sample, verbose );
 
