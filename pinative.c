@@ -109,7 +109,7 @@ piapi_native_counters( void *arg )
 	while( counters.samplers_run ) {
 		gettimeofday( &t0, 0x0 );
 		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
-			unsigned int j = (counters.sampler[i].number+1)%PIAPI_SAMPLE_RING_SIZE;
+			unsigned int j = ++(counters.sampler[i].number)%PIAPI_SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].port = i;
 			counters.sampler[i].sample[j].number = j;
 			counters.sampler[i].sample[j].total = j;
@@ -128,7 +128,6 @@ piapi_native_counters( void *arg )
 
 			if( piapi_native_debug )
 				piapi_print( &(counters.sampler[i].sample[j]), 1 );
-			counters.sampler[i].number++;
 		}
 		gettimeofday( &t1, 0x0 );
 		tdiff = t1.tv_sec - t0.tv_sec +
