@@ -44,7 +44,7 @@ signal_handler(int sig)
 	}
 
 	piapi_sampling = 0;
-	sleep(2);
+	sleep(1);
 }
 
 void
@@ -128,7 +128,6 @@ main(int argc, char *argv[])
 	piapi_collect( cntx, port, samples, frequency );
 	while( piapi_sampling ) sched_yield();
 
-	sleep( 1 );
 	piapi_destroy( &cntx );
 
 	return 0;

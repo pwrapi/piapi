@@ -42,7 +42,7 @@ signal_handler(int sig)
 	}
 
 	piapi_sampling = 0;
-	sleep(2);
+	sleep(1);
 }
 
 int
