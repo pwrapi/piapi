@@ -10,37 +10,41 @@
 
 static int piapi_sampling = 0;
 static int verbose = 0;
+static int quiet = 0;
 
 static void
 signal_handler(int sig)
 {
-	switch ( sig ) {
-		case SIGABRT:
-			printf( "WARNING: Abnormal termination signal received\n" );
-			break;
-		case SIGFPE:
-			printf( "WARNING: Floating point exception signal received\n" );
-			break;
-		case SIGILL:
-			printf( "WARNING: Invalid instruction signal received\n" );
-			break;
-		case SIGINT:
-			printf( "WARNING: Interactive attention request signal received\n" );
-			break;
-		case SIGSEGV:
-			printf( "WARNING: Invalid memory access signal received\n" );
-			break;
-		case SIGTERM:
-			printf( "WARNING: Termination signal received\n" );
-			break;
-		default:
-			printf( "WARNING: Unknown signal received\n" );
-			break;
+	if( !quiet ) {
+		switch ( sig ) {
+			case SIGABRT:
+				printf( "WARNING: Abnormal termination signal received\n" );
+				break;
+			case SIGFPE:
+				printf( "WARNING: Floating point exception signal received\n" );
+				break;
+			case SIGILL:
+				printf( "WARNING: Invalid instruction signal received\n" );
+				break;
+			case SIGINT:
+				printf( "WARNING: Interactive attention request signal received\n" );
+				break;
+			case SIGSEGV:
+				printf( "WARNING: Invalid memory access signal received\n" );
+				break;
+			case SIGTERM:
+				printf( "WARNING: Termination signal received\n" );
+				break;
+			default:
+				printf( "WARNING: Unknown signal received\n" );
+				break;
+		}
+
+		printf( "WARNING: Signal caught, shutting down sampling\n" );
 	}
 
-	printf( "WARNING: Signal caught, shutting down sampling\n" );
 	piapi_sampling = 0;
-	sleep(1);
+	sleep(2);
 }
 
 void
@@ -68,7 +72,7 @@ main(int argc, char *argv[])
 	int opt;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "t:s:f:vhi?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "t:s:f:qvhi?" )) != -1 ) {
 		switch( opt ) {
 			case 't':
 				port = atoi(optarg);
@@ -79,6 +83,9 @@ main(int argc, char *argv[])
 			case 'f':
 				frequency = atoi(optarg);
 				break;
+			case 'q':
+				quiet = 1;
+				break;
 			case 'v':
 				verbose = 1;
 				break;
@@ -87,7 +94,7 @@ main(int argc, char *argv[])
 				break;
 			case 'h':
 			case '?':
-				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-v] [-i]\n", argv[0] );
+				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-q] [-v] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -110,7 +117,8 @@ main(int argc, char *argv[])
 	    signal( SIGINT, signal_handler ) == SIG_ERR ||
 	    signal( SIGSEGV, signal_handler ) == SIG_ERR ||
 	    signal( SIGTERM, signal_handler ) == SIG_ERR ) {
-		printf( "WARNING: Unable to register all signal handlers\n" );
+		if( !quiet )
+			printf( "WARNING: Unable to register all signal handlers\n" );
 	}
 
 	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0 ); 
