@@ -83,8 +83,8 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 		sample->time_total = t.tv_sec - tinit->tv_sec +
 			(t.tv_usec - tinit->tv_usec)/MS;
 
-		sample->energy += sample->raw.watts *
-			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS);
+		sample->energy += (sample->raw.watts *
+			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS));
 	}
 }
 
@@ -111,8 +111,8 @@ piapi_native_counters( void *arg )
 		for( i = PIAPI_PORT_MIN; i <= PIAPI_PORT_MAX; i++ ) {
 			unsigned int j = (counters.sampler[i].number+1)%PIAPI_SAMPLE_RING_SIZE;
 			counters.sampler[i].sample[j].port = i;
-			counters.sampler[i].sample[j].number = j;
-			counters.sampler[i].sample[j].total = j;
+			counters.sampler[i].sample[j].number = counters.sampler[i].sample[(j != 0 ? j-1 : PIAPI_SAMPLE_RING_SIZE-1)].number+1;
+			counters.sampler[i].sample[j].total = counters.sampler[i].sample[j].number;
 
 			if( piapi_dev_collect( i,
 				&(counters.sampler[i].sample[j].raw ) ) < 0 ) {
@@ -126,8 +126,8 @@ piapi_native_counters( void *arg )
 			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
 				piapi_print( &(counters.sampler[i].sample[j]), 0 );
 
-			if( piapi_native_debug )
-				piapi_print( &(counters.sampler[i].sample[j]), 1 );
+			if( piapi_native_debug && i==PIAPI_PORT_MIN && !(j%PIAPI_SAMPLE_FREQ) )
+				piapi_print( &(counters.sampler[i].sample[j]), 0 );
 			counters.sampler[i].number++;
 		}
 		gettimeofday( &t1, 0x0 );
