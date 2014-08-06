@@ -83,8 +83,7 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 		sample->time_total = t.tv_sec - tinit->tv_sec +
 			(t.tv_usec - tinit->tv_usec)/MS;
 
-		sample->energy += (sample->raw.watts *
-			(t.tv_sec - tinit->tv_sec + (t.tv_usec - tinit->tv_usec)/MS));
+		sample->energy = sample->avg.watts * sample->time_total;
 	}
 }
 
