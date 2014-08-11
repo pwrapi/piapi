@@ -1,33 +1,33 @@
 .\" Manpage for pilogger
 .\" Contact ddeboni@sandia.gov to correct errors or typos
-.TS man 8 "28 May 2014" "1.2" "pilogger man page"
+.TH PILOGGER 8 "28 May 2014" Linux "pilogger man page"
 .SH NAME
 pilogger \- communicate with multiple PowerInsight devices
 .SH SYNOPSIS
-\fBpilogger\fP [ -p \fIoutputpath\fP ] [ -n \fIname\fP ]
+pilogger [ -p \fIoutputpath\fP ] [ -n \fIname\fP ]
 [ -i \fIipprefix\fP ] [ -l \fIlowerbound\fP ] [ -u \fIupperbound\fP ]
 [ -t \fIsensorport\fP ] [ -s \fIsamples\fP ] [ -f \fIfrequency\fP ] [ -? ]
 .SH DESCRIPTION
 \fBpilogger\fP is a command line utility for communicating monitor
 and control commands to multiple PowerInsight embedded devices
 .SH OPTIONS
-\fB-p\fP [ \fIoutputpath\fP ]
+.IP \fB-p\fP
 output path for the log data files (default is working directory)
-\fB-n\fP [ \fIname\fP ]
+.IP \fB-n\fP
 name prefix for the output files (default is teller)
-\fB-i\fP [ \fIipprefix\fP ]
+.IP \fB-i\fP
 IP prefix for the PowerInsight devices (default is 10.54.21)
-\fB-l\fP [ \fIlower\fP ]
+.IP \fB-l\fP
 last octet of IP address for PowerInsight device lower bound (default is 0)
-\fB-u\fP [ \fIupper\fP ]
+.IP \fB-u\fP
 last octet of IP address for PowerInsight device upper bound (default is -1)
-\fB-t\fP [ \fIsensorport\fP ]
+.IP \fB-t\fP
 sensor port to be used (default is CPU=1)
-\fB-s\fP [ \fIsamp\fP ]
+.IP \fB-s\fP
 number of samples to collect (default is 1, 0 for infinite)
-\fB-f\fP [ \fIfrequency\fP ]
+.IP \fB-f\fP
 frequency of collection (default is 1Hz, 0 for off)
-\fB-?\fP
+.IP \fB-?\fP
 usage information
 .SH "SEE ALSO"
 piproxy (8)

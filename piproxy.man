@@ -1,6 +1,6 @@
 .\" Manpage for piproxy
 .\" Contact ddeboni@sandia.gov to correct errors or typos
-.TS man 8 "28 May 2014" "1.2" "piproxy man page"
+.TH PIPROXY 8 "28 May 2014" Linux "pilogger man page"
 .SH NAME
 piproxy \- communicate with PowerInsight device
 .SH SYNOPSIS
@@ -11,30 +11,29 @@ piproxy \- communicate with PowerInsight device
 \fBpiproxy\fP is a command line utility for communicating monitor
 and control commands to the PowerInsight embedded device
 .SH OPTIONS
-.TP
-\fB-a\fP [ \fIsa_addr\fP ]
+.IP \fB-a\fP
 IP address of PowerInsight device (default is localhost)
-\fB-p\fP [ \fIsa_port\fP ]
+.IP \fB-p\fP
 TCP/IP port of PowerInsight agent (default is 20201)
-\fB-t\fP [ \fIsensorport\fP ]
+.IP \fB-t\fP
 sensor port to be used (default is CPU=1)
-\fB-d\fP [ \fIsamples\fP ]
+.IP \fB-d\fP
 number of samples to collect (default is 1, 0 for infinite)
-\fB-f\fP [ \fIfrequency\fP ]
+.IP \fB-f\fP
 frequency of collection (default is 1Hz, 0 for off)
-\fB-m\fP [ \fImark\fP ]
+.IP \fB-m\fP
 add marker message to the agent log
-\fB-l\fP
+.IP \fB-l\fP
 control agent logger (uses port and frequency)
-\fB-c\fP
+.IP \fB-c\fP
 read counter values (uses port)
-\fB-r\fP
+.IP \fB-r\fP
 reset counter values to zero (uses port)
-\fB-v\fP
+.IP \fB-v\fP
 verbosity of results
-\fB-i\fP
+.IP \fB-i\fP
 information regarding version and build
-\fB-h\fP
+.IP \fB-h\fP
 usage information
 .SH "SEE ALSO"
 pilogger (8)
