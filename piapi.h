@@ -7,20 +7,23 @@
 extern "C" {
 #endif
 
-/*! \fn int piapi_init( void *cntx, piapi_mode_t mode, piapi_callback_t callback )
+/*! \fn int piapi_init( void *cntx, piapi_mode_t mode, piapi_callback_t callback,
+ *   unsigned int saddr, unsigned short sport, unsigned int counterfreq );
  *  \brief Initialize PIAPI
  *  \param cntx handle to context state
  *  \param mode configuration type (native, proxy, agent)
  *  \param callback results callback function
  *  \param saddr socket ip address
  *  \param sport socket port
+ *  \param frequency internal counter frequency
  *  \return 0 on success, negative on failure
  *
  *  Initialization of the PIAPI accomplishes the following:
  *  - sets mode and callback for the context
  *  - calls the appropriate initializer for the configuration
  */
-int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, unsigned int saddr, unsigned short sport );
+int piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback,
+    unsigned int saddr, unsigned short sport, unsigned int counterfreq );
 
 /*! \fn int piapi_destroy( void *cntx )
  *  \brief Destroy PIAPI
@@ -74,7 +77,7 @@ int piapi_counter( void *cntx, piapi_port_t port );
  */
 int piapi_reset( void *cntx, piapi_port_t port );
 
-/*! \fn int piapi_log( void *cntx, unsigned int frequency )
+/*! \fn int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency )
  *  \brief Control frequency of counter logging
  *  \param cntx handle to context state
  *  \param port sensor port to control counter log on

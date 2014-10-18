@@ -16,7 +16,7 @@
 
 #define PIAPI_BUF_SIZE (1 << 10)
 
-#define PIAPI_SAMPLE_FREQ 10
+#define PIAPI_SAMPLE_FREQ 100
 #define PIAPI_SAMPLE_RING_SIZE (1 << 15)
 
 

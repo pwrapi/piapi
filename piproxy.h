@@ -41,7 +41,7 @@ int piapi_proxy_collect( void *cntx );
  */
 int piapi_proxy_halt( void *cntx );
 
-/*! \fn int piapi_proxy_counter( void *cntx, piapi_port_t port, piapi_sample_t *sample )
+/*! \fn int piapi_proxy_counter( void *cntx )
  *  \brief Query counter on a remote agent port
  *  \param cntx handle to context state
  *  \return 0 on success, negative on failure
@@ -50,7 +50,7 @@ int piapi_proxy_halt( void *cntx );
  */
 int piapi_proxy_counter( void *cntx );
 
-/*! \fn int piapi_proxy_reset( void *cntx, piapi_port_t port )
+/*! \fn int piapi_proxy_reset( void *cntx )
  *  \brief reset counter on a remote agent port
  *  \param cntx handle to context state
  *  \param port sensor port to query counter on

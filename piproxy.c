@@ -343,6 +343,31 @@ piapi_proxy_mark( void *cntx )
 }
 
 int
+piapi_proxy_countfreq( void *cntx )
+{
+	char buf[ PIAPI_BUF_SIZE ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Controlling agent counter frequency to %u on port %u\n",
+			PIAPI_CNTX(cntx)->frequency, PIAPI_CNTX(cntx)->port );
+
+	strcpy( PIAPI_CNTX(cntx)->command, "countfreq" );
+	len = sprintf( buf, "%s:%u:%u;", PIAPI_CNTX(cntx)->command,
+		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->frequency );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf( "Error while attempting to control agent counter frequency\n" );
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully controlled agent counter frequency\n");
+
+	return 0;
+}
+
+int
 piapi_proxy_init( void *cntx )
 {
 	if( piapi_proxy_connect( cntx ) )

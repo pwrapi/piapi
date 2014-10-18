@@ -20,7 +20,8 @@ static int piapi_debug = 1;
 #endif
 
 int
-piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, unsigned int saddr, unsigned short sport )
+piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback,
+    unsigned int saddr, unsigned short sport, unsigned int counterfreq )
 {
 	*cntx = malloc( sizeof(struct piapi_context) );
 	bzero( *cntx, sizeof(struct piapi_context) );
@@ -35,6 +36,8 @@ piapi_init( void **cntx, piapi_mode_t mode, piapi_callback_t callback, unsigned 
 	PIAPI_CNTX(*cntx)->sa_port = (sport ? sport : PIAPI_AGNT_PORT);
 	if( piapi_debug )
 		printf( "Using port of %u\n", PIAPI_CNTX(*cntx)->sa_port );
+
+        PIAPI_CNTX(*cntx)->frequency = counterfreq;
 
 	switch( PIAPI_CNTX(*cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:

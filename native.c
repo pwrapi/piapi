@@ -69,11 +69,12 @@ main(int argc, char *argv[])
 	unsigned int port = PIAPI_PORT_CPU,
 		samples = 1,
 		frequency = 1,
+		counterfreq = 10,
 		info = 0;
 	int opt;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "t:s:f:qvhi?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "t:s:f:c:qvhi?" )) != -1 ) {
 		switch( opt ) {
 			case 't':
 				port = atoi(optarg);
@@ -83,6 +84,9 @@ main(int argc, char *argv[])
 				break;
 			case 'f':
 				frequency = atoi(optarg);
+				break;
+			case 'c':
+				counterfreq = atoi(optarg);
 				break;
 			case 'q':
 				quiet = 1;
@@ -95,7 +99,7 @@ main(int argc, char *argv[])
 				break;
 			case 'h':
 			case '?':
-				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-q] [-v] [-i]\n", argv[0] );
+				printf( "Usage: %s [-t sensorport] [-s samples] [-f frequency] [-c counterfreq] [-q] [-v] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -122,7 +126,7 @@ main(int argc, char *argv[])
 			printf( "WARNING: Unable to register all signal handlers\n" );
 	}
 
-	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0 ); 
+	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0, counterfreq ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, port, samples, frequency );

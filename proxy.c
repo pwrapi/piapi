@@ -154,7 +154,7 @@ main(int argc, char *argv[])
 			printf( "WARNING: Unable to register all signal handlers\n" );
 	}
 
-	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport ); 
+	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport, 0 ); 
 
 	if( counter ) {
 		piapi_sampling = 1;

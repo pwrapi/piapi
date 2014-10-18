@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		} 
 	}
 
-	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport ); 
+	piapi_init( &cntx, PIAPI_MODE_PROXY, piapi_callback, saddr, sport, 10 ); 
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );

@@ -88,8 +88,6 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 }
 
 #ifdef PIAPI_COUNTERS
-static unsigned int frequency = PIAPI_SAMPLE_FREQ;
-
 static void
 piapi_native_counters( void *arg )
 {
@@ -200,6 +198,8 @@ piapi_native_thread( void *cntx )
 int
 piapi_native_init( void *cntx )
 {
+	int frequency = PIAPI_CNTX(cntx)->frequency;
+
 	if( piapi_native_debug )
        		printf( "\nPower native communication\n" );
 

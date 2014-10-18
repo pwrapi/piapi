@@ -50,12 +50,13 @@ main(int argc, char *argv[])
 {
 	unsigned int saddr = 0,
 		sport = 0,
+		counterfreq = 10,                
 		info = 0;
 	int opt;
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:hqi?" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:c:hqi?" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
@@ -70,6 +71,9 @@ main(int argc, char *argv[])
 			case 'p':
 				sport = atoi(optarg);
 				break;
+			case 'c':
+				counterfreq = atoi(optarg);
+				break;
 			case 'q':
 				quiet = 1;
 				break;
@@ -78,7 +82,7 @@ main(int argc, char *argv[])
 				break;
 			case 'h':
 			case '?':
-				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-q] [-i]\n", argv[0] );
+				printf( "Usage: %s [-a sa_addr] [-p sa_port] [-c counterfreq] [-q] [-i]\n", argv[0] );
 				exit( -1 );
 			default:
 				abort( );
@@ -105,7 +109,7 @@ main(int argc, char *argv[])
 			printf( "WARNING: Unable to register all signal handlers\n" );
 	}
 
-	piapi_init( &cntx, PIAPI_MODE_AGENT, 0x0, saddr, sport ); 
+	piapi_init( &cntx, PIAPI_MODE_AGENT, 0x0, saddr, sport, counterfreq ); 
 
 	piapi_sampling = 1;
 	while( piapi_sampling ) sched_yield();
