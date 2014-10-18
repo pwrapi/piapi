@@ -123,7 +123,7 @@ piapi_native_counters( void *arg )
 			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
 				piapi_print( &(counters.sampler[i].sample[j]), 0 );
 
-			if( piapi_native_debug && i==PIAPI_PORT_MIN && !(j%PIAPI_SAMPLE_FREQ) )
+			if( piapi_native_debug && i==PIAPI_PORT_MIN && !(j%frequency) )
 				piapi_print( &(counters.sampler[i].sample[j]), 0 );
 			counters.sampler[i].number++;
 		}
