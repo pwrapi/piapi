@@ -114,6 +114,7 @@ main(int argc, char *argv[])
 	piapi_sampling = 1;
 	while( piapi_sampling ) sched_yield();
 
+	sleep(1);
 	piapi_destroy( &cntx );
 
 	return 0;
