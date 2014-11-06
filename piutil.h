@@ -63,7 +63,7 @@ struct piapi_context {
 
 ssize_t writen(int fd, const void *vptr, size_t n);
 
-void piapi_print_header( void );
-void piapi_print( piapi_sample_t *sample, int verbose );
+void piapi_print_header( FILE *fd );
+void piapi_print( FILE *fd, piapi_sample_t *sample, int verbose );
 
 #endif

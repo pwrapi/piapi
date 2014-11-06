@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -25,6 +26,9 @@ static int piapi_native_debug = 0;
 #else
 static int piapi_native_debug = 1;
 #endif
+
+static FILE *log = 0x0;
+static char logfile[256] = "";
 
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
@@ -108,7 +112,13 @@ piapi_native_counters( void *arg )
 	if( piapi_native_debug )
 		printf( "Counter thread running\n" );
 
-        piapi_print_header( );
+        sprintf( logfile, "%s/%s.log", LOGPATH, getenv( "HOSTNAME" ) );
+        if( (log=fopen( logfile, "w" )) < 0 ) {
+		printf( "Unable to open counter log file %s\n", logfile );
+		return;
+	}
+
+        piapi_print_header( log );
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		gettimeofday( &t0, 0x0 );
@@ -128,10 +138,10 @@ piapi_native_counters( void *arg )
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
 
 			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
-				piapi_print( &(counters.sampler[i].sample[j]), 0 );
+				piapi_print( log, &(counters.sampler[i].sample[j]), 0 );
 
 			if( piapi_native_debug && i==PIAPI_PORT_MIN && !(j%frequency) )
-				piapi_print( &(counters.sampler[i].sample[j]), 0 );
+				piapi_print( stdout, &(counters.sampler[i].sample[j]), 0 );
 			counters.sampler[i].number++;
 		}
 		gettimeofday( &t1, 0x0 );
@@ -141,6 +151,8 @@ piapi_native_counters( void *arg )
 		if( tdiff < MS / frequency )
 			usleep( MS / frequency - tdiff );
 	}
+
+	fclose( log );
 
 	if( piapi_native_debug )
 		printf( "Counter thread exiting\n" );
@@ -362,6 +374,14 @@ int piapi_native_log( void *cntx )
 		if( piapi_native_debug )
        			printf( "Setting native counter log on port %u to %u\n", port, frequency );
 		counters.sampler[port].log = frequency;
+	}
+
+	if( frequency == 0 ) {
+		fclose( log );
+        	if( (log=fopen( logfile, "w" )) < 0 ) {
+			printf( "Unable to open counter log file %s\n", logfile );
+			return -1;
+		}
 	}
 
 	return 0;

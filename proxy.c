@@ -61,10 +61,10 @@ piapi_callback( piapi_sample_t *sample )
 
 	if( !header ) {
 		if( !quiet && !verbose )
-        		piapi_print_header( );
+        		piapi_print_header( stdout );
         	header = 1;
         }
-	piapi_print( sample, verbose );
+	piapi_print( stdout, sample, verbose );
 
 	if( sample->total && sample->number == sample->total )
 		piapi_sampling = 0;
