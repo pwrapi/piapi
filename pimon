@@ -9,7 +9,6 @@ do
     if pgrep piagent 1>/dev/null;then
         sleep 1
     else
-#       ./piagent 1> /var/tmp/$LOGFILE &
-       ./piagent 1> /mnt/log/$LOGFILE &
+       ./piagent &
     fi
 done
