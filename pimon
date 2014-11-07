@@ -1,14 +1,20 @@
 #!/bin/sh
 
-LOGFILE=`hostname`.log
-
+export LOGFILE="/mnt/log/`hostname`.log"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/power/lib
+
+FREQ=10
+
+if [ -z "$1" ]
+then
+    FREQ=$1
+fi
 
 while true
 do
     if pgrep piagent 1>/dev/null;then
         sleep 1
     else
-       ./piagent &
+       ./piagent -c $FREQ&
     fi
 done

@@ -28,7 +28,7 @@ static int piapi_native_debug = 1;
 #endif
 
 static FILE *log = 0x0;
-static char logfile[256] = "";
+static char *logfile = 0x0;
 
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
@@ -112,7 +112,11 @@ piapi_native_counters( void *arg )
 	if( piapi_native_debug )
 		printf( "Counter thread running\n" );
 
-        sprintf( logfile, "%s/%s.log", LOGPATH, getenv( "HOSTNAME" ) );
+	if( !(logfile=getenv( "LOGFILE" )) ) {
+		printf( "Unable read environment variable for log file\n" );
+		return;
+	}
+	
         if( (log=fopen( logfile, "w" )) < 0 ) {
 		printf( "Unable to open counter log file %s\n", logfile );
 		return;

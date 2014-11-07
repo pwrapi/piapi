@@ -10,10 +10,8 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 4
-#define PIAPI_BUILD 1
+#define PIAPI_BUILD 2
 #define PIAPI_REV_STR "$Rev$"
-
-#define LOGPATH "/mnt/log"
 
 #ifdef __cplusplus
 extern "C" {
