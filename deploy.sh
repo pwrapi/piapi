@@ -14,3 +14,12 @@ do
 	cp ./piproxy $IMAGE_PATH/bin
 	cp ./pilogger $IMAGE_PATH/bin
 done
+
+for IMAGE_PATH in '/tftpboot/images/ro-rootfs/home' '/tftpboot/images/ro-rootfs-alt/home'
+do
+	echo "Extracting beaglebone files to $IMAGE_PATH"
+	rm -rf $IMAGE_PATH/power
+	tar zxpf /home/ddeboni/archive/kratos_tools_arm.tgz $IMAGE_PATH
+	mv $IMAGE_PATH/build $IMAGE_PATH/power
+done
+
