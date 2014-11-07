@@ -49,7 +49,6 @@ piapi_print_header( FILE *fd )
 	fprintf( fd, "# number total time_sec time_usec port raw.volts raw.amps raw.watts "
 		"avg.volts avg.amps avg.watts min.volts min.amps min.watts "
 		"max.volts max.amps max.watts time_total energy\n" );
-	fflush( fd );
 }
 
 void
@@ -86,6 +85,5 @@ piapi_print( FILE *fd, piapi_sample_t *sample, int verbose )
         	fprintf( fd, "\ttotal time   - %f\n", sample->time_total );
         	fprintf( fd, "\ttotal energy - %f\n", sample->energy );
 	}
-	fflush( fd );
 }
 

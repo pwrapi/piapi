@@ -380,7 +380,7 @@ int piapi_native_log( void *cntx )
 		counters.sampler[port].log = frequency;
 	}
 
-	if( frequency == 0 ) {
+	if( frequency != 0 ) {
 		fclose( log );
         	if( (log=fopen( logfile, "w" )) < 0 ) {
 			printf( "Unable to open counter log file %s\n", logfile );
