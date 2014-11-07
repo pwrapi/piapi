@@ -3,10 +3,10 @@
 export LOGFILE="/mnt/log/`hostname`.log"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/power/lib
 
-FREQ=10
-
 if [ -z "$1" ]
 then
+    FREQ=10
+else
     FREQ=$1
 fi
 
