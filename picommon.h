@@ -10,7 +10,7 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 4
-#define PIAPI_BUILD 3
+#define PIAPI_BUILD 4
 #define PIAPI_REV_STR "$Rev$"
 
 #ifdef __cplusplus

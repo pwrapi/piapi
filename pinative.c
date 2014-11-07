@@ -364,6 +364,14 @@ int piapi_native_log( void *cntx )
 	if( piapi_native_debug )
        		printf( "Reseting native counter log on port %u to %u\n", port, frequency );
 
+	if( frequency != 0 ) {
+		fclose( log );
+        	if( (log=fopen( logfile, "w" )) < 0 ) {
+			printf( "Unable to open counter log file %s\n", logfile );
+			return -1;
+		}
+	}
+
 	begin = port;
 	end = port;
 	if( port == PIAPI_PORT_ALL ) {
@@ -378,14 +386,6 @@ int piapi_native_log( void *cntx )
 		if( piapi_native_debug )
        			printf( "Setting native counter log on port %u to %u\n", port, frequency );
 		counters.sampler[port].log = frequency;
-	}
-
-	if( frequency != 0 ) {
-		fclose( log );
-        	if( (log=fopen( logfile, "w" )) < 0 ) {
-			printf( "Unable to open counter log file %s\n", logfile );
-			return -1;
-		}
 	}
 
 	return 0;
