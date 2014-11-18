@@ -396,7 +396,7 @@ int piapi_native_mark( void *cntx )
 	char marker[40] = ""; 
 
 	strcpy( marker, PIAPI_CNTX(cntx)->command );
-	printf( "# MARK - %s\n", marker );
+	fprintf( log, "# MARK - %s\n", marker );
 
 	return 0;
 }
