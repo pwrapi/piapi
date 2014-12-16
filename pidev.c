@@ -423,6 +423,15 @@ void pidev_read(int portNumber, reading_t *sample)
         calcValues(portNumber, sample); 
 }
 
+void pidev_open(void)
+{
+    int i;
+
+    for( i = sizeof(devList)/sizeof(*devList)-1 ; i > 0 ; --i ) {
+        (devList[i].open)( i );
+    }
+}
+
 void pidev_close(void)
 {
     int i;
