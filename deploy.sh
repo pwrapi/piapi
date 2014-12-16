@@ -31,5 +31,6 @@ do
 
 	echo "Moving beaglebone files to $IMAGE_PATH"
 	mv build $IMAGE_PATH/power
+	ln -s $IMAGE_PATH/../etc/powerinsight.conf $IMAGE_PATH/power/bin/.config
 done
 

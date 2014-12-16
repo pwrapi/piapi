@@ -148,7 +148,7 @@ static void configPortMap()
     FILE *fd;
     int i;
 
-    fd = fopen( ".config", "r" );
+    fd = fopen( "/etc/powerinsight.conf", "r" );
     if( fd == NULL ) {
         printf( "Missing configuration file\n" );
         exit( 1 );
