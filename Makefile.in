@@ -27,13 +27,14 @@ endif
 
 ifeq ($(SPI),y)
 CFLAGS += -DPIAPI_SPI
+LDFLAGS += -lpidev
 endif
 
 ifeq ($(CNT),y)
 CFLAGS += -DPIAPI_COUNTERS
 endif
 
-TARGET = getRawPower
+TARGET = test
 LIBNAME = piapi
 
 SHAREDLIB = lib$(LIBNAME).so
@@ -47,22 +48,16 @@ OBJS = 	piapi.o     \
 TESTOBJS = proxy.o  \
 	agent.o     \
 	native.o    \
-	test.o      \
 	$(TARGET).o
-
-ifeq ($(SPI),y)
-OBJS +=	pidev.o
-endif
 
 all: $(LIBNAME) $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
 	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -o piproxy 
 	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -o piagent 
 	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -o pinative
-	$(CC) $(CFLAGS) test.c -L. -l$(LIBNAME) -o pitest
 
 clean:
-	rm -f out/* $(TARGET) piproxy piagent pinative pitest $(STATICLIB) $(OBJS)
+	rm -f $(TARGET) piproxy piagent pinative $(SHAREDLIB) $(OBJS)
 
 $(LIBNAME): $(OBJS)
 	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
@@ -74,5 +69,5 @@ install:
 	mkdir -p $(PREFIX)/lib
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
-	cp $(TARGET) piproxy piagent pinative pilogger pimon piver pitest config.amd config.intel $(PREFIX)/bin
+	cp $(TARGET) piproxy piagent pinative pilogger pimon piver .config $(PREFIX)/bin
 	cp -R script $(PREFIX)/script

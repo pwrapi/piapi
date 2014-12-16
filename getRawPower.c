@@ -34,15 +34,15 @@ int main(int argc, char *argv[])
 
     bzero( &sample, sizeof( reading_t ) );
     if(argc < 2) {
-	printUsage(argv[0]);
+        printUsage(argv[0]);
     }
 
     // Starting time
     if( timeCollect ) {
-    	gettimeofday( &start, NULL );
+        gettimeofday( &start, NULL );
     } else {
       printf("%-4s %5s %5s %7s %7s %7s\n",
-              "Pt#", "A", "V", "mA", "mV", "mW"); 
+          "Pt#", "A", "V", "mA", "mV", "mW"); 
     }
 
     // MAIN EXEC LOOP
@@ -52,32 +52,28 @@ int main(int argc, char *argv[])
         if((portNumber < 0) || (portNumber > MAX_PORTNUM)) 
             { printUsage(argv[0]); }
 
-#ifdef PIAPI_SPI
         // Collect raw readings and calculate power
         pidev_read(portNumber, &sample);
-#endif
+
         // What time is it now?
-	if( timeCollect ) {
-        	gettimeofday( &now, NULL );
-	}
+        if( timeCollect ) {
+            gettimeofday( &now, NULL );
+        }
 
         // Print results
-	if( timeCollect ) {
-        	printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
-            		start.tv_sec, now.tv_sec - start.tv_sec, (long int)(now.tv_usec),
-            		portNumber, sample.Asamp, sample.Vsamp/16,
-            		sample.miliamps,sample.milivolts,sample.miliwatts );
-	} else {
-        	printf("%-4d %5d %5d %7d %7d %7d\n", 
-           		portNumber, sample.Asamp, sample.Vsamp/16,
-            		sample.miliamps,sample.milivolts,sample.miliwatts );
-	}
-
+        if( timeCollect ) {
+            printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
+                start.tv_sec, now.tv_sec - start.tv_sec, (long int)(now.tv_usec),
+                portNumber, sample.Asamp, sample.Vsamp/16,
+                sample.miliamps,sample.milivolts,sample.miliwatts );
+        } else {
+            printf("%-4d %5d %5d %7d %7d %7d\n", 
+                portNumber, sample.Asamp, sample.Vsamp/16,
+                sample.miliamps,sample.milivolts,sample.miliwatts );
+        }
     }  // end for() loop 
 
-#ifdef PIAPI_SPI
     pidev_close();
-#endif
 
     return (0);
 }   // end main()
