@@ -24,13 +24,14 @@ do
 	echo "Linking configuration file to $IMAGE_PATH"
 	if [ "$IMAGE_PATH" == "/tftpboot/images/ro-rootfs/home" ]
 	then
-		ln -s config.amd build/bin/.config
+		mv config.amd $IMAGE_PATH/../etc/powerinsight.conf
+		rm config.intel
 	else
-		ln -s config.intel build/bin/.config
+		mv config.intel $IMAGE_PATH/../etc/powerinsight.conf
+		rm config.amd
 	fi
 
 	echo "Moving beaglebone files to $IMAGE_PATH"
 	mv build $IMAGE_PATH/power
-	ln -s $IMAGE_PATH/../etc/powerinsight.conf $IMAGE_PATH/power/bin/.config
 done
 
