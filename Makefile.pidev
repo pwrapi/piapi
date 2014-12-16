@@ -32,4 +32,6 @@ install:
 	mkdir -p $(PREFIX)/lib
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
-	cp $(TARGET) .config /etc/powerinsight.conf 
+	cp $(TARGET) $(PREFIX)/bin
+	cp .config $(PREFIX)/bin
+	ln -s $(PREFIX)/bin /etc/powerinsight.conf
