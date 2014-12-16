@@ -20,7 +20,7 @@ all: $(LIBNAME) $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(SHAREDLIB) $(OBJS)
+	rm -f $(TARGET) $(SHAREDLIB) $(OBJS) $(TESTOBJS)
 
 $(LIBNAME): $(OBJS)
 	$(CC) -shared -o $(SHAREDLIB) $(OBJS)

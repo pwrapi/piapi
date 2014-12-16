@@ -57,7 +57,7 @@ all: $(LIBNAME) $(TESTOBJS)
 	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -o pinative
 
 clean:
-	rm -f $(TARGET) piproxy piagent pinative $(SHAREDLIB) $(OBJS)
+	rm -f $(TARGET) piproxy piagent pinative $(SHAREDLIB) $(OBJS) $(TESTOBJS)
 
 $(LIBNAME): $(OBJS)
 	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
