@@ -2,6 +2,7 @@ PREFIX = install
 DBG ?= n
 LVL ?= 1
 XC ?= n
+SPI ?= n
 CNT ?= y
 
 ifeq ($(XC),y)
