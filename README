@@ -4,10 +4,6 @@ between a proxy running on the host and an agent running on the
 embedded PowerInsight device.
 
 To build on the host:
-automake
-./configure --prefix="/path/to/install/dir"
-(or copy the file Makefile.in to Makefile and change @prefix@)
-
 make
 make install
 
@@ -15,17 +11,12 @@ To build on the embedded device you will need to have a PowerInsight
 device with root access or cross-compilers on the host system.
 The pidev.h / libpidev.so files and native compilers are provided by
 Penguin Computing.  To build for the embedded system natively:
-automake
-./configure --prefix="/path/to/install/dir"
-(or copy the file Makefile.in to Makefile and change @prefix@)
-
 make SPI=y
 make install
 
 To build for the embedded system using cross-compilers:
-automake
-./configure --prefix="/path/to/install/dir"
-(or copy the file Makefile.in to Makefile and change @prefix@)
-
 make XC=y
 make install
+
+In either cases, the installation will be created in a subdirectory
+called install.

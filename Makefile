@@ -1,4 +1,4 @@
-PREFIX = @prefix@
+PREFIX = install
 DBG ?= n
 LVL ?= 1
 XC ?= n
@@ -70,4 +70,5 @@ install:
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) piproxy piagent pinative pilogger pimon piver $(PREFIX)/bin
-	cp -R script $(PREFIX)/script
+	mkdir -p $(PREFIX)/man
+	cp piproxy.8 pilogger.8 $(PREFIX)/man
