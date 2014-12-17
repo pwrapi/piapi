@@ -22,9 +22,7 @@
 #define PIAPI_AGNT_PORT     20201
 
 #define PIAPI_BUF_SIZE (1 << 10)
-
 #define PIAPI_SAMPLE_RING_SIZE (1 << 15)
-
 
 typedef struct piapi_counter {
 	piapi_sample_t sample[PIAPI_SAMPLE_RING_SIZE];

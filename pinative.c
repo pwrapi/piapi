@@ -7,7 +7,9 @@
 
 #include "pinative.h"
 #include "piutil.h"
+#ifdef PIAPI_SPI
 #include "pidev.h"
+#endif
 
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -32,16 +34,16 @@ static char *logfile = 0x0;
 
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
+
+#ifdef PIAPI_SPI
 static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 {
     reading_t raw;
 
-#ifdef PIAPI_SPI
     pthread_mutex_lock(&piapi_dev_lock);
     pidev_read(port, &raw);
     pthread_mutex_unlock(&piapi_dev_lock);
-#endif
 
     reading->volts = raw.milivolts/KS;
     reading->amps = raw.miliamps/KS;
@@ -49,6 +51,7 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 
     return 0;
 }
+#endif
 
 static inline void
 piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
@@ -132,11 +135,13 @@ piapi_native_counters( void *arg )
 			counters.sampler[i].sample[j].number = counters.sampler[i].number + 1;
 			counters.sampler[i].sample[j].total = counters.sampler[i].sample[j].number;
 
+#ifdef PIAPI_SPI
 			if( piapi_dev_collect( i,
 				&(counters.sampler[i].sample[j].raw ) ) < 0 ) {
 				printf( "Unable to collect reading on port %d", i );
 				return;
 			}
+#endif
 
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
@@ -199,11 +204,12 @@ piapi_native_thread( void *cntx )
 				end = PIAPI_PORT_MID;
 			}
 			for( sample.port = begin; sample.port <= end; sample.port++ ) {
+#ifdef PIAPI_SPI
 				if( piapi_dev_collect( sample.port, &(sample.raw) ) < 0 ) {
 					printf( "Unable to collect reading on port %d", sample.port);
 					return;
 				}
-
+#endif
 				piapi_dev_stats( &sample, &(avg[sample.port]), &(min[sample.port]),
 					&(max[sample.port]), &(t[sample.port]) );
 				PIAPI_CNTX(cntx)->callback( &sample );
