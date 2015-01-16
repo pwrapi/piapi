@@ -146,7 +146,7 @@ piapi_native_counters( void *arg )
 		return;
 	}
 
-        piapi_print_header( log );
+    piapi_print_header( log );
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		gettimeofday( &t0, 0x0 );
