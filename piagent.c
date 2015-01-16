@@ -126,15 +126,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 		}
 
 		return 0;
-	} else if( !strcmp( token, "detect" ) ) {
-		strcpy( PIAPI_CNTX(cntx)->command, token );
-
-		if( piapi_agent_debug ) {
-			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
-		}
-
-		return 0; 
-	} else if( !strcmp( token, "predict" ) ) {
+	} else if( !strcmp( token, "train" ) ) {
 		strcpy( PIAPI_CNTX(cntx)->command, token );
 
 		if( (token = strtok( NULL, ":" )) == NULL)
@@ -144,6 +136,27 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
 			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+		}
+
+		return 0;
+	} else if( !strcmp( token, "detect" ) ) {
+		strcpy( PIAPI_CNTX(cntx)->command, token );
+
+		if( (token = strtok( NULL, ":" )) == NULL)
+			return -1;
+		PIAPI_CNTX(cntx)->port = atoi(token);
+
+		if( piapi_agent_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
+			printf( "Port:      %d\n", PIAPI_CNTX(cntx)->port );
+		}
+
+		return 0; 
+	} else if( !strcmp( token, "predict" ) ) {
+		strcpy( PIAPI_CNTX(cntx)->command, token );
+
+		if( piapi_agent_debug ) {
+			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
 		}
 
 		return 0; 
@@ -295,6 +308,8 @@ piapi_agent_thread( void *cntx )
 					piapi_native_reset( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
 					piapi_native_log( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "train" ) ) {
+					piapi_native_train( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "predict" ) ) {
 					piapi_native_predict( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {

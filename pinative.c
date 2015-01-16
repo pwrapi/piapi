@@ -410,6 +410,18 @@ piapi_native_mark( void *cntx )
 }
 
 int
+piapi_native_train( void *cntx )
+{
+	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+
+	if( piapi_native_debug )
+       		printf( "Training native counter on port %d\n", port );
+
+	// TODO - magic goes here
+
+	return 0;
+}
+int
 piapi_native_detect( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;

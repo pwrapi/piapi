@@ -263,6 +263,35 @@ piapi_mark( void *cntx, char *marker )
 }
 
 int
+piapi_train( void *cntx, piapi_port_t port )
+{
+	PIAPI_CNTX(cntx)->port = port;
+
+	switch( PIAPI_CNTX(cntx)->mode ) {
+		case PIAPI_MODE_NATIVE:
+		case PIAPI_MODE_AGENT:
+			if( piapi_debug )
+				printf( "Training counter for port %d\n", port );
+
+			piapi_native_train( cntx );
+			break;
+
+		case PIAPI_MODE_PROXY:
+			if( piapi_debug )
+				printf( "Training proxy counter for port %d\n", port );
+
+			piapi_proxy_train( cntx );
+			break;
+
+		default:
+			printf( "Warning: Non-supported operation\n" );
+			break;
+	}
+
+	return 0;
+}
+
+int
 piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
 {
 	PIAPI_CNTX(cntx)->port = port;

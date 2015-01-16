@@ -350,6 +350,29 @@ piapi_proxy_mark( void *cntx )
 }
 
 int
+piapi_proxy_train( void *cntx )
+{
+	char buf[ PIAPI_BUF_SIZE ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Requesting agent to train counter on sensor port %u\n", PIAPI_CNTX(cntx)->port );
+
+	strcpy( PIAPI_CNTX(cntx)->command, "train" );
+	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf( "Error while attempting to train counter\n" );
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully train counter\n");
+
+	return 0;
+}
+
+int
 piapi_proxy_detect( void *cntx )
 {
 	char buf[ PIAPI_BUF_SIZE ] = "";

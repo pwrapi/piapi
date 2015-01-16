@@ -85,6 +85,15 @@ int piapi_native_log( void *cntx );
  */
 int piapi_native_mark( void *cntx );
 
+/*! \fn int piapi_native_train( void *cntx )
+ *  \brief Train prediction of a counter on a given port
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Train the port based on the counter buffers
+ */
+int piapi_native_train( void *cntx );
+
 /*! \fn int piapi_native_detect( void *cntx )
  *  \brief Detect average frequency and length of a counter on a given port
  *  \param cntx handle to context state

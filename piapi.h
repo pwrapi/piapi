@@ -91,7 +91,7 @@ int piapi_reset( void *cntx, piapi_port_t port );
  *  \param frequency number of samples per second
  *  \return 0 on success, negative on failure
  *  
- *  Control the frequency that the remote agent counter logs are written with zero indicating off
+ *  Control the frequency that the counter logs are written with zero indicating off
  */
 int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency );
 
@@ -101,9 +101,19 @@ int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency );
  *  \param marker string to insert into log
  *  \return 0 on success, negative on failure
  *  
- *  Insert a text marker to into the remote agent counter sample log
+ *  Insert a text marker to into the counter sample log
  */
 int piapi_mark( void *cntx, char *marker );
+
+/*! \fn int piapi_train( void *cntx, piapi_port_t port )
+ *  \brief Train prediction of a counter on a given port
+ *  \param cntx handle to context state
+ *  \param port sensor port of counter
+ *  \return 0 on success, negative on failure
+ *  
+ *  Train the port based on the counter buffers
+ */
+int piapi_train( void *cntx, piapi_port_t port );
 
 /*! \fn int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
  *  \brief Detect average frequency and length of a counter on a given port
@@ -113,18 +123,18 @@ int piapi_mark( void *cntx, char *marker );
  *  \param dutycycle average duty cycle in seconds
  *  \return 0 on success, negative on failure
  *  
- *  Detect the period and duty cycle based on the remote agent counter buffers
+ *  Detect the period and duty cycle based on the counter buffers
  */
 int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle );
 
-/*! \fn int piapi_predict( void *cntx, piapi_port_t port, float *length, float confidence )
+/*! \fn int piapi_predict( void *cntx, piapi_port_t port, float *length )
  *  \brief Predict the port with the greatest variation and length of phase
  *  \param cntx handle to context state
  *  \param port sensor port of counter
  *  \param length predicted length of phase in seconds
  *  \return 0 on success, negative on failure
  *  
- *  Detect the period and duty cycle based on the remote agent counter buffers
+ *  Predict the port and length of phase based on the counter buffers
  */
 int piapi_predict( void *cntx, piapi_port_t *port, float *length );
 
