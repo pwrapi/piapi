@@ -105,6 +105,29 @@ int piapi_log( void *cntx, piapi_port_t port, unsigned int frequency );
  */
 int piapi_mark( void *cntx, char *marker );
 
+/*! \fn int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
+ *  \brief Detect average frequency and length of a counter on a given port
+ *  \param cntx handle to context state
+ *  \param port sensor port of counter
+ *  \param period average length of period in seconds
+ *  \param dutycycle average duty cycle in seconds
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the remote agent counter buffers
+ */
+int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle );
+
+/*! \fn int piapi_predict( void *cntx, piapi_port_t port, float *length, float confidence )
+ *  \brief Predict the port with the greatest variation and length of phase
+ *  \param cntx handle to context state
+ *  \param port sensor port of counter
+ *  \param length predicted length of phase in seconds
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the remote agent counter buffers
+ */
+int piapi_predict( void *cntx, piapi_port_t *port, float *length );
+
 /*! \fn int piapi_info( piapi_version_t *version )
  *  \brief Retrieve version information
  *  \param cntx handle to context state

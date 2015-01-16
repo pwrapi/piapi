@@ -216,19 +216,19 @@ piapi_proxy_collect( void *cntx )
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Setting agent to collect on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+		printf( "Setting agent to collect on sensor port %u\n", PIAPI_CNTX(cntx)->port );
 
 	strcpy( PIAPI_CNTX(cntx)->command, "collect" );
 	len = sprintf( buf, "%s:%u:%u:%u;", PIAPI_CNTX(cntx)->command,
 		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->samples, PIAPI_CNTX(cntx)->frequency );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf("Error while attempting to initiate collection\n");
+		printf( "Error while attempting to initiate collection\n" );
 		return -1;
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully started collect\n");
+		printf( "Successfully started collect\n" );
 
 	return 0;
 }
@@ -240,18 +240,18 @@ piapi_proxy_halt( void *cntx )
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Requesting agent to halt collection on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+		printf( "Requesting agent to halt collection on sensor port %u\n", PIAPI_CNTX(cntx)->port );
 
 	strcpy( PIAPI_CNTX(cntx)->command, "halt" );
 	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf("Error while attempting to halt collection\n");
+		printf( "Error while attempting to halt collection\n" );
 		return -1;
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully halted collect\n");
+		printf( "Successfully halted collect\n" );
 
 	return 0;
 }
@@ -263,7 +263,7 @@ piapi_proxy_counter( void *cntx )
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+		printf( "Querying agent to get counter on sensor port %u\n", PIAPI_CNTX(cntx)->port );
 
 	strcpy( PIAPI_CNTX(cntx)->command, "counter" );
 	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
@@ -274,7 +274,7 @@ piapi_proxy_counter( void *cntx )
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully queried counter\n");
+		printf( "Successfully queried counter\n" );
 
 	return 0;
 }
@@ -286,18 +286,18 @@ piapi_proxy_reset( void *cntx )
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Requesting agent to reset counter on sensor port %u\n", PIAPI_CNTX(cntx)->port);
+		printf( "Requesting agent to reset counter on sensor port %u\n", PIAPI_CNTX(cntx)->port );
 
 	strcpy( PIAPI_CNTX(cntx)->command, "reset" );
 	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf("Error while attempting to reset counter\n");
+		printf( "Error while attempting to reset counter\n" );
 		return -1;
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully reset counter\n");
+		printf( "Successfully reset counter\n" );
 
 	return 0;
 }
@@ -322,7 +322,7 @@ piapi_proxy_log( void *cntx )
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully controlled agent log counter frequency\n");
+		printf( "Successfully controlled agent log counter frequency\n" );
 
 	return 0;
 }
@@ -344,32 +344,53 @@ piapi_proxy_mark( void *cntx )
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully marked agent log\n");
+		printf( "Successfully marked agent log\n" );
 
 	return 0;
 }
 
 int
-piapi_proxy_countfreq( void *cntx )
+piapi_proxy_detect( void *cntx )
 {
 	char buf[ PIAPI_BUF_SIZE ] = "";
 	unsigned int len;
 
 	if( piapi_proxy_debug )
-		printf( "Controlling agent counter frequency to %u on port %u\n",
-			PIAPI_CNTX(cntx)->frequency, PIAPI_CNTX(cntx)->port );
+		printf( "Requesting agent to detect counter on sensor port %u\n", PIAPI_CNTX(cntx)->port );
 
-	strcpy( PIAPI_CNTX(cntx)->command, "countfreq" );
-	len = sprintf( buf, "%s:%u:%u;", PIAPI_CNTX(cntx)->command,
-		PIAPI_CNTX(cntx)->port, PIAPI_CNTX(cntx)->frequency );
+	strcpy( PIAPI_CNTX(cntx)->command, "detect" );
+	len = sprintf( buf, "%s:%u;", PIAPI_CNTX(cntx)->command, PIAPI_CNTX(cntx)->port );
 
 	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
-		printf( "Error while attempting to control agent counter frequency\n" );
+		printf( "Error while attempting to detect counter\n" );
 		return -1;
 	}
 
 	if( piapi_proxy_debug )
-		printf( "Successfully controlled agent counter frequency\n");
+		printf( "Successfully detect counter\n");
+
+	return 0;
+}
+
+int
+piapi_proxy_predict( void *cntx )
+{
+	char buf[ PIAPI_BUF_SIZE ] = "";
+	unsigned int len;
+
+	if( piapi_proxy_debug )
+		printf( "Requesting agent to predict counter\n" );
+
+	strcpy( PIAPI_CNTX(cntx)->command, "predict" );
+	len = sprintf( buf, "%s;", PIAPI_CNTX(cntx)->command );
+
+	if( writen( PIAPI_CNTX(cntx)->fd, buf, len ) < 0 ) {
+		printf( "Error while attempting to predict counter\n" );
+		return -1;
+	}
+
+	if( piapi_proxy_debug )
+		printf( "Successfully detect counter\n");
 
 	return 0;
 }

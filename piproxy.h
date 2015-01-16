@@ -85,4 +85,22 @@ int piapi_proxy_log( void *cntx );
  */
 int piapi_proxy_mark( void *cntx );
 
+/*! \fn int piapi_proxy_detect( void *cntx )
+ *  \brief Detect average frequency and length of a counter on a given port
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the remote agent counter buffers
+ */
+int piapi_proxy_detect( void *cntx );
+
+/*! \fn int piapi_proxy_predict( void *cntx )
+ *  \brief Predict the port with the greatest variation and length of phase
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the remote agent counter buffers
+ */
+int piapi_proxy_predict( void *cntx );
+
 #endif

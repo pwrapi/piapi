@@ -85,4 +85,22 @@ int piapi_native_log( void *cntx );
  */
 int piapi_native_mark( void *cntx );
 
+/*! \fn int piapi_native_detect( void *cntx )
+ *  \brief Detect average frequency and length of a counter on a given port
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the counter buffers
+ */
+int piapi_native_detect( void *cntx );
+
+/*! \fn int piapi_native_predict( void *cntx )
+ *  \brief Predict the port with the greatest variation and length of phase
+ *  \param cntx handle to context state
+ *  \return 0 on success, negative on failure
+ *  
+ *  Detect the period and duty cycle based on the counter buffers
+ */
+int piapi_native_predict( void *cntx );
+
 #endif

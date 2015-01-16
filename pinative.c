@@ -361,7 +361,8 @@ piapi_native_reset( void *cntx )
 	return 0;
 }
 
-int piapi_native_log( void *cntx )
+int
+piapi_native_log( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
 	unsigned int frequency = PIAPI_CNTX(cntx)->frequency;
@@ -397,12 +398,35 @@ int piapi_native_log( void *cntx )
 	return 0;
 }
 
-int piapi_native_mark( void *cntx )
+int
+piapi_native_mark( void *cntx )
 {
 	char marker[40] = ""; 
 
 	strcpy( marker, PIAPI_CNTX(cntx)->command );
 	fprintf( log, "# MARK - %s\n", marker );
 
+	return 0;
+}
+
+int
+piapi_native_detect( void *cntx )
+{
+	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+
+	if( piapi_native_debug )
+       		printf( "Detecting native counter on port %d\n", port );
+
+	// TODO - magic goes here
+	return 0;
+}
+
+int
+piapi_native_predict( void *cntx )
+{
+	if( piapi_native_debug )
+       		printf( "Predicting native counter\n" );
+
+	// TODO - magic goes here
 	return 0;
 }
