@@ -450,9 +450,10 @@ piapi_native_train( void *cntx )
 	}
 
 	for( port = begin; port <= end; port++ ) {
-		if( piapi_native_debug )
-       			printf( "Training native counter on port %u\n", port );
 		counters.sampler[port].train = !(counters.sampler[port].train);
+		if( piapi_native_debug )
+       			printf( "Training native counter on port %u set to %u\n",
+				port, counters.sampler[port].train );
 	}
 
 	return 0;
