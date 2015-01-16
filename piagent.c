@@ -295,6 +295,10 @@ piapi_agent_thread( void *cntx )
 					piapi_native_reset( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
 					piapi_native_log( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "predict" ) ) {
+					piapi_native_predict( cntx );
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {
+					piapi_native_detect( cntx );
 				} else {
 					piapi_native_mark( cntx );
 				}

@@ -413,20 +413,30 @@ int
 piapi_native_detect( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+	float period = 0.0, dutycycle = 0.0;
 
 	if( piapi_native_debug )
        		printf( "Detecting native counter on port %d\n", port );
 
 	// TODO - magic goes here
+
+	PIAPI_CNTX(cntx)->period = period;
+	PIAPI_CNTX(cntx)->length = dutycycle;
 	return 0;
 }
 
 int
 piapi_native_predict( void *cntx )
 {
+	piapi_port_t port = PIAPI_PORT_UNKNOWN;
+	float length = 0.0;
+
 	if( piapi_native_debug )
        		printf( "Predicting native counter\n" );
 
 	// TODO - magic goes here
+
+	PIAPI_CNTX(cntx)->port = port;
+	PIAPI_CNTX(cntx)->length = length;
 	return 0;
 }

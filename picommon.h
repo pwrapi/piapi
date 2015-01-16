@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 typedef enum {
+	PIAPI_PORT_UNKNOWN = -1,
         PIAPI_PORT_HALF = 0,
         PIAPI_PORT_CPU = 1,
         PIAPI_PORT_R1_12V = 1,
