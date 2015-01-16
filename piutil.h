@@ -28,6 +28,7 @@ typedef struct piapi_counter {
 	piapi_sample_t sample[PIAPI_SAMPLE_RING_SIZE];
 	unsigned int generation;
 	unsigned int log;
+	unsigned int train;
 
 	unsigned int number;
 	piapi_reading_t min, max, avg;

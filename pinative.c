@@ -101,6 +101,27 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 	}
 }
 
+static int
+pinative_train( piapi_port_t port )
+{
+	// TODO - magic goes here
+	return 0;
+}
+
+static int
+pinative_detect( piapi_port_t port, float *period, float *dutycycle )
+{
+	// TODO - magic goes here
+	return 0;
+}
+
+static int
+pinative_predict( piapi_port_t *port, float *length )
+{
+	// TODO - magic goes here
+	return 0;
+}
+
 #ifdef PIAPI_COUNTERS
 static void
 piapi_native_counters( void *arg )
@@ -145,6 +166,9 @@ piapi_native_counters( void *arg )
 
 			piapi_dev_stats( &(counters.sampler[i].sample[j]), &(counters.sampler[i].avg),
 				&(counters.sampler[i].min), &(counters.sampler[i].max), &(counters.sampler[i].t) );
+
+			if( counters.sampler[i].train )
+				pinative_train( i );
 
 			if( counters.sampler[i].log && !(j % counters.sampler[i].log) )
 				piapi_print( log, &(counters.sampler[i].sample[j]), 0 );
@@ -413,11 +437,23 @@ int
 piapi_native_train( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
+	unsigned int begin, end;
 
-	if( piapi_native_debug )
-       		printf( "Training native counter on port %d\n", port );
+	begin = port;
+	end = port;
+	if( port == PIAPI_PORT_ALL ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MAX;
+	} else if( port == PIAPI_PORT_HALF ) {
+		begin = PIAPI_PORT_MIN;
+		end = PIAPI_PORT_MID;
+	}
 
-	// TODO - magic goes here
+	for( port = begin; port <= end; port++ ) {
+		if( piapi_native_debug )
+       			printf( "Training native counter on port %u\n", port );
+		counters.sampler[port].train = !(counters.sampler[port].train);
+	}
 
 	return 0;
 }
@@ -430,7 +466,9 @@ piapi_native_detect( void *cntx )
 	if( piapi_native_debug )
        		printf( "Detecting native counter on port %d\n", port );
 
-	// TODO - magic goes here
+	if( pinative_detect( port, &period, &dutycycle ) != 0 ) {
+		printf( "Warning: detecting native counter on port %d failed", port );
+	}
 
 	PIAPI_CNTX(cntx)->period = period;
 	PIAPI_CNTX(cntx)->length = dutycycle;
@@ -446,7 +484,9 @@ piapi_native_predict( void *cntx )
 	if( piapi_native_debug )
        		printf( "Predicting native counter\n" );
 
-	// TODO - magic goes here
+	if( pinative_predict( &port, &length ) != 0 ) {
+		printf( "Warning: predicting native counter on port %d failed", port );
+	}
 
 	PIAPI_CNTX(cntx)->port = port;
 	PIAPI_CNTX(cntx)->length = length;
