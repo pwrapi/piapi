@@ -115,28 +115,24 @@ int piapi_mark( void *cntx, char *marker );
  */
 int piapi_train( void *cntx, piapi_port_t port );
 
-/*! \fn int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
- *  \brief Detect average frequency and length of a counter on a given port
+/*! \fn int piapi_detect( void *cntx, piapi_port_t port )
+ *  \brief Detect average frequency and dutycycle of a counter on a given port
  *  \param cntx handle to context state
  *  \param port sensor port of counter
- *  \param period average length of period in seconds
- *  \param dutycycle average duty cycle in seconds
  *  \return 0 on success, negative on failure
  *  
  *  Detect the period and duty cycle based on the counter buffers
  */
-int piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle );
+int piapi_detect( void *cntx, piapi_port_t port );
 
-/*! \fn int piapi_predict( void *cntx, piapi_port_t port, float *length )
+/*! \fn int piapi_predict( void *cntx )
  *  \brief Predict the port with the greatest variation and length of phase
  *  \param cntx handle to context state
- *  \param port sensor port of counter
- *  \param length predicted length of phase in seconds
  *  \return 0 on success, negative on failure
  *  
  *  Predict the port and length of phase based on the counter buffers
  */
-int piapi_predict( void *cntx, piapi_port_t *port, float *length );
+int piapi_predict( void *cntx );
 
 /*! \fn int piapi_info( piapi_version_t *version )
  *  \brief Retrieve version information

@@ -312,10 +312,8 @@ piapi_agent_thread( void *cntx )
 					piapi_native_train( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "predict" ) ) {
 					piapi_native_predict( cntx );
-                    // TODO - write back return values
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {
 					piapi_native_detect( cntx );
-                    // TODO - write back return values
 				} else {
 					piapi_native_mark( cntx );
 				}

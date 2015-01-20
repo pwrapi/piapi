@@ -471,8 +471,8 @@ piapi_native_detect( void *cntx )
 		printf( "Warning: detecting native counter on port %d failed", port );
 	}
 
-	PIAPI_CNTX(cntx)->period = period;
-	PIAPI_CNTX(cntx)->length = dutycycle;
+    // TODO - write period and dutycycle to register
+
 	return 0;
 }
 
@@ -489,7 +489,7 @@ piapi_native_predict( void *cntx )
 		printf( "Warning: predicting native counter on port %d failed", port );
 	}
 
-	PIAPI_CNTX(cntx)->port = port;
-	PIAPI_CNTX(cntx)->length = length;
-	return 0;
+    // TODO - write port and length to register
+
+    return 0;
 }

@@ -292,7 +292,7 @@ piapi_train( void *cntx, piapi_port_t port )
 }
 
 int
-piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
+piapi_detect( void *cntx, piapi_port_t port )
 {
 	PIAPI_CNTX(cntx)->port = port;
 
@@ -317,14 +317,11 @@ piapi_detect( void *cntx, piapi_port_t port, float *period, float *dutycycle )
 			break;
 	}
 
-	*period = PIAPI_CNTX(cntx)->period;
-	*dutycycle = PIAPI_CNTX(cntx)->length;
-
 	return 0;
 }
 
 int
-piapi_predict( void *cntx, piapi_port_t *port, float *length )
+piapi_predict( void *cntx )
 {
 	switch( PIAPI_CNTX(cntx)->mode ) {
 		case PIAPI_MODE_NATIVE:
@@ -346,9 +343,6 @@ piapi_predict( void *cntx, piapi_port_t *port, float *length )
 			printf( "Warning: Non-supported operation\n" );
 			break;
 	}
-
-	*port = PIAPI_CNTX(cntx)->port;
-	*length = PIAPI_CNTX(cntx)->length;
 
 	return 0;
 }

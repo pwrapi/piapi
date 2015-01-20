@@ -52,8 +52,6 @@ struct piapi_context {
 	piapi_port_t port;
 	unsigned int samples;
 	unsigned int frequency;
-	float period;
-	float length;
 
 	piapi_callback_t callback;
 	pthread_t worker;
