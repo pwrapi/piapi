@@ -389,7 +389,9 @@ piapi_proxy_detect( void *cntx )
 		return -1;
 	}
 
-	if( piapi_proxy_debug )
+    // TODO - read back return values
+
+    if( piapi_proxy_debug )
 		printf( "Successfully detect counter\n");
 
 	return 0;
@@ -412,8 +414,10 @@ piapi_proxy_predict( void *cntx )
 		return -1;
 	}
 
+    // TODO - read back return values
+
 	if( piapi_proxy_debug )
-		printf( "Successfully detect counter\n");
+		printf( "Successfully predict counter\n");
 
 	return 0;
 }
