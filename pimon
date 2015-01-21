@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export LOGFILE="/mnt/log/`hostname`.log"
+export REGFILE="/mnt/log/reg/`hostname`."
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/power/lib
 
 if [ -z "$1" ]

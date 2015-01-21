@@ -32,6 +32,9 @@ static int piapi_native_debug = 1;
 static FILE *log = 0x0;
 static char *logfile = 0x0;
 
+static FILE *reg = 0x0;
+static char *regfile = 0x0;
+
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
 
@@ -102,23 +105,70 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 }
 
 static int
+pinative_reg_write( int port, float period, float length )
+{
+	char regfilenum[256] = "";
+
+	if( !regfile && !(regfile=getenv( "REGFILE" )) ) {
+		printf( "Unable read environment variable for reg file\n" );
+		return -1;
+	}
+	
+	sprintf( regfilenum, "%s%d", regfile, port );
+        if( (reg=fopen( regfilenum, "w" )) < 0 ) {
+		printf( "Unable to open counter reg file %s\n", regfilenum );
+		return -1;
+	}
+
+	if( port == 0 )
+		fprintf( reg, "%d %f", port, length );
+	else
+		fprintf( reg, "%f %f", period, length );
+
+        if( fclose( reg ) < 0 ) {
+		printf( "Unable to close counter reg file %s\n", regfilenum );
+		return -1;
+	}
+
+	return 0;
+}
+
+static int
 pinative_train( piapi_port_t port )
 {
 	// TODO - magic goes here
+
 	return 0;
 }
 
 static int
-pinative_detect( piapi_port_t port, float *period, float *dutycycle )
+pinative_detect( piapi_port_t port )
 {
+	float period = 0.0, dutycycle = 0.0;
+
 	// TODO - magic goes here
+
+	if( pinative_reg_write( port, period, dutycycle ) < 0 ) {
+		printf( "Unable to write counter reg for port %d\n", port );
+		return -1;
+	}
+
 	return 0;
 }
 
 static int
-pinative_predict( piapi_port_t *port, float *length )
+pinative_predict( )
 {
+	piapi_port_t port = PIAPI_PORT_UNKNOWN;
+	float length = 0.0;
+
 	// TODO - magic goes here
+
+	if( pinative_reg_write( 0, 0.0, length ) < 0 ) {
+		printf( "Unable to write counter reg for port %d\n", port );
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -146,7 +196,7 @@ piapi_native_counters( void *arg )
 		return;
 	}
 
-    piapi_print_header( log );
+	piapi_print_header( log );
 	counters.samplers_run = 1;
 	while( counters.samplers_run ) {
 		gettimeofday( &t0, 0x0 );
@@ -458,20 +508,18 @@ piapi_native_train( void *cntx )
 
 	return 0;
 }
+
 int
 piapi_native_detect( void *cntx )
 {
 	piapi_port_t port = PIAPI_CNTX(cntx)->port;
-	float period = 0.0, dutycycle = 0.0;
 
 	if( piapi_native_debug )
        		printf( "Detecting native counter on port %d\n", port );
 
-	if( pinative_detect( port, &period, &dutycycle ) != 0 ) {
+	if( pinative_detect( port ) != 0 ) {
 		printf( "Warning: detecting native counter on port %d failed", port );
 	}
-
-    // TODO - write period and dutycycle to register
 
 	return 0;
 }
@@ -479,17 +527,12 @@ piapi_native_detect( void *cntx )
 int
 piapi_native_predict( void *cntx )
 {
-	piapi_port_t port = PIAPI_PORT_UNKNOWN;
-	float length = 0.0;
-
 	if( piapi_native_debug )
        		printf( "Predicting native counter\n" );
 
-	if( pinative_predict( &port, &length ) != 0 ) {
-		printf( "Warning: predicting native counter on port %d failed", port );
+	if( pinative_predict( ) != 0 ) {
+		printf( "Warning: predicting native counter failed" );
 	}
 
-    // TODO - write port and length to register
-
-    return 0;
+	return 0;
 }
