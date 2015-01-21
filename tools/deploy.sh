@@ -22,6 +22,6 @@ do
 	tar zxpf /home/ddeboni/archive/kratos_tools_arm.tgz
 
 	echo "Moving beaglebone files to $IMAGE_PATH"
-	mv build $IMAGE_PATH/power
+	mv install $IMAGE_PATH/power
 done
 

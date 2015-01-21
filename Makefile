@@ -5,6 +5,8 @@ XC ?= n
 SPI ?= n
 CNT ?= y
 
+LIBNAME = piapi
+
 ifeq ($(XC),y)
 CROSS_COMPILE = arm-linux-gnueabihf-
 SPI = y
@@ -12,6 +14,7 @@ endif
 
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -O3 -pthread -fpic
+LDFLAGS = -L. -l$(LIBNAME)
 
 ifeq ($(DBG),y)
 CFLAGS += -g
@@ -35,10 +38,6 @@ ifeq ($(CNT),y)
 CFLAGS += -DPIAPI_COUNTERS
 endif
 
-TARGET = test
-LIBNAME = piapi
-DEVNAME = pidev
-
 SHAREDLIB = lib$(LIBNAME).so
 
 OBJS = 	piapi.o     \
@@ -50,16 +49,16 @@ OBJS = 	piapi.o     \
 TESTOBJS = proxy.o  \
 	agent.o     \
 	native.o    \
-	$(TARGET).o
+	test.o
 
 all: $(LIBNAME) $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -l$(DEVNAME) -o $(TARGET)
-	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -l$(DEVNAME) -o piproxy 
-	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -l$(DEVNAME) -o piagent 
-	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -l$(DEVNAME) -o pinative
+	$(CC) $(CFLAGS) test.c $(LDFLAGS) -o pitest
+	$(CC) $(CFLAGS) proxy.c $(LDFLAGS) -o piproxy 
+	$(CC) $(CFLAGS) agent.c $(LDFLAGS) -o piagent 
+	$(CC) $(CFLAGS) native.c $(LDFLAGS) -o pinative
 
 clean:
-	rm -f $(TARGET) piproxy piagent pinative $(SHAREDLIB) $(OBJS) $(TESTOBJS)
+	rm -f pitest piproxy piagent pinative $(SHAREDLIB) $(OBJS) $(TESTOBJS)
 
 $(LIBNAME): $(OBJS)
 	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
@@ -71,6 +70,6 @@ install:
 	mkdir -p $(PREFIX)/lib
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
-	cp $(TARGET) piproxy piagent pinative pilogger pimon piver $(PREFIX)/bin
+	cp pitest piproxy piagent pinative pilogger pimon piver $(PREFIX)/bin
 	mkdir -p $(PREFIX)/man
 	cp piproxy.8 pilogger.8 $(PREFIX)/man
