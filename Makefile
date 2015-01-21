@@ -37,6 +37,7 @@ endif
 
 TARGET = test
 LIBNAME = piapi
+DEVNAME = pidev
 
 SHAREDLIB = lib$(LIBNAME).so
 
@@ -52,10 +53,10 @@ TESTOBJS = proxy.o  \
 	$(TARGET).o
 
 all: $(LIBNAME) $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
-	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -o piproxy 
-	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -o piagent 
-	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -o pinative
+	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -l$(DEVNAME) -o $(TARGET)
+	$(CC) $(CFLAGS) proxy.c -L. -l$(LIBNAME) -l$(DEVNAME) -o piproxy 
+	$(CC) $(CFLAGS) agent.c -L. -l$(LIBNAME) -l$(DEVNAME) -o piagent 
+	$(CC) $(CFLAGS) native.c -L. -l$(LIBNAME) -l$(DEVNAME) -o pinative
 
 clean:
 	rm -f $(TARGET) piproxy piagent pinative $(SHAREDLIB) $(OBJS) $(TESTOBJS)
