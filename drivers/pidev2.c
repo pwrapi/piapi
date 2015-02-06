@@ -15,13 +15,6 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-/* Global variables */
-char *  ARGV0 = "powerInsight" ;
-char *  libexecdir = PILIBDIR_DEFAULT ;
-char *  configfile = PICONFIGFILE_DEFAULT ;
-unsigned int  debug = PIDEBUG_DEFAULT ;
-int  verbose = PIVERBOSE_DEFAULT ;
-
 /* The Lua state */
 static lua_State * L = NULL ;
 
