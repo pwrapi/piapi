@@ -1,23 +1,28 @@
 PREFIX = /usr
-CROSS_COMPILE = arm-linux-gnueabihf-
+#CROSS_COMPILE = arm-linux-gnueabihf-
+
+PIVER = 2
 
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -O3 -fpic
-
-CFLAGS += -DPIAPI_SPI
-LDFLAGS += -lpidev
 
 TARGET = getRawPower
 LIBNAME = pidev
 
 SHAREDLIB = lib$(LIBNAME).so
 
+ifeq ($(PIVER),2)
+CFLAGS += -MMD -O -I/usr/include/lua-5.1 -I$(PWD)/../../powerinsight
+LDFLAGS += -L$(PWD)/../../powerinsight -lpi -lm -llua-5.1
+OBJS = pidev2.o
+else
 OBJS = pidev.o
+endif
 
 TESTOBJS = $(TARGET).o
 
 all: $(LIBNAME) $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
+	$(CC) $(CFLAGS) $(TARGET).c $(LDFLAGS) -L. -l$(LIBNAME) -o $(TARGET)
 
 clean:
 	rm -f $(TARGET) $(SHAREDLIB) $(OBJS) $(TESTOBJS)
