@@ -28,8 +28,6 @@ static lua_State * L = NULL ;
 /* Shared space */
 static char buffer[1024];
 
-static int initialized = 0;
-
 static int pidev_init( void )
 {
    int ret ;
@@ -95,7 +93,6 @@ static int pidev_init( void )
       luaPI_doerror( L, ret, "Running application 'App'" );
    }
 */
-   initialized = 1;
    return 0 ;
 }
 
@@ -105,11 +102,16 @@ void pidev_read(int portNumber, reading_t *sample)
 
 void pidev_open(void)
 {
-   if( !initialized && !pidev_init( ) ) {
-      fprintf( stderr, "Unable to initialize powerinsight device" );
-      return;
-   }
+   static int initialized = 0;
 
+   if( !initialized ) {
+      if( !pidev_init( ) ) {
+         fprintf( stderr, "Unable to initialize powerinsight device" );
+         return;
+      }
+      else
+         initialized = 1;
+   }
 }
 
 void pidev_close(void)
