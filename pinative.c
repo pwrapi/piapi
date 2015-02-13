@@ -105,7 +105,7 @@ piapi_dev_stats( piapi_sample_t *sample, piapi_reading_t *avg,
 }
 
 static int
-pinative_reg_write( int port, float period, float length )
+pinative_reg_write( int port, double period, double length )
 {
 	char regfilenum[256] = "";
 
@@ -144,7 +144,7 @@ pinative_train( piapi_port_t port )
 static int
 pinative_detect( piapi_port_t port )
 {
-	float period = 0.0, dutycycle = 0.0;
+	double period = 0.0, dutycycle = 0.0;
 
 	// TODO - magic goes here
 
@@ -160,7 +160,7 @@ static int
 pinative_predict( )
 {
 	piapi_port_t port = PIAPI_PORT_UNKNOWN;
-	float length = 0.0;
+	double length = 0.0;
 
 	// TODO - magic goes here
 

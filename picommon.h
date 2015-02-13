@@ -10,7 +10,7 @@
 
 #define PIAPI_MAJOR 1
 #define PIAPI_MINOR 5
-#define PIAPI_BUILD 1
+#define PIAPI_BUILD 2
 #define PIAPI_REV_STR "$Rev$"
 
 #ifdef __cplusplus
@@ -56,9 +56,9 @@ typedef enum {
 } piapi_mode_t;
 
 typedef struct piapi_reading {
-	float volts;
-	float amps;
-	float watts;
+	double volts;
+	double amps;
+	double watts;
 } piapi_reading_t;
 
 typedef struct piapi_sample {
@@ -72,8 +72,8 @@ typedef struct piapi_sample {
         piapi_reading_t min;
         piapi_reading_t max;
         piapi_reading_t avg;
-	float time_total;
-        float energy;
+	double time_total;
+        double energy;
 } piapi_sample_t;
 
 typedef struct piapi_version {
