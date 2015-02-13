@@ -89,25 +89,29 @@ static int pidev_init( void )
    return 0 ;
 }
 
-void pidev_read(int portNumber, reading_t *sample)
+int pidev_read(int portNumber, reading_t *sample)
 {
+   return 0;
 }
 
-void pidev_open(void)
+int pidev_open(void)
 {
    static int initialized = 0;
 
    if( !initialized ) {
       if( !pidev_init( ) ) {
          fprintf( stderr, "Unable to initialize powerinsight device" );
-         return;
+         return -1;
       }
       else
          initialized = 1;
    }
+
+   return 0;
 }
 
-void pidev_close(void)
+int pidev_close(void)
 {
+   return 0;
 }
 

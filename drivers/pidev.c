@@ -413,31 +413,36 @@ static void calcValues(int portNumber, reading_t *sample)
 
 }   // end calcValues()
 
-
-void pidev_read(int portNumber, reading_t *sample)
+int pidev_read(int portNumber, reading_t *sample)
 {
-        // Collect raw readings
-        getReadings(portNumber, sample);
+    // Collect raw readings
+    getReadings(portNumber, sample);
 
-        // Calculate power
-        calcValues(portNumber, sample); 
+    // Calculate power
+    calcValues(portNumber, sample); 
+
+    return 0;
 }
 
-void pidev_open(void)
+int pidev_open(void)
 {
     int i;
 
     for( i = sizeof(devList)/sizeof(*devList)-1 ; i > 0 ; --i ) {
         (devList[i].open)( i );
     }
+
+    return 0;
 }
 
-void pidev_close(void)
+int pidev_close(void)
 {
     int i;
 
     for( i = sizeof(devList)/sizeof(*devList)-1 ; i > 0 ; --i ) {
         (devList[i].close)( i );
     }
+
+    return 0;
 }
 

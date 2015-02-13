@@ -17,8 +17,8 @@ typedef struct reading {
     int32_t     miliwatts;      // Calculated value
 } reading_t;
 
-void pidev_read(int portNumber, reading_t *sample);
-void pidev_open(void);
-void pidev_close(void);
+int pidev_read(int portNumber, reading_t *sample);
+int pidev_open(void);
+int pidev_close(void);
 
 #endif
