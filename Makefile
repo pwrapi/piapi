@@ -30,8 +30,8 @@ endif
 endif
 
 ifeq ($(SPI),y)
-CFLAGS += -DPIAPI_SPI
-LDFLAGS += -lpidev
+CFLAGS += -I/usr/include/lua-5.1 -I$(PWD)/../powerinsight -DPIAPI_SPI
+LDFLAGS += -L$(PWD)/../powerinsight -lpidev -lm -llua-5.1
 endif
 
 ifeq ($(CNT),y)

@@ -48,9 +48,9 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
     pidev_read(port, &raw);
     pthread_mutex_unlock(&piapi_dev_lock);
 
-    reading->volts = raw.milivolts/KS;
-    reading->amps = raw.miliamps/KS;
-    reading->watts = raw.miliwatts/KS;
+    reading->volts = raw.volt;
+    reading->amps = raw.amp;
+    reading->watts = raw.watt;
 
     return 0;
 }

@@ -13,7 +13,7 @@ SHAREDLIB = lib$(LIBNAME).so
 
 ifeq ($(PIVER),2)
 CFLAGS += -MMD -O -I/usr/include/lua-5.1 -I$(PWD)/../../powerinsight
-LDFLAGS += -L$(PWD)/../../powerinsight -lpi -lm -llua-5.1
+LDFLAGS += -L$(PWD)/../../powerinsight -lpidev -lm -llua-5.1
 OBJS = pidev2.o
 else
 OBJS = pidev.o
