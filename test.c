@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	char *token;
 	void *cntx;
 
-	while( (opt=getopt( argc, argv, "a:p:t:s:f:c" )) != -1 ) {
+	while( (opt=getopt( argc, argv, "a:p:" )) != -1 ) {
 		switch( opt ) {
 			case 'a':
 				token = strtok( optarg, "." );
