@@ -12,20 +12,21 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sched.h>
 
-int piapi_sampling;
+static int piapi_sampling;
 
 void
 piapi_callback( piapi_sample_t *sample )
 {
-        printf( "PIAPI:\n");
+        printf( "PIAPI (%u):\n", sample->port );
         printf( "\tsample - %u of %u\n", sample->number, sample->total );
         printf( "\ttime   - %f\n", sample->time_sec+sample->time_usec/1000000.0 );
         printf( "\tvolts  - %f\n", sample->raw.volts );
         printf( "\tamps   - %f\n", sample->raw.amps );
         printf( "\twatts  - %f\n", sample->raw.watts );
 
-	if( sample->number == sample->total ) {
+	if( sample->total && sample->number == sample->total ) {
         	printf( "PIAPI Summary:\n");
 	        printf( "\tavg volts    - %f\n", sample->avg.volts );
         	printf( "\tavg amps     - %f\n", sample->avg.amps );
@@ -82,19 +83,22 @@ int main(int argc, char *argv[])
 
 	piapi_sampling = 1;
 	piapi_collect( cntx, PIAPI_PORT_CPU, 1000, 100 );
-	while( piapi_sampling);
+	while( piapi_sampling ) sched_yield();
 
 	for( port = PIAPI_PORT_MIN; port <= PIAPI_PORT_MAX; port++ ) {
 		piapi_sampling = 1;
 		piapi_collect( cntx, port, 100, 100 );
-		while( piapi_sampling );
+		while( piapi_sampling ) sched_yield();
 	}
 
 	piapi_reset( cntx, PIAPI_PORT_CPU );
 	sleep( 2 );
 
+	piapi_sampling = 1;
 	piapi_counter( cntx, PIAPI_PORT_CPU );
+	while( piapi_sampling ) sched_yield();
 
+	sleep( 1 );
 	piapi_destroy( &cntx );
 
 	return 0;
