@@ -48,9 +48,15 @@ piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
     pidev_read(port, &raw);
     pthread_mutex_unlock(&piapi_dev_lock);
 
+#ifdef PIVER2
     reading->volts = raw.volt;
     reading->amps = raw.amp;
     reading->watts = raw.watt;
+#else
+    reading->volts = raw.milivolts/KS;
+    reading->amps = raw.miliamps/KS;
+    reading->watts = raw.miliwatts/KS;
+#endif
 
     return 0;
 }
@@ -451,7 +457,8 @@ piapi_native_log( void *cntx )
 			printf( "Unable to open counter log file %s\n", logfile );
 			return -1;
 		}
-	}
+	} else
+		fflush( log );
 
 	begin = port;
 	end = port;

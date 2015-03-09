@@ -1,7 +1,7 @@
 PREFIX = /usr
-#CROSS_COMPILE = arm-linux-gnueabihf-
+CROSS_COMPILE = arm-linux-gnueabihf-
 
-PIVER = 2
+PIVER = 1
 
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -O3 -fpic

@@ -1,9 +1,10 @@
 PREFIX = install
 DBG ?= n
 LVL ?= 1
-XC ?= n
+XC ?= y
 SPI ?= n
 CNT ?= y
+PIVER ?= 1
 
 LIBNAME = piapi
 
@@ -30,8 +31,13 @@ endif
 endif
 
 ifeq ($(SPI),y)
-CFLAGS += -I/usr/include/lua-5.1 -I$(PWD)/../powerinsight -DPIAPI_SPI
+ifeq ($(PIVER),2)
+CFLAGS += -I/usr/include/lua-5.1 -I$(PWD)/../powerinsight -DPIAPI_SPI -DPIVER2
 LDFLAGS += -L$(PWD)/../powerinsight -lpidev -lm -llua-5.1
+else
+CFLAGS += -DPIAPI_SPI
+LDFLAGS += -L$(PWD)/drivers -lpidev
+endif
 endif
 
 ifeq ($(CNT),y)
