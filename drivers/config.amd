@@ -1,1 +1,18 @@
-0 3 3 2 2 1 3 1 3 3 3 2 3 0 0 0
+-- Describe the hardware
+MainCarrier( 10016424 )
+
+-- Configure the sensors
+Sensors(
+  { conn="J1",  name="CPU1",   volt="12v", amp="acs713_20" },
+  { conn="J2",  name="ATX12",  volt="12v", amp="acs713_20" },
+  { conn="J3",  name="ATX5",   volt="5v",  amp="acs713_20" },
+  { conn="J4",  name="ATX5sb", volt="5v",  amp="acs713_20" },
+  { conn="J5",  name="ATX3.3", volt="3v3", amp="acs713_20" },
+  { conn="J6",  name="HDD12",  volt="12v", amp="acs713_20" },
+  { conn="J7",  name="HDD5",   volt="5v",  amp="acs713_20" }
+)
+
+-- Leave commented out to use default App.
+-- function App (...)
+--   print( "App args: ", ... )
+-- end

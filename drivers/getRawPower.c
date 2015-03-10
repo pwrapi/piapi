@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
           "Pt#", "A", "V", "mA", "mV", "mW"); 
     }
 
+    pidev_open();
+
     // MAIN EXEC LOOP
     for(i=0; i<(argc-1); i++) 
     { 

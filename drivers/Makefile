@@ -1,8 +1,6 @@
 PREFIX = /usr
 CROSS_COMPILE = arm-linux-gnueabihf-
 
-PIVER = 1
-
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -O3 -fpic
 
@@ -11,25 +9,17 @@ LIBNAME = pidev
 
 SHAREDLIB = lib$(LIBNAME).so
 
-ifeq ($(PIVER),2)
-CFLAGS += -MMD -O -I/usr/include/lua-5.1 -I$(PWD)/../../powerinsight
-LDFLAGS += -L$(PWD)/../../powerinsight -lpi -lm -llua-5.1
-OBJS = pidev2.o
-else
-OBJS = pidev.o
-endif
+CFLAGS += -MMD -O -I/usr/include/lua-5.1
+LDFLAGS += -lm -llua-5.1
 
 TESTOBJS = $(TARGET).o
 
-all: $(LIBNAME) $(TESTOBJS)
+all: $(TESTOBJS)
 	$(CC) $(CFLAGS) $(TARGET).c $(LDFLAGS) -L. -l$(LIBNAME) -o $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(SHAREDLIB) $(OBJS) $(TESTOBJS)
+	rm -f $(TARGET) $(TESTOBJS)
 
-$(LIBNAME): $(OBJS)
-	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
-	
 install:
 	mkdir -p $(PREFIX)
 	mkdir -p $(PREFIX)/include
@@ -38,5 +28,4 @@ install:
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
-	cp .config $(PREFIX)/bin
-	ln -s $(PREFIX)/bin /etc/powerinsight.conf
+	cp amd.config $(PREFIX)/bin/pidev.conf
