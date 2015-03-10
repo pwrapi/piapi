@@ -30,7 +30,7 @@ endif
 endif
 
 ifeq ($(SPI),y)
-CFLAGS += -DPIAPI_SPI
+CFLAGS += -I$(PWD)/drivers -DPIAPI_SPI
 LDFLAGS += -L$(PWD)/drivers -lpidev
 endif
 
