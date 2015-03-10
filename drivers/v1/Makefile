@@ -34,4 +34,3 @@ install:
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
 	cp config.* $(PREFIX)/bin
-	ln -s $(PREFIX)/bin/config.amd /etc/powerinsight.conf

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PIVER = 1
+
 for IMAGE_PATH in '/tftpboot/images/compute_powerinsight/usr' '/tftpboot/images/compute.x86_64/usr' '/usr'
 do
 	echo "Copying include files to $IMAGE_PATH"
@@ -26,9 +28,16 @@ do
 done
 
 echo "Creating configuration links"
-cd /tftpboot/images/ro-rootfs/home/power/bin
-ln -s config.amd pidev.conf
+if [ "$PIVER" = "2" ] ; then
+	cd /tftpboot/images/ro-rootfs/home/power/bin
+	ln -s config.amd pidev.conf
 
-cd /tftpboot/images/ro-rootfs-alt/home/power/bin
-ln -s config.intel pidev.conf
+	cd /tftpboot/images/ro-rootfs-alt/home/power/bin
+	ln -s config.intel pidev.conf
+else
+	cd /tftpboot/images/ro-rootfs/etc
+	ln -s ../home/power/bin/config.amd powerinsight.conf
 
+	cd /tftpboot/images/ro-rootfs-alt/etc
+	ln -s ../home/power/bin/config.intel powerinsight.conf
+fi
