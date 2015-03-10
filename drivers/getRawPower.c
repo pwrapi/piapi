@@ -64,14 +64,12 @@ int main(int argc, char *argv[])
 
         // Print results
         if( timeCollect ) {
-            printf("%ld %ld.%06ld %-4d %5d %5d %7d %7d %7d\n", 
+            printf("%ld %ld.%06ld %-4d %7f %7f %7f\n", 
                 start.tv_sec, now.tv_sec - start.tv_sec, (long int)(now.tv_usec),
-                portNumber, sample.Asamp, sample.Vsamp/16,
-                sample.miliamps,sample.milivolts,sample.miliwatts );
+                portNumber, sample.amp,sample.volt,sample.watt );
         } else {
-            printf("%-4d %5d %5d %7d %7d %7d\n", 
-                portNumber, sample.Asamp, sample.Vsamp/16,
-                sample.miliamps,sample.milivolts,sample.miliwatts );
+            printf("%-4d %7f %7f %7f\n", 
+                portNumber, sample.amp,sample.volt,sample.watt );
         }
     }  // end for() loop 
 

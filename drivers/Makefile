@@ -1,4 +1,4 @@
-PREFIX = /usr
+PREFIX = ../install
 CROSS_COMPILE = arm-linux-gnueabihf-
 
 CC = $(CROSS_COMPILE)gcc
@@ -8,9 +8,6 @@ TARGET = getRawPower
 LIBNAME = pidev
 
 SHAREDLIB = lib$(LIBNAME).so
-
-CFLAGS += -MMD -O -I/usr/include/lua-5.1
-LDFLAGS += -lm -llua-5.1
 
 TESTOBJS = $(TARGET).o
 
