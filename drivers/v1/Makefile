@@ -4,19 +4,27 @@ CROSS_COMPILE = arm-linux-gnueabihf-
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -O3 -fpic
 
+CFLAGS += -DPIAPI_SPI
+LDFLAGS += -lpidev
+
 TARGET = getRawPower
 LIBNAME = pidev
 
 SHAREDLIB = lib$(LIBNAME).so
 
+OBJS = pidev.o
+
 TESTOBJS = $(TARGET).o
 
-all: $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TARGET).c $(LDFLAGS) -L. -l$(LIBNAME) -o $(TARGET)
+all: $(LIBNAME) $(TESTOBJS)
+	$(CC) $(CFLAGS) $(TARGET).c -L. -l$(LIBNAME) -o $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(TESTOBJS)
+	rm -f $(TARGET) $(SHAREDLIB) $(OBJS) $(TESTOBJS)
 
+$(LIBNAME): $(OBJS)
+	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
+	
 install:
 	mkdir -p $(PREFIX)
 	mkdir -p $(PREFIX)/include
@@ -26,4 +34,4 @@ install:
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
 	cp config.* $(PREFIX)/bin
-	cp *.lc $(PREFIX)/bin
+	ln -s $(PREFIX)/bin/config.amd /etc/powerinsight.conf

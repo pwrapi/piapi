@@ -1,9 +1,10 @@
 PREFIX = install
 DBG ?= n
 LVL ?= 1
-XC ?= n
+XC ?= y
 SPI ?= n
 CNT ?= y
+PIVER ?= 1
 
 LIBNAME = piapi
 
@@ -30,8 +31,11 @@ endif
 endif
 
 ifeq ($(SPI),y)
-CFLAGS += -I$(PWD)/drivers -DPIAPI_SPI
-LDFLAGS += -L$(PWD)/drivers -lpidev
+CFLAGS += -I$(PWD)/drivers/v$(PIVER) -DPIAPI_SPI
+LDFLAGS += -L$(PWD)/drivers/v$(PIVER) -lpidev
+ifeq ($(PIVER),2)
+CFLAGS += -DPIVER2
+endif
 endif
 
 ifeq ($(CNT),y)
