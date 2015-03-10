@@ -26,3 +26,4 @@ install:
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
 	cp config.* $(PREFIX)/bin
+	cp *.lc $(PREFIX)/bin
