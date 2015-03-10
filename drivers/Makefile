@@ -25,4 +25,4 @@ install:
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
-	cp amd.config $(PREFIX)/bin/pidev.conf
+	cp config.amd $(PREFIX)/bin/pidev.conf
