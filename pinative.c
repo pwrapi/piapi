@@ -312,6 +312,10 @@ piapi_native_init( void *cntx )
 	if( piapi_native_debug )
        		printf( "\nPower native communication\n" );
 
+#ifdef PIAPI_SPI
+	pidev_open();
+#endif
+
 	pthread_mutex_init(&piapi_dev_lock, NULL);
 #ifdef PIAPI_COUNTERS
 	if( PIAPI_CNTX(cntx)->mode == PIAPI_MODE_AGENT )
