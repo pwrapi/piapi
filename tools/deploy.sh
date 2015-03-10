@@ -25,3 +25,10 @@ do
 	mv install $IMAGE_PATH/power
 done
 
+echo "Creating configuration links"
+cd /tftpboot/images/ro-rootfs/home/power/bin
+ln -s config.amd pidev.conf
+
+cd /tftpboot/images/ro-rootfs-alt/home/power/bin
+ln -s config.intel pidev.conf
+
