@@ -14,6 +14,12 @@
 
 #define MAX_PORTNUM  60
 
+typedef struct {
+    union { double  reading, watt, temp ; };
+    double  volt ;  /* Voltage component of Watt measurement */
+    double  amp ;  /* Amperage component */
+} reading_t ;
+
 /* Change default global parameters.  Call before calling pidev_open */
 int pidev_setup(
         char * ARGV0,  /* printed in error messages */
