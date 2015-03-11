@@ -1,7 +1,7 @@
 PREFIX = install
 DBG ?= n
 LVL ?= 1
-XC ?= y
+XC ?= n
 SPI ?= n
 CNT ?= y
 PIVER ?= 1
