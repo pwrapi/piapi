@@ -52,6 +52,14 @@ static void openAIN( int dev );
 static void closeSPI( int dev );
 static void closeAIN( int dev );
 
+typedef struct reading {
+    uint16_t    Asamp;          // Raw sample
+    uint16_t    Vsamp;          // Raw sample
+    int32_t     miliamps;       // Calculated value
+    int32_t     milivolts;      // Calculated value
+    int32_t     miliwatts;      // Calculated value
+} ireading_t;
+
 /* 
  *  There are 3 spi chip selects available: 
  *  CS0 on spiBus 1 (spidev1.0)  (shows as SPI0_CS0 on the schematic)
@@ -343,7 +351,7 @@ static void closeAIN( int dev ) {
 }
 
 /***********************************************************/
-static void getReadings(int portNumber, reading_t *sample) 
+static void getReadings(int portNumber, ireading_t *sample) 
 {
     int  dev, fd, port ;
 
@@ -378,7 +386,7 @@ static void getReadings(int portNumber, reading_t *sample)
 
 
 /***********************************************************/
-static void calcValues(int portNumber, reading_t *sample)
+static void calcValues(int portNumber, ireading_t *sample)
 {
 
     // calculate miliamps
@@ -416,11 +424,17 @@ static void calcValues(int portNumber, reading_t *sample)
 
 void pidev_read(int portNumber, reading_t *sample)
 {
-        // Collect raw readings
-        getReadings(portNumber, sample);
+    ireading_t raw;
 
-        // Calculate power
-        calcValues(portNumber, sample); 
+    // Collect raw readings
+    getReadings(portNumber, &raw);
+
+    // Calculate power
+    calcValues(portNumber, &raw); 
+
+    sample->volts = raw.milivolts/KS;
+    sample->amps = raw.miliamps/KS;
+    sample->watts = raw.miliwatts/KS;
 }
 
 void pidev_open(void)

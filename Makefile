@@ -33,9 +33,6 @@ endif
 ifeq ($(SPI),y)
 CFLAGS += -I$(PWD)/drivers/v$(PIVER) -DPIAPI_SPI
 LDFLAGS += -L$(PWD)/drivers/v$(PIVER) -lpidev
-ifeq ($(PIVER),2)
-CFLAGS += -DPIVER2
-endif
 endif
 
 ifeq ($(CNT),y)

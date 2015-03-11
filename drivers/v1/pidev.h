@@ -9,13 +9,11 @@
 
 #define MAX_PORTNUM      15
 
-typedef struct reading {
-    uint16_t    Asamp;          // Raw sample
-    uint16_t    Vsamp;          // Raw sample
-    int32_t     miliamps;       // Calculated value
-    int32_t     milivolts;      // Calculated value
-    int32_t     miliwatts;      // Calculated value
-} reading_t;
+typedef struct {
+    union { double  reading, watt, temp ; };
+    double  volt ;  /* Voltage component of Watt measurement */
+    double  amp ;  /* Amperage component */
+} reading_t ;
 
 void pidev_read(int portNumber, reading_t *sample);
 void pidev_open(void);
