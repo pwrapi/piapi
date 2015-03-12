@@ -21,7 +21,6 @@
 #include <errno.h>
 
 #define MS 1000000.0
-#define KS 1000.0
 
 #ifndef PIAPI_NATIVE_DEBUG
 static int piapi_native_debug = 0;
@@ -450,13 +449,12 @@ piapi_native_log( void *cntx )
        		printf( "Reseting native counter log on port %u to %u\n", port, frequency );
 
 	if( frequency != 0 ) {
-		fclose( log );
         	if( (log=fopen( logfile, "w" )) < 0 ) {
 			printf( "Unable to open counter log file %s\n", logfile );
 			return -1;
 		}
 	} else
-		fflush( log );
+		fclose( log );
 
 	begin = port;
 	end = port;

@@ -52,7 +52,9 @@ static void openAIN( int dev );
 static void closeSPI( int dev );
 static void closeAIN( int dev );
 
-typedef struct reading {
+#define KS 1000.0
+
+typedef struct ireading {
     uint16_t    Asamp;          // Raw sample
     uint16_t    Vsamp;          // Raw sample
     int32_t     miliamps;       // Calculated value
@@ -432,9 +434,9 @@ void pidev_read(int portNumber, reading_t *sample)
     // Calculate power
     calcValues(portNumber, &raw); 
 
-    sample->volts = raw.milivolts/KS;
-    sample->amps = raw.miliamps/KS;
-    sample->watts = raw.miliwatts/KS;
+    sample->volt = raw.milivolts/KS;
+    sample->amp = raw.miliamps/KS;
+    sample->watt = raw.miliwatts/KS;
 }
 
 void pidev_open(void)
