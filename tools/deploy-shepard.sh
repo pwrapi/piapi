@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for IMAGE_PATH in '/images/ro-rootfs/n36_NFSroot_ubuntu_MAIN/usr' '/usr'
+for IMAGE_PATH in '/images/rootfs/n36_NFSroot_ubuntu_MAIN/usr' '/usr'
 do
 	echo "Copying include files to $IMAGE_PATH"
 	cp ./piapi.h $IMAGE_PATH/include
@@ -15,7 +15,7 @@ do
 	cp ./pilogger $IMAGE_PATH/bin
 done
 
-for IMAGE_PATH in '/images/ro-rootfs/PI-2014-10-08.nfs/rootfs/home'
+for IMAGE_PATH in '/images/rootfs/PI-2014-10-08.nfs/rootfs/home'
 do
 	echo "Extracting beaglebone files to $IMAGE_PATH"
 	rm -rf $IMAGE_PATH/power
