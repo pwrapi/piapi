@@ -206,8 +206,7 @@ piapi_native_counters( void *arg )
 			counters.sampler[i].sample[j].total = counters.sampler[i].sample[j].number;
 
 #ifdef PIAPI_SPI
-			if( piapi_dev_collect( i,
-				&(counters.sampler[i].sample[j].raw ) ) < 0 ) {
+			if( piapi_dev_collect( i, &(counters.sampler[i].sample[j].raw ) ) < 0 ) {
 				printf( "Unable to collect reading on port %d", i );
 				return;
 			}
