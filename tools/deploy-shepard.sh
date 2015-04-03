@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for IMAGE_PATH in '/images/rootfs/n36_NFSroot_ubuntu_MAIN/usr' '/usr'
+for IMAGE_PATH in '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED/usr' '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED-LOGIN/usr' '/usr'
 do
 	echo "Copying include files to $IMAGE_PATH"
 	cp ./piapi.h $IMAGE_PATH/include
@@ -25,3 +25,6 @@ do
 	mv install $IMAGE_PATH/power
 done
 
+echo "Creating powerinsight configuration link"
+cd /images/rootfs/PI-2014-10-08.nfs/rootfs/home/power/bin
+ln -s config.intel pidev.conf
