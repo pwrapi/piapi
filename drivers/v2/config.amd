@@ -7,7 +7,7 @@ Sensors(
   { conn="J2",  name="ATX5",   volt="5v",  amp="shunt25" },
   { conn="J3",  name="ATX5sb", volt="5v",  amp="shunt50" },
   { conn="J4",  name="ATX3.3", volt="3v3", amp="shunt10" },
-  { conn="J5",  name="CPU2",   volt="12v", amp="shunt25" },
+  { conn="J5",  name="CPU",    volt="12v", amp="shunt25" },
   { conn="J6",  name="HDD12",  volt="12v", amp="shunt25" },
   { conn="J7",  name="HDD5",   volt="5v",  amp="shunt25" },
 
