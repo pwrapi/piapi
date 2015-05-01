@@ -15,6 +15,7 @@ SPI = y
 endif
 
 CC = $(CROSS_COMPILE)gcc
+AR = $(CROSS_COMPILE)ar
 CFLAGS = -Wall -O3 -pthread
 LDFLAGS = -L. -l$(LIBNAME)
 
@@ -72,7 +73,7 @@ $(LIBNAME): $(OBJS)
 	$(CC) -shared -o $(LIB) $(OBJS)
 else
 $(LIBNAME): $(OBJS)
-	ar rcs $(LIB) $(OBJS)
+	$(AR) rcs $(LIB) $(OBJS)
 endif	
 
 install:
