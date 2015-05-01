@@ -5,6 +5,7 @@ XC ?= n
 SPI ?= n
 CNT ?= y
 PIVER ?= 1
+SHARED ?= y
 
 LIBNAME = piapi
 
@@ -14,8 +15,15 @@ SPI = y
 endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -O3 -pthread -fpic
+CFLAGS = -Wall -O3 -pthread
 LDFLAGS = -L. -l$(LIBNAME)
+
+ifeq ($(SHARED),y)
+CFLAGS += -fpic
+LIB = lib$(LIBNAME).so
+else
+LIB = lib$(LIBNAME).a
+endif
 
 ifeq ($(DBG),y)
 CFLAGS += -g
@@ -39,8 +47,6 @@ ifeq ($(CNT),y)
 CFLAGS += -DPIAPI_COUNTERS
 endif
 
-SHAREDLIB = lib$(LIBNAME).so
-
 OBJS = 	piapi.o     \
 	piproxy.o   \
 	piagent.o   \
@@ -59,17 +65,22 @@ all: $(LIBNAME) $(TESTOBJS)
 	$(CC) $(CFLAGS) native.c $(LDFLAGS) -o pinative
 
 clean:
-	rm -f pitest piproxy piagent pinative $(SHAREDLIB) $(OBJS) $(TESTOBJS)
+	rm -f pitest piproxy piagent pinative $(LIB) $(OBJS) $(TESTOBJS)
 
+ifeq ($(SHARED),y)
 $(LIBNAME): $(OBJS)
-	$(CC) -shared -o $(SHAREDLIB) $(OBJS)
-	
+	$(CC) -shared -o $(LIB) $(OBJS)
+else
+$(LIBNAME): $(OBJS)
+	ar rcs $(LIB) $(OBJS)
+endif	
+
 install:
 	mkdir -p $(PREFIX)
 	mkdir -p $(PREFIX)/include
 	cp picommon.h piapi.h $(PREFIX)/include
 	mkdir -p $(PREFIX)/lib
-	cp $(SHAREDLIB) $(PREFIX)/lib
+	cp $(LIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp pitest piproxy piagent pinative pilogger pimon piver $(PREFIX)/bin
 	mkdir -p $(PREFIX)/man
