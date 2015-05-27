@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for IMAGE_PATH in '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED/usr' '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED-LOGIN/usr' '/usr'
+for IMAGE_PATH in '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED/usr' '/images/rootfs/TOSS-3.1.4_nfsroot_H_OFED-LOGIN/usr' '/usr' '/images/rootfs/AMD_HSA_FINAL_OFED/usr' '/images/rootfs/HSA_LOGIN/usr'
 do
 	echo "Copying include files to $IMAGE_PATH"
 	cp ./piapi.h $IMAGE_PATH/include

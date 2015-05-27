@@ -7,13 +7,13 @@ my $start = shift;
 my $fin = shift;
     defined($fin) or die "Must provide last agent in range\n";
 
-print "checking teller-pm$start through teller-pm$fin\n";
+print "checking pi$start through pi$fin\n";
 
 my $count=1;
 for my $num ($start..$fin) {
     if ($num < 10) { $num = "0" . $num; }
-    print "teller-pm$num:\n";
-    system("ssh root\@teller-pm$num ps aux | grep ./piagent");
+    print "pi$num:\n";
+    system("ssh root\@pi$num ps aux | grep ./piagent");
     $count++;
 }
 sleep(2);

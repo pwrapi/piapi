@@ -4,7 +4,7 @@ LVL ?= 1
 XC ?= n
 SPI ?= n
 CNT ?= y
-PIVER ?= 1
+PIVER ?= 2
 SHARED ?= y
 
 LIBNAME = piapi
