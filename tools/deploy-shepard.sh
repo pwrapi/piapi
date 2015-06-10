@@ -24,7 +24,3 @@ do
 	echo "Moving beaglebone files to $IMAGE_PATH"
 	mv install $IMAGE_PATH/power
 done
-
-echo "Creating powerinsight configuration link"
-cd /images/rootfs/PI-2014-10-08.nfs/rootfs/home/power/bin
-ln -s config.intel pidev.conf

@@ -25,5 +25,5 @@ install:
 	cp $(SHAREDLIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp $(TARGET) $(PREFIX)/bin
-	cp config.* $(PREFIX)/bin
+	cp pidev.conf $(PREFIX)/bin
 	cp *.lc $(PREFIX)/bin
