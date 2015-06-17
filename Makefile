@@ -48,22 +48,22 @@ ifeq ($(CNT),y)
 CFLAGS += -DPIAPI_COUNTERS
 endif
 
-OBJS = 	piapi.o     \
-	piproxy.o   \
-	piagent.o   \
-	pinative.o  \
-	piutil.o
+OBJS = 	src/piapi.o     \
+	src/piproxy.o   \
+	src/piagent.o   \
+	src/pinative.o  \
+	src/piutil.o
 
-TESTOBJS = proxy.o  \
-	agent.o     \
-	native.o    \
-	test.o
+TESTOBJS = tools/proxy.o  \
+	tools/agent.o     \
+	tools/native.o    \
+	tools/test.o
 
 all: $(LIBNAME) $(TESTOBJS)
-	$(CC) $(CFLAGS) test.c $(LDFLAGS) -o pitest
-	$(CC) $(CFLAGS) proxy.c $(LDFLAGS) -o piproxy 
-	$(CC) $(CFLAGS) agent.c $(LDFLAGS) -o piagent 
-	$(CC) $(CFLAGS) native.c $(LDFLAGS) -o pinative
+	$(CC) $(CFLAGS) tools/test.c $(LDFLAGS) -o pitest
+	$(CC) $(CFLAGS) tools/proxy.c $(LDFLAGS) -o piproxy 
+	$(CC) $(CFLAGS) tools/agent.c $(LDFLAGS) -o piagent 
+	$(CC) $(CFLAGS) tools/native.c $(LDFLAGS) -o pinative
 
 clean:
 	rm -f pitest piproxy piagent pinative $(LIB) $(OBJS) $(TESTOBJS)
@@ -79,10 +79,10 @@ endif
 install:
 	mkdir -p $(PREFIX)
 	mkdir -p $(PREFIX)/include
-	cp picommon.h piapi.h $(PREFIX)/include
+	cp src/picommon.h piapi.h $(PREFIX)/include
 	mkdir -p $(PREFIX)/lib
 	cp $(LIB) $(PREFIX)/lib
 	mkdir -p $(PREFIX)/bin
 	cp pitest piproxy piagent pinative pilogger pimon piver $(PREFIX)/bin
 	mkdir -p $(PREFIX)/man
-	cp piproxy.8 pilogger.8 $(PREFIX)/man
+	cp tools/piproxy.8 tools/pilogger.8 $(PREFIX)/man
