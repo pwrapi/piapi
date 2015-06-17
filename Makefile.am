@@ -1,15 +1,13 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
-VERSION_INFO = 1:0:1
+VERSION_INFO = 2:0:1
 
 ACLOCAL_AMFLAGS = -I config 
 
 DIST_SUBDIRS = src \
-	tools \
-	examples 
+	tools
 
 SUBDIRS = src \
-	tools \
-	examples 
+	tools
 
-EXTRA_DIST = LICENSE Changes pwrapi.m4 autogen.sh  
+EXTRA_DIST = LICENSE Changes piapi.m4 autogen.sh  
 
