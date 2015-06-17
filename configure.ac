@@ -29,9 +29,9 @@ AC_C_INLINE
 m4_include([config/piapi.m4])
 m4_include([config/piapi_powerinsight.m4])
 
-PWRAPI_CHECK_POWERINSIGHT([pwrapi_have_powerinsight="yes"], [pwrapi_have_powerinsight="no"])
+PIAPI_CHECK_POWERINSIGHT([piapi_have_powerinsight="yes"], [piapi_have_powerinsight="no"])
 
-PWRAPI_CHECK_DEBUG()
+PIAPI_CHECK_DEBUG()
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
