@@ -1,4 +1,4 @@
-bin_PROGRAMS = piproxy piagent pinative pitest pilogger pimon piver
+bin_PROGRAMS = piproxy piagent pinative pitest
 
 # PowerInsight API Tools
 piproxy_SOURCES = proxy.c
@@ -18,4 +18,6 @@ pitest_CFLAGS = -I$(top_srcdir)/src
 pitest_LDADD = $(top_builddir)/src/libpiapi.la
 
 man_MANS = pilogger.8 piproxy.8
+
+bin_SCRIPTS = pilogger pimon piver
 
