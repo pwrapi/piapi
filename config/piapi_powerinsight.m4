@@ -1,8 +1,8 @@
 
-AC_DEFUN([PWRAPI_CHECK_POWERINSIGHT], [
+AC_DEFUN([PIAPI_CHECK_POWERINSIGHT], [
 	AC_ARG_WITH([powerinsight], [AS_HELP_STRING([--with-powerinsight@<:@=DIR@:>@], [Use the powerinsight binding in directory specified (DIR).])])
 
-	pwrapi_check_powerinsight_happy="yes"
+	piapi_check_powerinsight_happy="yes"
 
 	CPPFLAGS_saved="$CPPFLAGS"
   	LDFLAGS_saved="$LDFLAGS"
@@ -31,14 +31,14 @@ AC_DEFUN([PWRAPI_CHECK_POWERINSIGHT], [
 	AC_LANG_SAVE
 	AC_LANG_CPLUSPLUS
 
-	AC_CHECK_HEADERS([piapi.h], [], [pwrapi_check_powerinsight_happy="no"])
+	AC_CHECK_HEADERS([piapi.h], [], [piapi_check_powerinsight_happy="no"])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([], [
 			int a;
-		])], [pwrapi_check_powerinsight_lib_happy="yes"],
-		[pwrapi_check_powerinsight_lib_happy="no"])
+		])], [piapi_check_powerinsight_lib_happy="yes"],
+		[piapi_check_powerinsight_lib_happy="no"])
 
-	AS_IF([test "x$pwrapi_check_powerinsight_lib_happy" = "xno"],
-		[pwrapi_check_powerinsight_happy="no"])
+	AS_IF([test "x$piapi_check_powerinsight_lib_happy" = "xno"],
+		[piapi_check_powerinsight_happy="no"])
 
 	AC_LANG_RESTORE
 
@@ -50,9 +50,9 @@ AC_DEFUN([PWRAPI_CHECK_POWERINSIGHT], [
 	AC_SUBST([POWERINSIGHT_LDFLAGS])
 	AC_SUBST([POWERINSIGHT_LIBS])
 
-	AM_CONDITIONAL([HAVE_POWERINSIGHT], [test "x$pwrapi_check_powerinsight_happy" = "xyes"])
-	AS_IF([test "x$pwrapi_check_powerinsight_happy" = "xyes"], 
+	AM_CONDITIONAL([HAVE_POWERINSIGHT], [test "x$piapi_check_powerinsight_happy" = "xyes"])
+	AS_IF([test "x$piapi_check_powerinsight_happy" = "xyes"], 
 		[AC_DEFINE([HAVE_POWERINSIGHT], [1], [Set to 1 if powerinsight is found during configuration])])
 
-	AS_IF([test "x$pwrapi_check_powerinsight_happy" = "xyes"], [$1], [$2])
+	AS_IF([test "x$piapi_check_powerinsight_happy" = "xyes"], [$1], [$2])
 ])
