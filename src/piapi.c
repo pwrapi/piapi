@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifndef PIAPI_DEBUG
+#ifndef USE_DEBUG
 static int piapi_debug = 0;
 #else
 static int piapi_debug = 1;

@@ -7,7 +7,7 @@
 
 #include "pinative.h"
 #include "piutil.h"
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 #include "pidev.h"
 #endif
 
@@ -22,7 +22,7 @@
 
 #define MS 1000000.0
 
-#ifndef PIAPI_NATIVE_DEBUG
+#ifndef USE_DEBUG
 static int piapi_native_debug = 0;
 #else
 static int piapi_native_debug = 1;
@@ -37,7 +37,7 @@ static char *regfile = 0x0;
 static piapi_counters_t counters;
 static pthread_mutex_t piapi_dev_lock;
 
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 static int
 piapi_dev_collect( piapi_port_t port, piapi_reading_t *reading )
 {
@@ -171,7 +171,6 @@ pinative_predict( )
 	return 0;
 }
 
-#ifdef PIAPI_COUNTERS
 static void
 piapi_native_counters( void *arg )
 {
@@ -205,7 +204,7 @@ piapi_native_counters( void *arg )
 			counters.sampler[i].sample[j].number = counters.sampler[i].number + 1;
 			counters.sampler[i].sample[j].total = counters.sampler[i].sample[j].number;
 
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 			if( piapi_dev_collect( i, &(counters.sampler[i].sample[j].raw ) ) < 0 ) {
 				printf( "Unable to collect reading on port %d", i );
 				return;
@@ -238,7 +237,6 @@ piapi_native_counters( void *arg )
 	if( piapi_native_debug )
 		printf( "Counter thread exiting\n" );
 }
-#endif
 
 static void
 piapi_native_thread( void *cntx )
@@ -276,7 +274,7 @@ piapi_native_thread( void *cntx )
 				end = PIAPI_PORT_MID;
 			}
 			for( sample.port = begin; sample.port <= end; sample.port++ ) {
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 				if( piapi_dev_collect( sample.port, &(sample.raw) ) < 0 ) {
 					printf( "Unable to collect reading on port %d", sample.port);
 					return;
@@ -304,15 +302,13 @@ piapi_native_init( void *cntx )
 	if( piapi_native_debug )
        		printf( "\nPower native communication\n" );
 
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 	pidev_open();
 #endif
 
 	pthread_mutex_init(&piapi_dev_lock, NULL);
-#ifdef PIAPI_COUNTERS
 	if( PIAPI_CNTX(cntx)->mode == PIAPI_MODE_AGENT )
 		pthread_create(&counters.samplers, 0x0, (void *)&piapi_native_counters, &frequency);
-#endif
 	if( piapi_native_debug )
        		printf( "Native counters initialized\n" );
 
@@ -328,15 +324,13 @@ piapi_native_destroy( void *cntx )
 	PIAPI_CNTX(cntx)->worker_run = 0;
 	pthread_join( PIAPI_CNTX(cntx)->worker, NULL);
 
-#ifdef PIAPI_COUNTERS
 	if( PIAPI_CNTX(cntx)->mode == PIAPI_MODE_AGENT ) {
 		counters.samplers_run = 0;
 		pthread_join( counters.samplers, NULL );
 	}
-#endif
 	pthread_mutex_destroy(&piapi_dev_lock);
 
-#ifdef PIAPI_SPI
+#ifdef HAVE_POWERINSIGHT
 	pidev_close();
 #endif
 

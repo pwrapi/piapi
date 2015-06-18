@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifndef PIAPI_AGENT_DEBUG
+#ifndef USE_DEBUG
 static int piapi_agent_debug = 0;
 #else
 static int piapi_agent_debug = 1;

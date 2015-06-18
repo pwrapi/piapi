@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <sched.h>
 
-#ifndef PIAPI_PROXY_DEBUG
+#ifndef USE_DEBUG
 static int piapi_proxy_debug = 0;
 #else
 static int piapi_proxy_debug = 1;

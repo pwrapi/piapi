@@ -13,4 +13,3 @@ AC_DEFUN([PIAPI_CHECK_DEBUG],[
     ) 
 ])
 
-AM_CONDITIONAL(USE_STATIC, [test "x$USE_STATIC" = xyes])
