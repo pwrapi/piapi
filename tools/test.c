@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
 	for( port = PIAPI_PORT_MIN; port <= PIAPI_PORT_MAX; port++ ) {
 		piapi_sampling = 1;
-		piapi_collect( cntx, port, 100, 100 );
+		piapi_collect( cntx, (piapi_port_t)port, 100, 100 );
 		while( piapi_sampling ) sched_yield();
 	}
 

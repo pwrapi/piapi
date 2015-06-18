@@ -136,7 +136,7 @@ main(int argc, char *argv[])
 	piapi_init( &cntx, PIAPI_MODE_NATIVE, piapi_callback, 0, 0, counterfreq ); 
 
 	piapi_sampling = 1;
-	piapi_collect( cntx, port, samples, frequency );
+	piapi_collect( cntx, (piapi_port_t)port, samples, frequency );
 	while( piapi_sampling ) sched_yield();
 
 	sleep(1);

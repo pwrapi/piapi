@@ -165,17 +165,17 @@ main(int argc, char *argv[])
 
 	if( counter ) {
 		piapi_sampling = 1;
-		piapi_counter( cntx, port );
+		piapi_counter( cntx, (piapi_port_t)port );
 		while( piapi_sampling ) sched_yield();
 	} else if( reset ) {
-		piapi_reset( cntx, port );	
+		piapi_reset( cntx, (piapi_port_t)port );	
 	} else if( log ) {
-		piapi_log( cntx, port, frequency );
+		piapi_log( cntx, (piapi_port_t)port, frequency );
 	} else if( strcmp( mark, "" ) != 0 ) {
 		piapi_mark( cntx, mark );
 	} else {
 		piapi_sampling = 1;
-		piapi_collect( cntx, port, samples, frequency );
+		piapi_collect( cntx, (piapi_port_t)port, samples, frequency );
 		while( piapi_sampling ) sched_yield();
 	}
 

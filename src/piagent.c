@@ -39,7 +39,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
@@ -62,7 +62,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
@@ -75,7 +75,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
@@ -88,7 +88,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
@@ -101,7 +101,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
@@ -131,7 +131,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );
@@ -144,7 +144,7 @@ piapi_agent_parse( char *buf, unsigned int len, void *cntx )
 
 		if( (token = strtok( NULL, ":" )) == NULL)
 			return -1;
-		PIAPI_CNTX(cntx)->port = atoi(token);
+		PIAPI_CNTX(cntx)->port = (piapi_port_t)atoi(token);
 
 		if( piapi_agent_debug ) {
 			printf( "Command:   %s\n", PIAPI_CNTX(cntx)->command );

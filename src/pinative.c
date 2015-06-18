@@ -387,7 +387,7 @@ piapi_native_counter( void *cntx )
 		end = PIAPI_PORT_MID;
 	}
 
-	for( port = begin; port <= end; port++ ) {
+	for( port = (piapi_port_t)begin; port <= end; port++ ) {
 		i = counters.sampler[port].number%PIAPI_SAMPLE_RING_SIZE;
 		sample = counters.sampler[port].sample[i];
 		sample.cntx = cntx;
@@ -422,7 +422,7 @@ piapi_native_reset( void *cntx )
 		end = PIAPI_PORT_MID;
 	}
 
-	for( port = begin; port <= end; port++ ) {
+	for( port = (piapi_port_t)begin; port <= end; port++ ) {
 		if( piapi_native_debug )
        			printf( "Reseting native counter on port %u\n", port );
 
@@ -465,7 +465,7 @@ piapi_native_log( void *cntx )
 		end = PIAPI_PORT_MID;
 	}
 
-	for( port = begin; port <= end; port++ ) {
+	for( port = (piapi_port_t)begin; port <= end; port++ ) {
 		if( piapi_native_debug )
        			printf( "Setting native counter log on port %u to %u\n", port, frequency );
 		counters.sampler[port].log = frequency;
@@ -501,7 +501,7 @@ piapi_native_train( void *cntx )
 		end = PIAPI_PORT_MID;
 	}
 
-	for( port = begin; port <= end; port++ ) {
+	for( port = (piapi_port_t)begin; port <= end; port++ ) {
 		counters.sampler[port].train = !(counters.sampler[port].train);
 		if( piapi_native_debug )
        			printf( "Training native counter on port %u set to %u\n",
