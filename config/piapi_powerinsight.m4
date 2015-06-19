@@ -23,7 +23,7 @@ AC_DEFUN([PIAPI_CHECK_POWERINSIGHT], [
                  CPPFLAGS="$POWERINSIGHT_CPPFLAGS $CPPFLAGS"
                  POWERINSIGHT_LDFLAGS="-L$with_powerinsight/lib"
                  LDFLAGS="$POWERINSIGHT_LDFLAGS $LDFLAGS"
-                 POWERINSIGHT_LIBS="-pidev -lpthread"
+                 POWERINSIGHT_LIBS="-lpidev -lpthread"
                  LIBS="$LIBS $POWERINSIGHT_LIBS"]
 		)]
 	)
