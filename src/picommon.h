@@ -11,7 +11,7 @@
 #define PIAPI_MAJOR 2
 #define PIAPI_MINOR 0
 #define PIAPI_BUILD 1
-#define PIAPI_REV_STR "$Rev$"
+#define PIAPI_REV_STR "$Rev: 0 $"
 
 #ifdef __cplusplus
 extern "C" {
