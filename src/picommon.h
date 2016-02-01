@@ -9,9 +9,12 @@
 #define PICOMMON_H
 
 #define PIAPI_MAJOR 2
-#define PIAPI_MINOR 0
+#define PIAPI_MINOR 1
 #define PIAPI_BUILD 1
 #define PIAPI_REV_STR "$Rev: 0 $"
+
+#define PIAPI_PROXY_TIMEOUT 120
+#define PIAPI_AGENT_TIMEOUT 3600
 
 #ifdef __cplusplus
 extern "C" {

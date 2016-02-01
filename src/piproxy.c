@@ -168,6 +168,7 @@ static int
 piapi_proxy_connect( void *cntx )
 {
 	struct sockaddr_in addr;
+        struct timeval timeout = { .tv_sec = PIAPI_PROXY_TIMEOUT, .tv_usec = 0 };
 	ssize_t rc;
 
 	if( piapi_proxy_debug )
@@ -206,6 +207,7 @@ piapi_proxy_connect( void *cntx )
 	if( piapi_proxy_debug )
         	printf( "Connected to agent port %d\n", PIAPI_CNTX(cntx)->sa_port );
 
+        setsockopt( PIAPI_CNTX(cntx)->fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(struct timeval) );
 	return 0;
 }
 
