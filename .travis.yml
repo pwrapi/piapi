@@ -1,0 +1,27 @@
+sudo: true
+language: c
+compiler:
+    - gcc
+os:
+    - linux
+before_install:
+install:
+        - git clone https://github.com/pwrapi/piapi
+        - cd piapi
+        - ./autogen.sh
+        - mkdir build
+        - cd build
+        - ../configure --prefix=`pwd`/../install/
+        - make
+        - make install
+script:
+        - cd ../install
+        - cd bin
+	- ./piver
+        - ./pinative -s 100 -f 100
+notifications:
+    email:
+        recipients:
+            - ddeboni@sandia.gov
+        on_success: [change]
+        on_failure: [always] 
