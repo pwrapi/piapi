@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
-VERSION_INFO = 2:0:1
+VERSION_INFO = 2:1:1
 
 ACLOCAL_AMFLAGS = -I config 
 
