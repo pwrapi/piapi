@@ -17,7 +17,7 @@ install:
 script:
         - cd ../install
         - cd bin
-	- ./piver
+        - ./piver
         - ./pinative -s 100 -f 100
 notifications:
     email:
