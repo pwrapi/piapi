@@ -21,7 +21,6 @@ script:
         - ./pinative -s 100 -f 100
         - ./piagent -c 10 &
         - ./piproxy -a 127.0.0.1 -s 100 -f 100
-        - killall piagent
 notifications:
     email:
         recipients:
