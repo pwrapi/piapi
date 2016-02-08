@@ -18,9 +18,9 @@ script:
         - cd ../install
         - cd bin
         - ./piver
-        - ./pinative -s 100 -f 100
+        - ./pinative -t 16 -s 100 -f 100
         - ./piagent -c 10 &
-        - ./piproxy -a 127.0.0.1 -s 100 -f 100
+        - ./piproxy -a 127.0.0.1 -t 16 -s 100 -f 100
 notifications:
     email:
         recipients:
