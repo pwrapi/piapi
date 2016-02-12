@@ -15,10 +15,12 @@ pinative_LDADD = $(top_builddir)/src/libpiapi.la -lpthread
 
 if HAVE_POWERINSIGHT
 piagent_CFLAGS += $(POWERINSIGHT_CFLAGS)
-piagent_LDFLAGS += $(POWERINSIGHT_LDFLAGS)
+piagent_LDFLAGS = $(POWERINSIGHT_LDFLAGS)
+piagent_LDADD = $(POWERINSIGHT_LIBS)
 
 pinative_CFLAGS += $(POWERINSIGHT_CFLAGS)
-pinative_LDFLAGS += $(POWERINSIGHT_LDFLAGS)
+pinative_LDFLAGS = $(POWERINSIGHT_LDFLAGS)
+pinative_LDADD = $(POWERINSIGHT_LIBS)
 endif
 
 pitest_SOURCES = test.c
