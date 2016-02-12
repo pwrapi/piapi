@@ -13,6 +13,14 @@ pinative_SOURCES = native.c
 pinative_CFLAGS = -I$(top_srcdir)/src
 pinative_LDADD = $(top_builddir)/src/libpiapi.la -lpthread
 
+if HAVE_POWERINSIGHT
+piagent_CFLAGS += $(POWERINSIGHT_CFLAGS)
+piagent_LDFLAGS += $(POWERINSIGHT_LDFLAGS)
+
+pinative_CFLAGS += $(POWERINSIGHT_CFLAGS)
+pinative_LDFLAGS += $(POWERINSIGHT_LDFLAGS)
+endif
+
 pitest_SOURCES = test.c
 pitest_CFLAGS = -I$(top_srcdir)/src
 pitest_LDADD = $(top_builddir)/src/libpiapi.la -lpthread
