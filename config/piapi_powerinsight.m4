@@ -12,18 +12,18 @@ AC_DEFUN([PIAPI_CHECK_POWERINSIGHT], [
 	AS_IF([test -z "$with_powerinsight"],
 		[POWERINSIGHT_CPPFLAGS=
                  POWERINSIGHT_LDFLAGS=
-                 POWERINSIGHT_LIBS="-lpidev -lpthread"
+                 POWERINSIGHT_LIBS="-lpidev"
                  LIBS="$LIBS $POWERINSIGHT_LIBS"],
 		[	AS_IF([test "x$with_powerinsight" = "xyes"],
 				[POWERINSIGHT_CPPFLAGS=
            		 POWERINSIGHT_LDFLAGS=
-           		 POWERINSIGHT_LIBS="-lpidev -lpthread"
+           		 POWERINSIGHT_LIBS="-lpidev"
            		 LIBS="$LIBS $POWERINSIGHT_LIBS"],
 				[POWERINSIGHT_CPPFLAGS="-I$with_powerinsight/include"
                  CPPFLAGS="$POWERINSIGHT_CPPFLAGS $CPPFLAGS"
                  POWERINSIGHT_LDFLAGS="-L$with_powerinsight/lib"
                  LDFLAGS="$POWERINSIGHT_LDFLAGS $LDFLAGS"
-                 POWERINSIGHT_LIBS="-lpidev -lpthread"
+                 POWERINSIGHT_LIBS="-lpidev"
                  LIBS="$LIBS $POWERINSIGHT_LIBS"]
 		)]
 	)
