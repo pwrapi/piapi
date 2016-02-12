@@ -11,5 +11,5 @@ libpiapi_la_LDFLAGS = -version-info 2:1:1 -lpthread
 if HAVE_POWERINSIGHT
 libpiapi_la_CFLAGS += $(POWERINSIGHT_CFLAGS)
 libpiapi_la_LDFLAGS += $(POWERINSIGHT_LDFLAGS)
-libpiapi_la_LDADD = $(POWERINSIGHT_LIBS)
+libpiapi_la_LIBADD = $(POWERINSIGHT_LIBS)
 endif

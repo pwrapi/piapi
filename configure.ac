@@ -1,6 +1,6 @@
 orig_CFLAGS="$CFLAGS"
 
-AC_INIT([piapi], [2.0.1])
+AC_INIT([piapi], [2.1.1])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
 AM_INIT_AUTOMAKE
