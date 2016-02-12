@@ -244,7 +244,7 @@ piapi_agent_thread( void *cntx )
 	socklen_t socklen = sizeof(addr);
         struct timeval timeout = { .tv_sec = PIAPI_AGENT_TIMEOUT, .tv_usec = 0 };
 
-	int max_fd = PIAPI_CNTX(cntx)->fd;
+	int max_fd = PIAPI_CNTX(cntx)->fd, enable = 1;
 	fd_set fds;
 	FD_ZERO( &fds );
 	FD_SET( PIAPI_CNTX(cntx)->fd, &fds );
@@ -271,6 +271,7 @@ piapi_agent_thread( void *cntx )
 					*((char *)(&addr.sin_addr.s_addr)+3) );
 
 			setsockopt( new_fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(struct timeval) );
+            setsockopt( new_fd, SOL_TCP, TCP_NODELAY, (char *) &enable, sizeof(int) );
 			FD_SET( new_fd, &fds );
 			if( new_fd > max_fd )
 				max_fd = new_fd;
