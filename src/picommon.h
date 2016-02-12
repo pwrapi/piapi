@@ -8,6 +8,10 @@
 #ifndef PICOMMON_H
 #define PICOMMON_H
 
+#ifdef HAVE_CONFIG_H
+#include "piapi_config.h"
+#endif
+
 #define PIAPI_MAJOR 2
 #define PIAPI_MINOR 1
 #define PIAPI_BUILD 1
