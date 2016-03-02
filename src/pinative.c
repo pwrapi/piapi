@@ -349,6 +349,7 @@ piapi_native_collect( void *cntx )
        		printf( "Starting native collection\n" );
 
 	pthread_create(&(PIAPI_CNTX(cntx)->worker), 0x0, (void *)&piapi_native_thread, cntx);
+	pthread_join( PIAPI_CNTX(cntx)->worker, NULL);
 	return 0;
 }
 
