@@ -319,7 +319,7 @@ piapi_agent_thread( void *cntx )
 					piapi_native_predict( cntx );
 				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {
 					piapi_native_detect( cntx );
-				} else {
+				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "mark" ) ) {
 					piapi_native_mark( cntx );
 				}
             } else {
