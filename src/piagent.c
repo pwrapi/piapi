@@ -322,7 +322,12 @@ piapi_agent_thread( void *cntx )
 				} else {
 					piapi_native_mark( cntx );
 				}
-			}
+            } else {
+                if( piapi_agent_debug )
+                    printf( "WARNING: Unknown / unhandled message received\n" );
+                FD_CLR( fd, &fds );
+                continue;
+            }
 		}
 	}
 }
