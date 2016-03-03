@@ -294,34 +294,41 @@ piapi_agent_thread( void *cntx )
 				}
 			} while( rc && buf[rc-1] != ';' );
 
-			buf[rc] = '\0';
-			while( rc > 0 ) {
-				if( !isspace( buf[rc-1] ) )
-					break;
-				buf[--rc] = '\0';
-			}
+			if( rc > 0 ) {
+			    buf[rc] = '\0';
+			    while( rc > 0 ) {
+				    if( !isspace( buf[rc-1] ) )
+					    break;
+				    buf[--rc] = '\0';
+			    }
 
-			PIAPI_CNTX(cntx)->cfd = fd;
-			if( piapi_agent_parse( buf, rc, cntx ) == 0 ) {
-				if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
-					piapi_native_collect( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "halt" ) ) {
-					piapi_native_halt( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
-					piapi_native_counter( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
-					piapi_native_reset( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
-					piapi_native_log( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "train" ) ) {
-					piapi_native_train( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "predict" ) ) {
-					piapi_native_predict( cntx );
-				} else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {
-					piapi_native_detect( cntx );
-				} else {
-					piapi_native_mark( cntx );
-				}
+			    PIAPI_CNTX(cntx)->cfd = fd;
+			    if( piapi_agent_parse( buf, rc, cntx ) == 0 ) {
+				    if( !strcmp( PIAPI_CNTX(cntx)->command, "collect" ) ) {
+					    piapi_native_collect( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "halt" ) ) {
+					    piapi_native_halt( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "counter" ) ) {
+					    piapi_native_counter( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "reset" ) ) {
+					    piapi_native_reset( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "log" ) ) {
+					    piapi_native_log( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "train" ) ) {
+					    piapi_native_train( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "predict" ) ) {
+					    piapi_native_predict( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "detect" ) ) {
+					    piapi_native_detect( cntx );
+				    } else if( !strcmp( PIAPI_CNTX(cntx)->command, "mark" ) ) { 
+					    piapi_native_mark( cntx );
+				    } else if( piapi_agent_debug ) {
+                   	    printf( "WARNING: Unknown / unhandled command received -> \"%s\"\n",
+						        PIAPI_CNTX(cntx)->command );
+				    }
+                } else if( piapi_agent_debug ) {
+                    	printf( "WARNING: Unknown / unhandled message received -> \"%s\"\n", buf );
+            	}
 			}
 		}
 	}
