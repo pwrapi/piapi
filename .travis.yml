@@ -6,8 +6,6 @@ os:
     - linux
 before_install:
 install:
-        - git clone https://github.com/pwrapi/piapi
-        - cd piapi
         - ./autogen.sh
         - mkdir build
         - cd build
